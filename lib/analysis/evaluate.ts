@@ -1,6 +1,6 @@
 // Deterministic screening. Ported from the Build Day reference `evaluate.mjs`
 // and extended to the PRD criteria set. The model may NOT override these results.
-export const CALCULATION_VERSION = "atlas-2";
+export const CALCULATION_VERSION = "atlas-3";
 
 export type CriterionState = "pass" | "fail" | "unknown" | "conflict";
 
@@ -17,6 +17,8 @@ export type ProjectBrief = {
   maxLatencyMs: number;
 };
 
+export type Disagreement = { claim: string; counterClaim: string };
+
 export type SiteInput = {
   id: string;
   name: string;
@@ -27,7 +29,10 @@ export type SiteInput = {
   waterCapLDay: number | null;
   nearestFacilityKm?: number | null;
   peakTempC?: number | null;
-  powerConflict?: { claim: string; counterClaim: string } | false;
+  powerConflict?: Disagreement | false;
+  scheduleConflict?: Disagreement | false;
+  /** Provenance strings per criterion, shown beside the verdict. */
+  sources?: Partial<Record<"power" | "schedule" | "water", string[]>>;
 };
 
 export type Quantities = {
@@ -45,6 +50,10 @@ export type Criterion = {
   required: string;
   observed: string;
   basis: string;
+  /** Where the observed figure came from. Empty when nothing sourced exists. */
+  sources: string[];
+  /** Present only for conflicts: the two statements that disagree. */
+  disagreement?: Disagreement;
 };
 
 export type Assessment = {
@@ -103,6 +112,7 @@ const fmt = (n: number, d = 1) =>
 export function evaluate(p: ProjectBrief, site: SiteInput): Assessment {
   const q = quantities(p);
   const criteria: Criterion[] = [];
+  const src = site.sources ?? {};
 
   criteria.push({
     id: "power",
@@ -115,18 +125,19 @@ export function evaluate(p: ProjectBrief, site: SiteInput): Assessment {
       ? "no sourced figure"
       : `${fmt(site.availableMW)} MW`,
     basis: "itMW x PUE. Utilization is excluded deliberately: the connection must carry full load.",
+    sources: src.power ?? [],
+    ...(site.powerConflict ? { disagreement: site.powerConflict } : {}),
   });
 
+  const waterCap = site.waterCapLDay ?? p.waterCapLDay;
   criteria.push({
     id: "water",
     label: "Water withdrawal per day",
-    state: capacityCriterion(q.waterLDay, site.waterCapLDay ?? p.waterCapLDay),
+    state: capacityCriterion(q.waterLDay, waterCap),
     required: `${fmt(q.waterLDay, 0)} L/day`,
-    observed:
-      (site.waterCapLDay ?? p.waterCapLDay) === null
-        ? "no sourced figure"
-        : `${fmt((site.waterCapLDay ?? p.waterCapLDay)!, 0)} L/day`,
+    observed: waterCap === null ? "no sourced figure" : `${fmt(waterCap, 0)} L/day`,
     basis: "itMW x utilization x 24000 kWh/day/MW x WUE.",
+    sources: src.water ?? [],
   });
 
   criteria.push({
@@ -136,12 +147,17 @@ export function evaluate(p: ProjectBrief, site: SiteInput): Assessment {
     required: `${fmt(p.requiredHectares, 2)} ha`,
     observed: site.areaHectares === null ? "geometry not set" : `${fmt(site.areaHectares, 2)} ha`,
     basis: "Polygon area via spherical excess (Turf). Gross area, not net buildable.",
+    sources: site.areaHectares === null ? [] : ["Polygon geometry"],
   });
 
-  // Schedule: an available-from date later than the opening date is a supplied-requirement failure.
+  // Schedule: two different stated dates are a conflict; one stated date later
+  // than the opening date is a supplied-requirement failure.
   let scheduleState: CriterionState = "unknown";
   let observedDate = "no sourced connection date";
-  if (site.availableFromDate) {
+  if (site.scheduleConflict) {
+    scheduleState = "conflict";
+    observedDate = "two sources disagree";
+  } else if (site.availableFromDate) {
     observedDate = site.availableFromDate;
     scheduleState = new Date(site.availableFromDate) <= new Date(p.openingDate) ? "pass" : "fail";
   }
@@ -152,6 +168,8 @@ export function evaluate(p: ProjectBrief, site: SiteInput): Assessment {
     required: `on or before ${p.openingDate}`,
     observed: observedDate,
     basis: "Date comparison only. A stated date is not a binding commitment.",
+    sources: src.schedule ?? [],
+    ...(site.scheduleConflict ? { disagreement: site.scheduleConflict } : {}),
   });
 
   criteria.push({
@@ -169,6 +187,7 @@ export function evaluate(p: ProjectBrief, site: SiteInput): Assessment {
         ? "not computed"
         : `${fmt(site.nearestFacilityKm)} km`,
     basis: "Great-circle distance to the nearest PeeringDB facility. Proximity is not latency or available fibre.",
+    sources: site.nearestFacilityKm === null || site.nearestFacilityKm === undefined ? [] : ["PeeringDB facility inventory"],
   });
 
   if (typeof site.peakTempC === "number") {
@@ -179,6 +198,7 @@ export function evaluate(p: ProjectBrief, site: SiteInput): Assessment {
       required: "<= 35 C monthly mean",
       observed: `${fmt(site.peakTempC)} C`,
       basis: "NASA POWER 2001-2020 monthly climatology. A monthly mean is not a design day.",
+      sources: ["NASA POWER climatology"],
     });
   }
 
@@ -200,6 +220,23 @@ export function evaluate(p: ProjectBrief, site: SiteInput): Assessment {
     notice: "Screening only. No ownership, permitting, utility commitment or power-flow certification is implied.",
     createdAt: new Date().toISOString(),
   };
+}
+
+export type CriterionDelta = { id: string; label: string; from: CriterionState; to: CriterionState };
+export type QuantityDelta = { key: keyof Quantities; from: number; to: number };
+
+/** What changed between two assessments of the same site. Pure; used by the UI and by the scenario tool. */
+export function diffAssessments(before: Assessment, after: Assessment): { criteria: CriterionDelta[]; quantities: QuantityDelta[] } {
+  const criteria: CriterionDelta[] = [];
+  for (const c of after.criteria) {
+    const prev = before.criteria.find((x) => x.id === c.id);
+    if (prev && prev.state !== c.state) criteria.push({ id: c.id, label: c.label, from: prev.state, to: c.state });
+  }
+  const quantities: QuantityDelta[] = [];
+  for (const k of Object.keys(after.quantities) as Array<keyof Quantities>) {
+    if (Math.abs(before.quantities[k] - after.quantities[k]) > 1e-9) quantities.push({ key: k, from: before.quantities[k], to: after.quantities[k] });
+  }
+  return { criteria, quantities };
 }
 
 export const PRESETS: Record<"campus" | "modular", ProjectBrief> = {

@@ -48,12 +48,76 @@ export function facilities(): Facility[] {
   }));
 }
 
-export function evidenceDocs() {
+/** Labelled synthetic documents a presenter can ingest. The store is not the project: nothing here counts until ingested. */
+export function evidenceFixtures() {
   const read = (f: string) => fs.readFileSync(path.join(DIR, f), "utf8");
   return [
-    { id: "demo-broker-A", title: "Broker brief (synthetic)", siteId: "A", text: read("sample-broker-brief.txt") },
-    { id: "demo-utility-A", title: "Utility note (synthetic)", siteId: "A", text: read("sample-utility-note.txt") },
+    { id: "demo-broker-A", title: "Broker brief", siteId: "A", origin: "fixture" as const, text: read("sample-broker-brief.txt"), summary: "Claims 30 MW by June 2027" },
+    { id: "demo-utility-A", title: "Utility note", siteId: "A", origin: "fixture" as const, text: read("sample-utility-note.txt"), summary: "12 MW conditional, earliest Dec 2027" },
+    { id: "demo-adversarial-A", title: "Seller note", siteId: "A", origin: "fixture" as const, text: read("sample-adversarial-note.txt"), summary: "Contains instruction-like text" },
   ];
+}
+
+// --- OpenStreetMap power context (Overpass extract, ODbL) -------------------
+
+export type PowerFeature =
+  | { kind: "substation"; osmId: string; name: string | null; kV: number | null; operator: string | null; lon: number; lat: number }
+  | { kind: "line"; osmId: string; kV: number | null; coordinates: [number, number][] };
+
+type PowerFC = {
+  metadata: { retrievedAt: string; osmBase: string; caveat: string; query: string };
+  features: Array<{ geometry: { type: string; coordinates: unknown }; properties: Record<string, unknown> }>;
+};
+
+export const powerMetadata = () => load<PowerFC>("osm-power-context.geojson").metadata;
+
+export function powerFeatures(): PowerFeature[] {
+  const fc = load<PowerFC>("osm-power-context.geojson");
+  return fc.features.map((f) => {
+    const p = f.properties;
+    if (p.kind === "substation") {
+      const [lon, lat] = f.geometry.coordinates as [number, number];
+      return { kind: "substation", osmId: String(p.osmId), name: (p.name as string | null) ?? null, kV: (p.kV as number | null) ?? null, operator: (p.operator as string | null) ?? null, lon, lat };
+    }
+    return { kind: "line", osmId: String(p.osmId), kV: (p.kV as number | null) ?? null, coordinates: f.geometry.coordinates as [number, number][] };
+  });
+}
+
+/** Nearest tagged substation and the high-voltage lines passing within a radius. Presence only; never capacity. */
+export function powerContext(centroid: [number, number], radiusKm = 15) {
+  let nearest: { s: Extract<PowerFeature, { kind: "substation" }>; km: number } | null = null;
+  const substationsWithin: Array<{ name: string | null; kV: number | null; km: number; osmId: string }> = [];
+  const lineKV = new Map<string, number>();
+  let linesWithin = 0;
+  for (const f of powerFeatures()) {
+    if (f.kind === "substation") {
+      const km = distanceKm(centroid, [f.lon, f.lat]);
+      if (!nearest || km < nearest.km) nearest = { s: f, km };
+      if (km <= radiusKm) substationsWithin.push({ name: f.name, kV: f.kV, km: Number(km.toFixed(1)), osmId: f.osmId });
+    } else {
+      // Sample vertices; a line whose any vertex falls inside the radius counts as passing nearby.
+      let near = false;
+      for (let i = 0; i < f.coordinates.length; i += Math.max(1, Math.floor(f.coordinates.length / 40))) {
+        if (distanceKm(centroid, f.coordinates[i]) <= radiusKm) { near = true; break; }
+      }
+      if (near) {
+        linesWithin += 1;
+        const k = f.kV === null ? "untagged" : `${f.kV} kV`;
+        lineKV.set(k, (lineKV.get(k) ?? 0) + 1);
+      }
+    }
+  }
+  substationsWithin.sort((a, b) => a.km - b.km);
+  return {
+    nearestSubstation: nearest && nearest.km <= 60
+      ? { name: nearest.s.name, kV: nearest.s.kV, operator: nearest.s.operator, km: Number(nearest.km.toFixed(1)), osmId: nearest.s.osmId, lon: nearest.s.lon, lat: nearest.s.lat }
+      : null,
+    substationsWithinRadius: substationsWithin.slice(0, 8),
+    linesWithinRadius: linesWithin,
+    lineVoltages: Object.fromEntries(Array.from(lineKV.entries()).sort((a, b) => b[1] - a[1])),
+    radiusKm,
+    inCoverage: Boolean(nearest && nearest.km <= 60),
+  };
 }
 
 /** Haversine great-circle distance in km. */
@@ -96,6 +160,7 @@ export function peakTemp(r: ClimateRecord): { month: string; value: number } {
 export const SOURCES = [
   { id: "S-NASA", name: "NASA POWER monthly climatology 2001–2020", url: "https://power.larc.nasa.gov/", scale: "~0.5° grid cell", kind: "recorded-public-data" },
   { id: "S-PDB", name: "PeeringDB India facilities", url: "https://www.peeringdb.com/", scale: "point facility records", kind: "recorded-public-data" },
+  { id: "S-OSM", name: "OpenStreetMap power infrastructure (Overpass extract)", url: "https://www.openstreetmap.org/copyright", scale: "tagged substations and lines within 45 km of six anchors", kind: "recorded-public-data" },
   { id: "S-GB", name: "geoBoundaries India ADM1", url: "https://www.geoboundaries.org/", scale: "state boundaries", kind: "recorded-public-data" },
   { id: "S-CARTO", name: "CARTO dark basemap / OpenStreetMap", url: "https://carto.com/basemaps/", scale: "vector tiles", kind: "basemap" },
   { id: "S-FIX", name: "Demonstration parcels and documents", url: "", scale: "fictional", kind: "synthetic" },
