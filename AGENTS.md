@@ -46,6 +46,9 @@ lib/analysis/evaluate.ts  the authority — pure, versioned, tested; diffAssessm
 lib/analysis/evidence.ts  claim extraction + deriveSiteFacts (one figure = used, two = conflict)
 lib/analysis/site.ts      buildSiteInput: client site + centroid + documents -> evaluator input
 lib/analysis/geometry.ts  polygon validation for drawn and imported shapes
+lib/analysis/scenario.ts  versioned runs (appendRun) and describeChange for the Runs panel
+lib/analysis/checks.ts    nextChecks: one list of what to obtain next, used by dossier, tool and report
+app/api/evidence          upload route: PDF/text -> extracted text; the client then holds it like a paste
 lib/agent/tools.ts        nine tools with JSON schemas + the system prompt
 lib/report.ts             printable HTML evidence pack (browser-side)
 lib/data.ts               dataset registry, provenance, power context, derived bookmarks
@@ -62,7 +65,7 @@ tests/                    node:test over the pure modules
 ```bash
 npm run dev        # http://localhost:3000
 npm run typecheck  # must pass before committing
-npm test           # 26 tests; must pass before committing
+npm test           # 33 tests; must pass before committing
 npm run build      # must pass before pushing
 ```
 
@@ -109,6 +112,10 @@ npm run build      # must pass before pushing
 - **Route files may only export handlers.** Shared zod schemas live in
   `lib/contracts.ts`; exporting them from a route file breaks the Next build.
 - **`env.local` is not `.env.local`.** Next.js silently ignores the former.
+- **`pdf-parse` must be imported as `pdf-parse/lib/pdf-parse.js`.** Its package
+  entry runs a debug block that reads a bundled test PDF under Next's bundler.
+- **`100vh` inside a zoomed element is zoomed too.** Presentation-mode heights
+  divide by the zoom factor (see `.rail-body` in globals.css).
 - **Overpass `out center geom`** gives ways `geometry`, not `center`; substation
   ways need their centroid computed. The output file records query, timestamp,
   byte count and sha256 of the raw response.

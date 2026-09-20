@@ -4,6 +4,7 @@ import { Section, StateChip, Stat, SyntheticBadge } from "./ui";
 import { DeltaCard, ScenarioCard, type Delta, type ScenarioResult } from "./Changes";
 import type { Assessment } from "@/lib/analysis/evaluate";
 import type { GeoContext } from "@/lib/analysis/site";
+import { nextChecks } from "@/lib/analysis/checks";
 
 export type AssessContext = GeoContext;
 
@@ -101,7 +102,7 @@ export default function SiteDossier({
             <button
               onClick={onInvestigate}
               disabled={busy}
-              className="rounded-control bg-active px-3 py-1.5 text-[12px] font-semibold text-bg transition hover:brightness-110 disabled:opacity-50"
+              className="rounded-control bg-brand px-3 py-1.5 text-[12px] font-semibold text-bg transition hover:brightness-110 disabled:opacity-50"
             >
               {busy ? "Investigating…" : "Investigate"}
             </button>
@@ -176,7 +177,7 @@ export default function SiteDossier({
               <>
                 Grid presence:{" "}
                 {p.nearestSubstation ? (
-                  <button onClick={() => onFocus("substation")} className="text-caution underline decoration-caution/40 underline-offset-2 hover:text-ink">
+                  <button onClick={() => onFocus("substation")} className="text-ink underline decoration-white/30 underline-offset-2 hover:text-ink">
                     {p.nearestSubstation.name ?? "unnamed substation"}{p.nearestSubstation.kV ? ` · ${p.nearestSubstation.kV} kV` : ""} · {p.nearestSubstation.km} km
                   </button>
                 ) : (
@@ -201,6 +202,30 @@ export default function SiteDossier({
           )}
         </Section>
       )}
+
+      {(() => {
+        const checks = nextChecks(assessment);
+        if (!checks.length) return null;
+        return (
+          <Section title="Next investigations" right={<span className="text-[10px] text-muted">{checks.length} open</span>}>
+            <ol className="space-y-1.5">
+              {checks.map((c, i) => (
+                <li key={c.criterionId} className="rounded-control bg-white/[.02] p-2.5 ring-1 ring-white/[.04]">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-[12.5px] font-medium text-ink">
+                      <span className="tabular mr-1.5 text-muted">{i + 1}.</span>
+                      {c.criterion}
+                    </span>
+                    <StateChip state={c.state} />
+                  </div>
+                  <p className="mt-1 text-[11px] leading-snug text-ink/85"><span className="text-muted">Obtain: </span>{c.evidence}</p>
+                  <p className="mt-0.5 text-[10.5px] text-muted/80">Owner: {c.owner}</p>
+                </li>
+              ))}
+            </ol>
+          </Section>
+        );
+      })()}
 
       <Section title="Boundaries">
         {notice && <p className="mb-1 text-[10.5px] leading-relaxed text-caution/90">{notice}.</p>}

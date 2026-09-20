@@ -1,6 +1,7 @@
 // Readable, printable evidence pack. Pure string building; runs in the browser.
 import type { Assessment, ProjectBrief } from "@/lib/analysis/evaluate";
 import type { Claim, EvidenceDoc } from "@/lib/analysis/evidence";
+import { nextChecks } from "@/lib/analysis/checks";
 
 export type ReportInput = {
   brief: ProjectBrief;
@@ -24,15 +25,6 @@ const esc = (s: unknown) =>
 
 const STATE_LABEL: Record<string, string> = { pass: "Supported", fail: "Not met", unknown: "Unknown", conflict: "Conflict" };
 
-const NEEDS: Record<string, { evidence: string; owner: string }> = {
-  power: { evidence: "A DISCOM connection study or sanctioned-load letter naming the parcel", owner: "Utility liaison" },
-  water: { evidence: "A written municipal or groundwater withdrawal allocation", owner: "Civil lead" },
-  land: { evidence: "A surveyed boundary with net buildable area after setbacks", owner: "Land advisor" },
-  schedule: { evidence: "An energisation date tied to a signed connection agreement", owner: "Utility liaison" },
-  connectivity: { evidence: "A carrier route quote with diversity and measured latency", owner: "Network lead" },
-  climate: { evidence: "A local station design-day dry-bulb and wet-bulb record", owner: "Mechanical lead" },
-};
-
 const KIND: Record<string, string> = { "power-mw": "power", "connection-date": "connection date", "water-lday": "water allocation", "instruction-like": "instruction-like" };
 const inr = (n: number) => (n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} crore` : `₹${(n / 1e5).toFixed(1)} lakh`);
 const num = (n: number, d = 1) => n.toLocaleString("en-IN", { maximumFractionDigits: d });
@@ -40,8 +32,7 @@ const num = (n: number, d = 1) => n.toLocaleString("en-IN", { maximumFractionDig
 export function buildReportHtml(r: ReportInput): string {
   const a = r.assessment;
   const q = a.quantities;
-  const rank: Record<string, number> = { conflict: 0, unknown: 1, fail: 2, pass: 9 };
-  const unresolved = a.criteria.filter((c) => c.state !== "pass").sort((x, y) => rank[x.state] - rank[y.state]);
+  const unresolved = nextChecks(a);
   const statusText: Record<Assessment["status"], string> = {
     "passes-modelled-criteria-only": "Passes modelled criteria only",
     "fails-supplied-requirement": "Fails a supplied requirement",
@@ -54,12 +45,15 @@ export function buildReportHtml(r: ReportInput): string {
 <html lang="en"><head><meta charset="utf-8">
 <title>Compute Atlas — ${esc(r.site.name)} — screening brief</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif&display=swap" rel="stylesheet">
 <style>
-  :root { --ink:#0b1a24; --muted:#4f6b7a; --line:#d9e2e7; --paper:#f4f7f8; --pass:#0f8f74; --fail:#c2413f; --unknown:#9a6a00; --conflict:#2c6fb7; }
+  :root { --ink:#0a0d12; --muted:#5b6876; --line:#e1e6ec; --paper:#f4f6f8; --pass:#0f8f5e; --fail:#c53a49; --unknown:#9a6a00; --conflict:#6f45c9; --brand:#5b6fe6; }
   * { box-sizing: border-box; }
-  body { margin:0; background:#e9eef1; color:var(--ink); font:15px/1.5 Inter, system-ui, sans-serif; }
+  body { margin:0; background:#eef1f5; color:var(--ink); font:15px/1.5 Geist, system-ui, sans-serif; letter-spacing:-0.005em; }
   .page { max-width: 880px; margin: 32px auto; background:#fff; padding: 48px 56px; box-shadow: 0 12px 40px -20px rgba(0,0,0,.35); }
-  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing:-.01em; }
+  h1 { font: 400 40px/1.05 "Instrument Serif", Georgia, serif; margin: 0 0 6px; letter-spacing:-.01em; }
+  .tabular { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
   h2 { font-size: 13px; text-transform: uppercase; letter-spacing:.14em; color: var(--muted); margin: 36px 0 12px; border-top:1px solid var(--line); padding-top: 18px; }
   .sub { color: var(--muted); margin: 0 0 8px; }
   .status { display:inline-block; font-weight: 700; padding: 4px 10px; border-radius: 6px; background: var(--paper); margin-top: 10px; }
@@ -71,10 +65,11 @@ export function buildReportHtml(r: ReportInput): string {
   .small { font-size: 12.5px; color: var(--muted); }
   .grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .stat { background: var(--paper); border-radius: 8px; padding: 12px 14px; }
-  .stat b { display:block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .stat b { display:block; font: 500 20px "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
   .stat span { font-size: 12px; color: var(--muted); }
   .badge { display:inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing:.06em; padding: 2px 6px; border-radius: 4px; background:#fff3d6; color:#7a5200; margin-left: 6px; vertical-align: middle; }
-  .badge.live { background:#dff7f0; color:#0f6d58; } .badge.rec { background:#fff3d6; color:#7a5200; }
+  .badge.live { background:#e2f7ec; color:#0f6d4a; } .badge.rec { background:#fff3d6; color:#7a5200; }
+  a { color: var(--brand); }
   .doc { border:1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin: 10px 0; }
   .doc h3 { margin:0 0 6px; font-size: 15px; }
   .quote { border-left: 3px solid var(--line); padding-left: 10px; color:#334; margin: 6px 0; }
@@ -118,7 +113,7 @@ export function buildReportHtml(r: ReportInput): string {
   ${
     unresolved.length
       ? `<table><thead><tr><th>#</th><th>Criterion</th><th>State</th><th>Evidence that would close it</th><th>Owner</th></tr></thead><tbody>${unresolved
-          .map((c, i) => `<tr><td>${i + 1}</td><td>${esc(c.label)}</td><td class="st ${c.state}">${esc(STATE_LABEL[c.state])}</td><td>${esc(NEEDS[c.id]?.evidence ?? "")}</td><td>${esc(NEEDS[c.id]?.owner ?? "")}</td></tr>`)
+          .map((c, i) => `<tr><td>${i + 1}</td><td>${esc(c.criterion)}<div class="small">${esc(c.why)}</div></td><td class="st ${c.state}">${esc(STATE_LABEL[c.state])}</td><td>${esc(c.evidence)}</td><td>${esc(c.owner)}</td></tr>`)
           .join("")}</tbody></table>`
       : `<p>No criterion is unresolved on the current evidence.</p>`
   }
@@ -130,8 +125,8 @@ export function buildReportHtml(r: ReportInput): string {
           .map((d) => {
             const cs = r.claims.filter((c) => c.documentId === d.id && c.kind !== "instruction-like");
             const il = r.claims.filter((c) => c.documentId === d.id && c.kind === "instruction-like");
-            return `<div class="doc"><h3>${esc(d.title)}<span class="badge">${esc(d.origin === "fixture" ? "synthetic fixture" : "pasted by analyst")}</span></h3>
-            ${cs.length ? `<ul class="small">${cs.map((c) => `<li>¶${c.paragraph} · ${esc(KIND[c.kind] ?? c.kind)} → <b>${esc(c.kind === "connection-date" ? String(c.value).slice(0, 7) : `${c.value} ${c.unit}`)}</b> <span>(extraction ${esc(c.confidence)})</span><div class="quote">${esc(c.statement)}</div></li>`).join("")}</ul>` : `<p class="small">No decision-relevant figures extracted.</p>`}
+            return `<div class="doc"><h3>${esc(d.title)}<span class="badge">${esc(d.origin === "fixture" ? "synthetic fixture" : d.origin === "upload" ? "uploaded by analyst" : "pasted by analyst")}</span></h3>
+            ${cs.length ? `<ul class="small">${cs.map((c) => `<li>¶${c.paragraph} · ${esc(KIND[c.kind] ?? c.kind)} → <b>${esc(c.kind === "connection-date" ? String(c.value).slice(0, 7) : `${c.value} ${c.unit}`)}</b> <span>(extraction ${esc(c.confidence)}${c.qualified ? ", qualified by the document" : ""})</span><div class="quote">${esc(c.statement)}</div></li>`).join("")}</ul>` : `<p class="small">No decision-relevant figures extracted.</p>`}
             ${il.length ? `<div class="warn"><b>Instruction-like text detected</b> (¶${il.map((c) => c.paragraph).join(", ¶")}). Quoted as document content; it changed no verdict.<div class="quote">${il.map((c) => esc(c.statement)).join("<br>")}</div></div>` : ""}
             </div>`;
           })

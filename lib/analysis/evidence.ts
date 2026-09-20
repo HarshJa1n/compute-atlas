@@ -12,7 +12,7 @@ export type EvidenceDoc = {
   text: string;
   siteId: string;
   /** Where the document came from: a labelled fixture or something the user pasted. */
-  origin: "fixture" | "pasted";
+  origin: "fixture" | "pasted" | "upload";
 };
 
 export type ClaimKind = "power-mw" | "connection-date" | "water-lday" | "instruction-like";
@@ -27,7 +27,11 @@ export type Claim = {
   unit: string | null;
   /** Deterministic extraction confidence: how strongly the sentence matched. Not project probability. */
   confidence: "high" | "medium";
+  /** True when the document itself disclaims the figure (indicative, conditional, non-binding). A fact about the text, never a tie-breaker. */
+  qualified: boolean;
 };
+
+const QUALIFIERS = /\b(indicative|non-?binding|no binding|preliminary|conditional|subject to|assumes|not constitute|does not constitute|scenario|could|may)\b/i;
 
 const MONTHS: Record<string, number> = {
   january: 1, jan: 1, february: 2, feb: 2, march: 3, mar: 3, april: 4, apr: 4, may: 5, june: 6, jun: 6,
@@ -84,7 +88,7 @@ export function extractClaims(doc: EvidenceDoc): Claim[] {
     const own = /^Paragraph (\d+)\./i.exec(raw);
     if (!isHeader) bodyIndex += 1;
     const paragraph = own ? Number(own[1]) : bodyIndex;
-    const base = { documentId: doc.id, title: doc.title, paragraph, statement };
+    const base = { documentId: doc.id, title: doc.title, paragraph, statement, qualified: QUALIFIERS.test(statement) };
 
     if (INSTRUCTION_LIKE.test(statement)) {
       claims.push({ ...base, kind: "instruction-like", value: null, unit: null, confidence: "high" });
@@ -99,7 +103,7 @@ export function extractClaims(doc: EvidenceDoc): Claim[] {
       const before = statement.slice(0, m.index);
       // "a 20 MW IT campus" / "20 MW IT load" is the requirement, not supply.
       const after = statement.slice(m.index + m[0].length);
-      const isRequirement = /\b(propos\w*|planned|requir\w*|campus of|load of)\s+(a\s+)?$/i.test(before) || /\bfor\s+a\s+$/i.test(before) || /^\s*(IT|campus|load|facility)\b/i.test(after);
+      const isRequirement = /\b(propos\w*|planned|requir\w*|campus of|IT load of|demand of)\s+(a\s+)?$/i.test(before) || /\bfor\s+a\s+$/i.test(before) || /^\s*(IT|campus|load|facility)\b/i.test(after);
       if (!SUPPLY_WORDS.test(statement) || isRequirement) continue;
       claims.push({ ...base, kind: "power-mw", value: Number(m[1]), unit: "MW", confidence: /\b(sanction|connection agreement|committed|firm)\b/i.test(statement) ? "high" : "medium" });
     }

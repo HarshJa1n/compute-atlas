@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Claim, EvidenceDoc } from "@/lib/analysis/evidence";
 import { SyntheticBadge } from "./ui";
 
@@ -14,7 +14,7 @@ const KIND_LABEL: Record<Claim["kind"], string> = {
 };
 
 export default function EvidencePanel({
-  siteId, siteName, docs, claims, fixtures, onAdd, onRemove, maxChars,
+  siteId, siteName, docs, claims, fixtures, onAdd, onRemove, onUpload, busy, error, maxChars,
 }: {
   siteId: string | null;
   siteName: string;
@@ -23,8 +23,12 @@ export default function EvidencePanel({
   fixtures: Fixture[];
   onAdd: (doc: Omit<EvidenceDoc, "siteId">) => void;
   onRemove: (id: string) => void;
+  onUpload: (file: File) => void;
+  busy: boolean;
+  error: string | null;
   maxChars: number;
 }) {
+  const fileRef = useRef<HTMLInputElement>(null);
   const [pasting, setPasting] = useState(false);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -56,7 +60,7 @@ export default function EvidencePanel({
                 <div className="flex items-start justify-between gap-2">
                   <span className="text-[12px] font-medium text-ink">{d.title}</span>
                   <div className="flex items-center gap-1.5">
-                    {d.origin === "fixture" ? <SyntheticBadge>Fixture</SyntheticBadge> : <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-info ring-1 ring-info/25">Pasted</span>}
+                    {d.origin === "fixture" ? <SyntheticBadge>Fixture</SyntheticBadge> : <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-info ring-1 ring-info/25">{d.origin === "upload" ? "Uploaded" : "Pasted"}</span>}
                     <button onClick={() => onRemove(d.id)} aria-label={`Remove ${d.title}`} className="text-[12px] text-muted hover:text-danger">×</button>
                   </div>
                 </div>
@@ -65,6 +69,7 @@ export default function EvidencePanel({
                     {cs.map((c, i) => (
                       <li key={i} className="tabular text-[10.5px] text-muted">
                         ¶{c.paragraph} · {KIND_LABEL[c.kind]} <span className="text-ink">{c.kind === "connection-date" ? String(c.value).slice(0, 7) : `${Number(c.value).toLocaleString("en-IN")} ${c.unit}`}</span>
+                        {c.qualified && <span className="ml-1 text-caution/90">· qualified by the document</span>}
                       </li>
                     ))}
                   </ul>
@@ -102,13 +107,32 @@ export default function EvidencePanel({
       )}
 
       <div className="space-y-1.5 border-t hairline border-t pt-2.5">
-        <button
-          onClick={() => setPasting((v) => !v)}
-          aria-expanded={pasting}
-          className="w-full rounded-control px-3 py-1.5 text-[11px] font-medium text-muted ring-1 ring-white/[.06] transition hover:bg-white/[.05] hover:text-ink"
-        >
-          {pasting ? "Cancel paste" : "Paste a document"}
-        </button>
+        <div className="flex gap-1.5">
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={busy}
+            className="flex-1 rounded-control bg-white/[.04] px-3 py-1.5 text-[11px] font-semibold text-ink ring-1 ring-white/[.08] transition hover:bg-white/[.08] disabled:opacity-40"
+          >
+            {busy ? "Reading…" : "Upload PDF or text"}
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".pdf,.txt,.md,.csv,application/pdf,text/*"
+            className="sr-only"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }}
+          />
+          <button
+            onClick={() => setPasting((v) => !v)}
+            aria-expanded={pasting}
+            className="flex-1 rounded-control px-3 py-1.5 text-[11px] font-medium text-muted ring-1 ring-white/[.06] transition hover:bg-white/[.05] hover:text-ink"
+          >
+            {pasting ? "Cancel paste" : "Paste text"}
+          </button>
+        </div>
+        {error && (
+          <p role="alert" className="rounded-control bg-danger/[.08] px-2.5 py-2 text-[11px] leading-snug text-danger ring-1 ring-danger/25">{error}</p>
+        )}
         {pasting && (
           <div className="space-y-1.5">
             <input
@@ -116,14 +140,14 @@ export default function EvidencePanel({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Title, e.g. DISCOM feasibility letter"
               maxLength={120}
-              className="w-full rounded-control bg-bg/60 px-2.5 py-1.5 text-[11.5px] text-ink placeholder:text-muted/50 ring-1 ring-white/10 focus:ring-active/50"
+              className="w-full rounded-control bg-bg/60 px-2.5 py-1.5 text-[11.5px] text-ink placeholder:text-muted/50 ring-1 ring-white/10 focus:ring-brand/50"
             />
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value.slice(0, maxChars))}
               rows={6}
               placeholder="Paste the document text. Figures like '18 MW' or 'connection by March 2028' are extracted with their paragraph."
-              className="w-full rounded-control bg-bg/60 p-2 text-[11px] leading-snug text-ink placeholder:text-muted/50 ring-1 ring-white/10 focus:ring-active/50"
+              className="w-full rounded-control bg-bg/60 p-2 text-[11px] leading-snug text-ink placeholder:text-muted/50 ring-1 ring-white/10 focus:ring-brand/50"
             />
             <div className="flex items-center justify-between">
               <span className="tabular text-[10px] text-muted/70">{text.length.toLocaleString("en-IN")} / {maxChars.toLocaleString("en-IN")}</span>
@@ -133,7 +157,7 @@ export default function EvidencePanel({
                   onAdd({ id: `pasted-${Date.now().toString(36)}`, title: title.trim() || "Pasted document", text: text.trim(), origin: "pasted" });
                   setTitle(""); setText(""); setPasting(false);
                 }}
-                className="rounded-control bg-active px-3 py-1.5 text-[11px] font-semibold text-bg transition hover:brightness-110 disabled:opacity-40"
+                className="rounded-control bg-brand px-3 py-1.5 text-[11px] font-semibold text-bg transition hover:brightness-110 disabled:opacity-40"
               >
                 Ingest
               </button>

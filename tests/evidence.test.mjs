@@ -76,3 +76,19 @@ test("diffAssessments reports only the criteria whose state changed", () => {
   assert.deepEqual(d.criteria.map((c) => `${c.id}:${c.from}>${c.to}`), ["water:fail>pass"]);
   assert.ok(d.quantities.some((q) => q.key === "waterLDay"));
 });
+
+test("documents that disclaim their own figures are marked qualified, and that is all it means", () => {
+  const b = extractClaims(broker);
+  const mw = b.find((c) => c.kind === "power-mw");
+  assert.equal(mw.qualified, true); // "could be available" is hedged
+  const firm = extractClaims({ id: "f", title: "Sanction letter", siteId: "A", origin: "pasted", text: "Paragraph 1. Sanctioned load of 26 MW is confirmed for the parcel." });
+  assert.equal(firm.find((c) => c.kind === "power-mw").qualified, false);
+  // A qualified figure still counts as a distinct figure: disagreement stays a conflict.
+  const facts = deriveSiteFacts({ availableMW: null, waterCapLDay: null }, [...b, ...firm]);
+  assert.ok(facts.powerConflict);
+});
+
+test("water allocations with thousands separators are read", () => {
+  const claims = extractClaims({ id: "w", title: "Municipal note", siteId: "A", origin: "pasted", text: "Paragraph 1. The water allocation is 1,50,000 L/day." });
+  assert.equal(claims.find((c) => c.kind === "water-lday").value, 150000);
+});

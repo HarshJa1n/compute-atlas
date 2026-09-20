@@ -8,6 +8,7 @@ import type { Map as MLMap } from "maplibre-gl";
 import { PRESETS, diffAssessments, type Assessment, type ProjectBrief } from "@/lib/analysis/evaluate";
 import type { Claim, EvidenceDoc } from "@/lib/analysis/evidence";
 import type { GeoContext } from "@/lib/analysis/site";
+import { appendRun, describeChange, type Run } from "@/lib/analysis/scenario";
 import { EVIDENCE_LIMITS } from "@/lib/contracts";
 import { buildReportHtml } from "@/lib/report";
 import SiteDossier from "@/components/panels/SiteDossier";
@@ -16,11 +17,14 @@ import BriefSheet from "@/components/panels/BriefSheet";
 import CompareTray from "@/components/panels/CompareTray";
 import SitesPanel from "@/components/panels/SitesPanel";
 import EvidencePanel, { type Fixture } from "@/components/panels/EvidencePanel";
+import LayerLegend from "@/components/panels/LayerLegend";
+import PlaceSearch from "@/components/panels/PlaceSearch";
 import type { Delta, ScenarioResult } from "@/components/panels/Changes";
+import { Mark, btn } from "@/components/panels/ui";
 import { parsePolygon, validatePolygon } from "@/lib/analysis/geometry";
 import type { Bookmark } from "@/lib/data";
 import DemoStrip, { type DemoAction } from "./DemoStrip";
-import Tour, { type TourStep } from "./Tour";
+import Tour, { TOUR_STEPS, type TourStep } from "./Tour";
 import type { DrawControls, Focus, Layers } from "./AtlasCanvas";
 
 const AtlasCanvas = dynamic(() => import("./AtlasCanvas"), { ssr: false });
@@ -65,6 +69,8 @@ export default function Atlas({
   const [model, setModel] = useState<string | null>(null);
   const [layers, setLayers] = useState<Layers>({ states: true, facilities: true, candidates: true, power: true });
   const [evidence, setEvidence] = useState<EvidenceDoc[]>([]);
+  const [evidenceBusy, setEvidenceBusy] = useState(false);
+  const [evidenceError, setEvidenceError] = useState<string | null>(null);
   const [compare, setCompare] = useState<Array<{ id: string; name: string; assessment: Assessment }>>([]);
   const [showCompare, setShowCompare] = useState(false);
   const [leftTab, setLeftTab] = useState<"sites" | "brief" | "evidence" | "layers">("sites");
@@ -76,10 +82,11 @@ export default function Atlas({
   const [exportOpen, setExportOpen] = useState(false);
   const [invCollapsed, setInvCollapsed] = useState(false);
 
-  // Change tracking: what moved, why, and which criteria to flash.
+  // Change tracking: what moved, why, which criteria to flash, and a versioned history.
   const [delta, setDelta] = useState<Delta | null>(null);
   const [changed, setChanged] = useState<Set<string>>(new Set());
-  const prevRef = useRef<{ siteId: string; assessment: Assessment } | null>(null);
+  const [history, setHistory] = useState<Run[]>([]);
+  const prevRef = useRef<{ siteId: string; brief: ProjectBrief; assessment: Assessment } | null>(null);
   const reasonRef = useRef<string | null>(null);
 
   // Agent side effects.
@@ -101,10 +108,7 @@ export default function Atlas({
     return () => window.removeEventListener("resize", apply);
   }, []);
 
-  const candidates = useMemo(
-    () => sites.map((s) => ({ id: s.id, name: `Parcel ${s.id}`, geometry: s.geometry })),
-    [sites]
-  );
+  const candidates = useMemo(() => sites.map((s) => ({ id: s.id, name: `Parcel ${s.id}`, geometry: s.geometry })), [sites]);
 
   const active = useMemo(() => {
     if (selectedId === "drawn" && drawn) {
@@ -142,14 +146,22 @@ export default function Atlas({
       .then((d: { assessment: Assessment; context: GeoContext; claims: Claim[] }) => {
         if (id !== runId.current) return;
         const prev = prevRef.current;
-        if (prev && prev.siteId === active.id) {
+        const sameSite = prev?.siteId === active.id;
+        let label = `${active.name} · initial run`;
+        if (prev && sameSite) {
           const diff = diffAssessments(prev.assessment, d.assessment);
+          const reason = reasonRef.current ?? (JSON.stringify(prev.brief) !== JSON.stringify(brief) ? describeChange(prev.brief, brief) : "Inputs changed");
+          label = reason;
           if (diff.criteria.length || diff.quantities.length) {
-            setDelta({ ...diff, reason: reasonRef.current ?? "Inputs changed", at: Date.now() });
+            setDelta({ ...diff, reason, at: Date.now() });
             setChanged(new Set(diff.criteria.map((c) => c.id)));
           }
         }
-        prevRef.current = { siteId: active.id, assessment: d.assessment };
+        const moved = !prev || !sameSite || JSON.stringify(prev.assessment.criteria) !== JSON.stringify(d.assessment.criteria) || JSON.stringify(prev.brief) !== JSON.stringify(brief);
+        if (moved) {
+          setHistory((h) => appendRun(h, { at: new Date().toISOString(), siteId: active.id, label, brief, assessment: d.assessment }));
+        }
+        prevRef.current = { siteId: active.id, brief, assessment: d.assessment };
         reasonRef.current = null;
         setAssessment(d.assessment);
         setContext(d.context);
@@ -164,17 +176,17 @@ export default function Atlas({
     return () => clearTimeout(t);
   }, [changed]);
 
-  const flyNational = useCallback(() => mapRef.current?.fitBounds(indiaBounds, { padding: 48, duration: 1100 }), [indiaBounds]);
+  const flyNational = useCallback(() => mapRef.current?.fitBounds(indiaBounds, { padding: 48, duration: 1100, pitch: 0 }), [indiaBounds]);
 
   const selectSite = useCallback((id: string, fly = true) => {
     setSelectedId(id);
     setEvents([]); setMode(null); setAskedKey(null); setScenario(null); setDelta(null);
     const geom = id === "drawn" ? drawn?.geometry : sites.find((s) => s.id === id)?.geometry;
-    if (geom && fly) mapRef.current?.fitBounds(bboxOf(geom), { padding: 160, duration: 900, maxZoom: 13.5 });
+    if (geom && fly) mapRef.current?.fitBounds(bboxOf(geom), { padding: 160, duration: 900, maxZoom: 13.5, pitch: 0 });
   }, [sites, drawn]);
 
   const flyTo = (b: Bookmark) => {
-    mapRef.current?.flyTo({ center: b.center, zoom: b.zoom, duration: 1100 });
+    mapRef.current?.flyTo({ center: b.center, zoom: b.zoom, duration: 1100, pitch: 0 });
     if (b.parcelId) selectSite(b.parcelId);
   };
 
@@ -198,6 +210,27 @@ export default function Atlas({
     const f = fixtures.find((x) => x.id === fixtureId);
     if (f) addEvidence({ id: f.id, title: f.title, text: f.text, origin: "fixture" });
   }, [fixtures, addEvidence]);
+
+  /** Files go through the server for text extraction (PDF); the returned text is then held like any pasted document. */
+  const uploadEvidence = useCallback(async (file: File) => {
+    if (!active) return;
+    setEvidenceBusy(true); setEvidenceError(null);
+    try {
+      const fd = new FormData();
+      fd.append("siteId", active.id);
+      fd.append("file", file);
+      const res = await fetch("/api/evidence", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error ?? "Could not read that document.");
+      const doc = data.document as EvidenceDoc;
+      addEvidence({ id: doc.id, title: doc.title, text: doc.text, origin: "upload" });
+      if (data.truncated) setEvidenceError(`Only the first ${EVIDENCE_LIMITS.maxChars.toLocaleString("en-IN")} characters were kept.`);
+    } catch (e) {
+      setEvidenceError(e instanceof Error ? e.message : "Ingestion failed.");
+    } finally {
+      setEvidenceBusy(false);
+    }
+  }, [active, addEvidence]);
 
   // --- Investigation ------------------------------------------------------
   const ask = useCallback(async (question: string) => {
@@ -317,11 +350,14 @@ export default function Atlas({
     setShowCompare(true);
   };
 
+  const narrative = () => events.filter((e): e is Extract<Evt, { type: "text" }> => e.type === "text").map((e) => e.text);
+
   const exportJSON = () => {
     const payload = {
       exportedAt: new Date().toISOString(), brief, site: sitePayload(), assessment, context, claims,
       evidence: siteDocs.map((d) => ({ id: d.id, title: d.title, origin: d.origin, chars: d.text.length })),
-      investigation: { mode, model, narrative: events.filter((e): e is Extract<Evt, { type: "text" }> => e.type === "text").map((e) => e.text) },
+      history: history.map((r) => ({ version: r.version, label: r.label, at: r.at })),
+      investigation: { mode, model, narrative: narrative() },
       notice: "Screening export. Synthetic parcels and documents are labelled. Not an engineering or legal opinion.",
     };
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
@@ -335,9 +371,7 @@ export default function Atlas({
     if (!active || !assessment) return;
     const html = buildReportHtml({
       brief, site: { id: active.id, name: active.name, kind: active.kind, areaHectares: areaHa }, assessment,
-      evidence: siteDocs, claims,
-      narrative: events.filter((e): e is Extract<Evt, { type: "text" }> => e.type === "text").map((e) => e.text),
-      investigationMode: mode, model, sources, context,
+      evidence: siteDocs, claims, narrative: narrative(), investigationMode: mode, model, sources, context,
     });
     const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
     window.open(url, "_blank", "noopener");
@@ -346,43 +380,58 @@ export default function Atlas({
   };
 
   // --- Demo controls & tour ----------------------------------------------
-  const resetDemo = useCallback(() => {
-    abortRef.current?.abort();
-    tourTimers.current.forEach(clearTimeout); tourTimers.current = []; setTour(null);
-    controls.current?.clear();
-    setBrief(PRESETS.campus); setSelectedId(null); setDrawn(null); setHasGeometry(false); setDrawing(false); setGeomError(null);
-    setEvidence([]); setCompare([]); setShowCompare(false); setEvents([]); setMode(null); setScenario(null); setDelta(null);
-    setAskedKey(null); setLeftTab("sites"); setExportOpen(false);
-    prevRef.current = null; reasonRef.current = null;
-    flyNational();
-  }, [flyNational]);
-
   const stopTour = useCallback(() => {
     tourTimers.current.forEach(clearTimeout);
     tourTimers.current = [];
     setTour(null);
+    mapRef.current?.easeTo({ pitch: 0, duration: 600 });
   }, []);
+
+  const resetDemo = useCallback(() => {
+    abortRef.current?.abort();
+    stopTour();
+    controls.current?.clear();
+    setBrief(PRESETS.campus); setSelectedId(null); setDrawn(null); setHasGeometry(false); setDrawing(false); setGeomError(null);
+    setEvidence([]); setEvidenceError(null); setCompare([]); setShowCompare(false); setEvents([]); setMode(null); setScenario(null); setDelta(null);
+    setHistory([]); setAskedKey(null); setLeftTab("sites"); setExportOpen(false);
+    prevRef.current = null; reasonRef.current = null;
+    flyNational();
+  }, [flyNational, stopTour]);
 
   const startTour = useCallback(() => {
     const map = mapRef.current;
     if (!map) return;
-    stopTour();
+    tourTimers.current.forEach(clearTimeout);
+    tourTimers.current = [];
     const parcel = sites.find((s) => s.id === "A") ?? sites[0];
     const t = (ms: number, fn: () => void) => tourTimers.current.push(setTimeout(fn, ms));
+    const [d0, d1, d2] = TOUR_STEPS.map((s) => s.ms);
+
+    setSelectedId(null);
     setTour(0);
     map.stop();
-    map.fitBounds(indiaBounds, { padding: 48, duration: 1800 });
-    t(3200, () => { setTour(1); map.flyTo({ center: [77.6, 21.9], zoom: 5.9, duration: 2600, essential: true }); });
-    t(6600, () => { setTour(2); if (parcel) map.fitBounds(bboxOf(parcel.geometry), { padding: 200, duration: 2600, maxZoom: 13.5, essential: true }); });
-    t(7400, () => { if (parcel) selectSite(parcel.id, false); });
-    t(10400, () => setTour(null));
-  }, [sites, indiaBounds, selectSite, stopTour]);
+    // 1. A slow settle over the whole country.
+    map.jumpTo({ center: [80.5, 21.5], zoom: 3.2, pitch: 0 });
+    map.easeTo({ center: [79.8, 22.2], zoom: 3.9, duration: d0, easing: (x) => 1 - Math.pow(1 - x, 3) });
+    // 2. Sweep into central India with a little pitch so the grid lines read as infrastructure.
+    t(d0, () => { setTour(1); map.flyTo({ center: [77.9, 22.3], zoom: 6.4, pitch: 30, duration: d1 - 200, essential: true }); });
+    // 3. Land on the parcel, then level out and select it.
+    t(d0 + d1, () => {
+      setTour(2);
+      if (parcel) map.flyTo({ center: centroidOf(parcel.geometry), zoom: 13.2, pitch: 40, duration: d2 - 400, essential: true });
+    });
+    t(d0 + d1 + d2, () => {
+      setTour(null);
+      map.easeTo({ pitch: 0, duration: 700 });
+      if (parcel) selectSite(parcel.id, false);
+    });
+  }, [sites, selectSite]);
 
   const onMapReady = useCallback((m: MLMap) => {
     mapRef.current = m;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const skip = new URLSearchParams(window.location.search).has("notour");
-    if (!reduced && !skip) setTimeout(startTour, 400);
+    if (!reduced && !skip) setTimeout(startTour, 300);
   }, [startTour]);
 
   const onInteract = useCallback(() => { if (tour !== null) stopTour(); }, [tour, stopTour]);
@@ -418,6 +467,7 @@ export default function Atlas({
         return;
       }
       if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (tour !== null && e.key !== "Tab") { stopTour(); return; }
       if (present && /^[0-9]$/.test(e.key)) {
         const a = demoActions.find((x) => x.key === e.key);
         if (a && !a.disabled) { e.preventDefault(); a.run(); }
@@ -429,9 +479,10 @@ export default function Atlas({
 
   const rightW = present ? 368 * 1.3 + 12 * 1.3 : 368;
   const leftW = present ? 262 * 1.3 + 12 * 1.3 : 262;
+  const touring = tour !== null;
 
   return (
-    <main className="relative h-screen w-screen overflow-hidden bg-bg" data-present={present ? "true" : "false"}>
+    <main className="relative h-screen w-screen overflow-hidden bg-bg" data-present={present ? "true" : "false"} data-tour={touring ? "true" : "false"}>
       <AtlasCanvas
         onReady={onMapReady}
         onControls={(c) => { controls.current = c; }}
@@ -448,127 +499,153 @@ export default function Atlas({
 
       {/* Header */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 p-3">
-        <div className="glass zoomable pointer-events-auto rounded-panel px-3.5 py-2.5">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-active" aria-hidden />
-            <h1 className="text-[13px] font-semibold tracking-tight text-ink">Compute Atlas</h1>
+        <div className="glass zoomable pointer-events-auto flex items-center gap-3 rounded-panel px-3.5 py-2.5">
+          <Mark className="h-6 w-6 text-brand" />
+          <div>
+            <h1 className="text-[13.5px] font-semibold tracking-tight text-ink">Compute Atlas</h1>
+            <p className="text-[10.5px] text-muted">Prove the site before you build.</p>
           </div>
-          <p className="mt-0.5 text-[10.5px] text-muted">Before you build an AI factory, prove the site can support it.</p>
         </div>
 
-        <div className="glass zoomable pointer-events-auto relative flex items-center gap-1 rounded-panel p-1">
-          <button onClick={() => setRailOpen((v) => !v)} aria-expanded={railOpen} aria-label={railOpen ? "Hide project panel" : "Show project panel"} className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink">
-            {railOpen ? "◀ Panel" : "▶ Panel"}
+        <div className="tour-hide glass zoomable pointer-events-auto relative flex max-w-[calc(100vw-220px)] items-center gap-0.5 rounded-panel p-1">
+          <button onClick={() => setRailOpen((v) => !v)} aria-expanded={railOpen} aria-label={railOpen ? "Hide project panel" : "Show project panel"} className={btn.toolbar}>
+            {railOpen ? "◂ Panel" : "▸ Panel"}
           </button>
           <span className="mx-1 h-4 w-px bg-white/10" />
-          <button onClick={flyNational} className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink">India</button>
-          {!present && bookmarks.map((b) => (
-            <button key={b.id} onClick={() => flyTo(b)} title={b.parcelId ? `Frames parcel ${b.parcelId}` : "Regional climate anchor"} className="hidden rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink sm:block">
-              {b.name}
-            </button>
-          ))}
+          <div className="flex min-w-0 items-center gap-0.5 overflow-x-auto">
+            <button onClick={flyNational} className={`${btn.toolbar} shrink-0`}>India</button>
+            {!present && bookmarks.map((b) => (
+              <button key={b.id} onClick={() => flyTo(b)} title={b.parcelId ? `Frames parcel ${b.parcelId}` : "Regional climate anchor"} className={`${btn.toolbar} hidden shrink-0 sm:block`}>
+                {b.name}
+              </button>
+            ))}
+          </div>
+          {!present && (
+            <>
+              <span className="mx-1 hidden h-4 w-px bg-white/10 lg:block" />
+              <div className="hidden shrink-0 lg:block">
+                <PlaceSearch onPick={(pl) => mapRef.current?.flyTo({ center: pl.center, zoom: 11, duration: 1100 })} />
+              </div>
+            </>
+          )}
           <span className="mx-1 h-4 w-px bg-white/10" />
-          <button onClick={startTour} className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink">Tour</button>
-          <button onClick={() => setPresent((v) => !v)} aria-pressed={present} className={`rounded-[6px] px-2.5 py-1.5 text-[11px] font-semibold transition ${present ? "bg-active/15 text-active" : "text-muted hover:bg-white/[.07] hover:text-ink"}`}>
+          <button onClick={startTour} className={btn.toolbar}>Tour</button>
+          <button onClick={() => setPresent((v) => !v)} aria-pressed={present} className={`rounded-[7px] px-2.5 py-1.5 text-[11.5px] font-semibold transition ${present ? "bg-brand/15 text-brand" : "text-muted hover:bg-white/[.07] hover:text-ink"}`}>
             {present ? "Presenting" : "Present"}
           </button>
-          <button onClick={() => setExportOpen((v) => !v)} disabled={!assessment} aria-expanded={exportOpen} className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-semibold text-active transition hover:bg-active/10 disabled:opacity-30">
-            Export ▾
+          <button onClick={() => setExportOpen((v) => !v)} disabled={!assessment} aria-expanded={exportOpen} className="rounded-[7px] bg-brand px-3 py-1.5 text-[11.5px] font-semibold text-bg transition hover:brightness-110 disabled:opacity-30">
+            Export
           </button>
           {exportOpen && (
-            <div className="glass absolute right-1 top-full mt-1 flex w-[220px] flex-col rounded-panel p-1 animate-rise">
-              <button onClick={exportReport} className="rounded-[6px] px-3 py-2 text-left text-[12px] text-ink hover:bg-white/[.07]">
+            <div className="glass absolute right-1 top-full mt-1.5 flex w-[230px] flex-col rounded-panel p-1 animate-rise">
+              <button onClick={exportReport} className="rounded-[9px] px-3 py-2 text-left text-[12px] text-ink hover:bg-white/[.07]">
                 <span className="block font-medium">Open report</span>
-                <span className="block text-[10px] text-muted">Readable HTML, printable to PDF</span>
+                <span className="block text-[10.5px] text-muted">Readable evidence pack, printable to PDF</span>
               </button>
-              <button onClick={exportJSON} className="rounded-[6px] px-3 py-2 text-left text-[12px] text-ink hover:bg-white/[.07]">
+              <button onClick={exportJSON} className="rounded-[9px] px-3 py-2 text-left text-[12px] text-ink hover:bg-white/[.07]">
                 <span className="block font-medium">Download JSON</span>
-                <span className="block text-[10px] text-muted">Inputs, verdicts, claims, versions</span>
+                <span className="block text-[10.5px] text-muted">Inputs, verdicts, claims, history, versions</span>
               </button>
             </div>
           )}
         </div>
       </header>
 
+      {/* Draw is reachable from the map itself, not only the collapsible rail. */}
+      {!present && (
+        <div className="tour-hide absolute left-1/2 top-[86px] z-20 -translate-x-1/2">
+          <button
+            onClick={drawing ? clearDraw : startDraw}
+            aria-pressed={drawing}
+            className={`glass rounded-full px-4 py-2 text-[12px] font-semibold transition ${drawing ? "text-brand ring-1 ring-brand/40" : "text-ink hover:text-brand"}`}
+          >
+            {drawing ? "Cancel drawing" : "✎ Draw a site"}
+          </button>
+        </div>
+      )}
+
       {/* Left rail */}
-      <aside hidden={!railOpen} className="glass zoomable absolute left-3 top-[86px] z-20 w-[262px] overflow-hidden rounded-panel">
-        <div className="flex border-b hairline border-b">
+      <aside hidden={!railOpen} className="tour-hide glass zoomable absolute left-3 top-[86px] z-20 w-[262px] overflow-hidden rounded-panel">
+        <div className="flex gap-0.5 border-b hairline border-b p-1">
           {(["sites", "brief", "evidence", "layers"] as const).map((t) => (
-            <button key={t} onClick={() => setLeftTab(t)} aria-pressed={leftTab === t} className={`flex flex-1 items-center justify-center gap-1 whitespace-nowrap px-1 py-2 text-[10.5px] font-semibold uppercase tracking-[.06em] transition ${leftTab === t ? "text-active" : "text-muted hover:text-ink"}`}>
+            <button
+              key={t}
+              onClick={() => setLeftTab(t)}
+              aria-pressed={leftTab === t}
+              className={`flex flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-[9px] px-1 py-1.5 text-[11px] font-semibold transition ${leftTab === t ? "bg-white/[.07] text-ink" : "text-muted hover:text-ink"}`}
+            >
               {t === "sites" ? "Sites" : t === "brief" ? "Project" : t === "evidence" ? "Evidence" : "Layers"}
-              {t === "evidence" && siteDocs.length > 0 && <span className="rounded-full bg-active/20 px-1.5 text-[9.5px] tabular text-active">{siteDocs.length}</span>}
+              {t === "evidence" && siteDocs.length > 0 && <span className="rounded-full bg-brand/20 px-1.5 font-mono text-[9.5px] text-brand">{siteDocs.length}</span>}
             </button>
           ))}
         </div>
 
-        <div className="max-h-[calc(100vh-240px)] overflow-y-auto">
-        {leftTab === "sites" ? (
-          <SitesPanel
-            rows={[
-              ...sites.map((x) => ({ id: x.id, name: x.name, kind: x.kind, areaHa: hectares(x.geometry) })),
-              ...(drawn ? [{ id: "drawn", name: "Drawn polygon", kind: "user-drawn", areaHa: hectares(drawn.geometry) }] : []),
-            ]}
-            selectedId={selectedId}
-            onSelect={selectSite}
-            onDraw={startDraw}
-            onClear={clearDraw}
-            onImport={importGeoJSON}
-            drawing={drawing}
-            hasDrawn={hasGeometry}
-            error={geomError}
-          />
-        ) : leftTab === "brief" ? (
-          <BriefSheet
-            brief={brief}
-            onChange={(b, label) => { reasonRef.current = label; setBrief(b); }}
-            onPreset={(m) => { reasonRef.current = `Switched to ${m} preset`; setBrief(PRESETS[m]); }}
-          />
-        ) : leftTab === "evidence" ? (
-          <EvidencePanel
-            siteId={active?.id ?? null}
-            siteName={active?.name ?? ""}
-            docs={siteDocs}
-            claims={claims}
-            fixtures={fixtures}
-            onAdd={addEvidence}
-            onRemove={removeEvidence}
-            maxChars={EVIDENCE_LIMITS.maxChars}
-          />
-        ) : (
-          <div className="space-y-2.5 p-4">
-            {([
-              ["power", "Grid infrastructure", "OpenStreetMap · 804 substations, 2,226 lines"],
-              ["facilities", "Carrier facilities", "PeeringDB · 203 points"],
-              ["states", "State boundaries", "geoBoundaries ADM1"],
-              ["candidates", "Candidate parcels", "Synthetic fixtures"],
-            ] as const).map(([k, label, src]) => (
-              <label key={k} className="flex cursor-pointer items-start gap-2.5">
-                <input type="checkbox" checked={layers[k]} onChange={(e) => setLayers((p) => ({ ...p, [k]: e.target.checked }))} className="mt-0.5 accent-active" />
-                <span>
-                  <span className="block text-[12px] font-medium text-ink">{label}</span>
-                  <span className="block text-[10px] text-muted">{src}</span>
-                </span>
-              </label>
-            ))}
-            <div className="border-t hairline border-t pt-2.5">
-              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[.14em] text-muted">Line voltage</p>
-              <ul className="space-y-0.5 text-[10.5px] text-muted">
-                <li><span className="mr-1.5 inline-block h-[3px] w-4 bg-[#ffcc75] align-middle" /> 400 kV and above</li>
-                <li><span className="mr-1.5 inline-block h-[3px] w-4 bg-[#7ebbff] align-middle" /> 220 kV</li>
-                <li><span className="mr-1.5 inline-block h-[3px] w-4 bg-[#5a8fc4] align-middle" /> 100 to 132 kV</li>
-                <li><span className="mr-1.5 inline-block h-[3px] w-4 bg-[#35546a] align-middle" /> lower or untagged</li>
-              </ul>
-              <p className="mt-2 text-[10px] leading-snug text-muted/80">
-                Layers show presence, not capacity. Nothing here is a connection offer. Water-stress layers are <span className="text-caution">unavailable</span> in this prototype rather than approximated.
-              </p>
-            </div>
-          </div>
-        )}
+        <div className="rail-body overflow-y-auto">
+          {leftTab === "sites" ? (
+            <SitesPanel
+              rows={[
+                ...sites.map((x) => ({ id: x.id, name: x.name, kind: x.kind, areaHa: hectares(x.geometry) })),
+                ...(drawn ? [{ id: "drawn", name: "Drawn polygon", kind: "user-drawn", areaHa: hectares(drawn.geometry) }] : []),
+              ]}
+              selectedId={selectedId}
+              onSelect={selectSite}
+              onDraw={startDraw}
+              onClear={clearDraw}
+              onImport={importGeoJSON}
+              drawing={drawing}
+              hasDrawn={hasGeometry}
+              error={geomError}
+            />
+          ) : leftTab === "brief" ? (
+            <BriefSheet
+              brief={brief}
+              onChange={(b, label) => { reasonRef.current = label; setBrief(b); }}
+              onPreset={(m) => { reasonRef.current = `Switched to ${m} preset`; setBrief(PRESETS[m]); }}
+            />
+          ) : leftTab === "evidence" ? (
+            <EvidencePanel
+              siteId={active?.id ?? null}
+              siteName={active?.name ?? ""}
+              docs={siteDocs}
+              claims={claims}
+              fixtures={fixtures}
+              onAdd={addEvidence}
+              onRemove={removeEvidence}
+              onUpload={(f) => void uploadEvidence(f)}
+              busy={evidenceBusy}
+              error={evidenceError}
+              maxChars={EVIDENCE_LIMITS.maxChars}
+            />
+          ) : (
+            <LayerLegend layers={layers} onToggle={(k, v) => setLayers((p) => ({ ...p, [k]: v }))} />
+          )}
         </div>
       </aside>
 
+      {/* Versioned runs */}
+      {!present && railOpen && (
+        <div className="tour-hide glass absolute bottom-3 left-3 z-20 w-[262px] rounded-panel p-3">
+          <div className="mb-1.5 flex items-center justify-between">
+            <h3 className="text-[10.5px] font-semibold uppercase tracking-[.16em] text-muted">Runs</h3>
+            <span className="font-mono text-[10px] text-muted">{history.length ? `v${history[history.length - 1].version}` : "—"}</span>
+          </div>
+          {history.length === 0 ? (
+            <p className="text-[10.5px] leading-snug text-muted/80">Select a site, change an assumption or ingest a document. Every recompute is a version; nothing is rewritten.</p>
+          ) : (
+            <ol className="max-h-[84px] space-y-0.5 overflow-y-auto">
+              {[...history].reverse().slice(0, 6).map((r) => (
+                <li key={r.version} className="flex gap-2 text-[10.5px] leading-snug">
+                  <span className="shrink-0 font-mono text-brand">v{r.version}</span>
+                  <span className="truncate text-muted" title={r.label}>{r.label}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      )}
+
       {/* Right panels */}
-      <aside className="glass zoomable absolute right-3 top-[86px] bottom-3 z-20 flex w-[300px] flex-col overflow-hidden rounded-panel lg:w-[340px] xl:w-[368px]">
+      <aside className="tour-hide glass zoomable absolute right-3 top-[86px] bottom-3 z-20 flex w-[300px] flex-col overflow-hidden rounded-panel lg:w-[340px] xl:w-[368px]">
         <div className="min-h-0 flex-[3] overflow-hidden border-b hairline border-b">
           <SiteDossier
             name={active?.name ?? ""}
@@ -608,10 +685,7 @@ export default function Atlas({
       </aside>
 
       {showCompare && compare.length > 0 && (
-        <div
-          className="absolute z-20"
-          style={{ left: railOpen ? leftW + 24 : 12, right: rightW + 16, bottom: present ? 84 : 12 }}
-        >
+        <div className="absolute z-20" style={{ left: railOpen ? leftW + 24 : 12, right: rightW + 16, bottom: present ? 84 : 12 }}>
           <div className="zoomable">
             <CompareTray rows={compare} onRemove={(id) => setCompare((p) => p.filter((x) => x.id !== id))} onClose={() => setShowCompare(false)} />
           </div>
@@ -624,9 +698,15 @@ export default function Atlas({
         </div>
       )}
 
-      {!selectedId && !present && tour === null && (
-        <div className="glass pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-panel px-4 py-2.5">
-          <p className="text-[11.5px] text-muted">Click a parcel, or use the polygon tool to draw anywhere in India.</p>
+      {drawing && (
+        <div className="glass pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full px-4 py-2">
+          <p className="text-[11.5px] text-ink">Click to place each corner · <span className="text-muted">double-click to finish · Escape cancels</span></p>
+        </div>
+      )}
+
+      {!selectedId && !present && !drawing && !touring && (
+        <div className="glass pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full px-4 py-2">
+          <p className="text-[11.5px] text-muted">Click a candidate parcel, or use <span className="text-ink">Draw a site</span> above.</p>
         </div>
       )}
     </main>

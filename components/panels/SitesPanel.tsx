@@ -28,7 +28,7 @@ export default function SitesPanel({
           onClick={onDraw}
           aria-pressed={drawing}
           className={`w-full rounded-control px-3 py-2 text-[12px] font-semibold transition ring-1 ${
-            drawing ? "bg-active text-bg ring-active" : "bg-white/[.03] text-ink ring-white/[.06] hover:bg-white/[.07]"
+            drawing ? "bg-brand text-bg ring-brand" : "bg-white/[.03] text-ink ring-white/[.06] hover:bg-white/[.07]"
           }`}
         >
           {drawing ? "Drawing — click to place corners" : "Draw a site polygon"}
@@ -49,7 +49,7 @@ export default function SitesPanel({
           </button>
         </div>
         {drawing && (
-          <p className="text-[10px] leading-snug text-active/90">
+          <p className="text-[10px] leading-snug text-brand/90">
             Click to add corners, double-click to finish. Escape cancels.
           </p>
         )}
@@ -61,11 +61,11 @@ export default function SitesPanel({
             ref={ta}
             rows={4}
             placeholder='{"type":"Polygon","coordinates":[[[77.53,23.18],…]]}'
-            className="w-full rounded-control bg-bg/60 p-2 font-mono text-[10px] text-ink placeholder:text-muted/50 ring-1 ring-white/10 focus:ring-active/50"
+            className="w-full rounded-control bg-bg/60 p-2 font-mono text-[10px] text-ink placeholder:text-muted/50 ring-1 ring-white/10 focus:ring-brand/50"
           />
           <button
             onClick={() => { onImport(ta.current?.value ?? ""); setImporting(false); }}
-            className="w-full rounded-control bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-ink transition hover:bg-white/20"
+            className="w-full rounded-control bg-brand px-3 py-1.5 text-[11px] font-semibold text-bg transition hover:brightness-110"
           >
             Load polygon
           </button>
@@ -90,12 +90,12 @@ export default function SitesPanel({
                 aria-current={r.id === selectedId}
                 className={`w-full rounded-control px-2.5 py-2 text-left transition ring-1 ${
                   r.id === selectedId
-                    ? "bg-active/[.10] ring-active/30"
+                    ? "bg-brand/[.10] ring-brand/30"
                     : "bg-white/[.02] ring-white/[.04] hover:bg-white/[.06]"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className={`text-[12px] font-medium ${r.id === selectedId ? "text-active" : "text-ink"}`}>
+                  <span className={`text-[12px] font-medium ${r.id === selectedId ? "text-brand" : "text-ink"}`}>
                     {r.name}
                   </span>
                   {r.kind === "synthetic" ? <SyntheticBadge>Fixture</SyntheticBadge> : null}

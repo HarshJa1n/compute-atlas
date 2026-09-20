@@ -29,11 +29,11 @@ export const EvidenceSchema = z
     z.object({
       id: z.string().max(64),
       title: z.string().max(120),
-      text: z.string().max(8000),
+      text: z.string().max(20000),
       siteId: z.string().max(32),
-      origin: z.enum(["fixture", "pasted"]),
+      origin: z.enum(["fixture", "pasted", "upload"]),
     })
   )
   .max(12);
 
-export const EVIDENCE_LIMITS = { maxDocs: 12, maxChars: 8000 } as const;
+export const EVIDENCE_LIMITS = { maxDocs: 12, maxChars: 20000 } as const;

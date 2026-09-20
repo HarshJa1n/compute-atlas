@@ -42,7 +42,7 @@ function describeInput(name: string, input: unknown): string | null {
 function inline(text: string, key: string) {
   return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, j) => {
     if (part.startsWith("**") && part.endsWith("**")) {
-      return <strong key={`${key}-${j}`} className="font-semibold text-active">{part.slice(2, -2)}</strong>;
+      return <strong key={`${key}-${j}`} className="font-semibold text-brand">{part.slice(2, -2)}</strong>;
     }
     if (part.startsWith("*") && part.endsWith("*") && part.length > 2) {
       return <em key={`${key}-${j}`} className="text-muted">{part.slice(1, -1)}</em>;
@@ -180,9 +180,9 @@ export default function Investigation({
             return (
               <div key={i} className="rounded-control bg-white/[.02] px-2.5 py-1.5 ring-1 ring-white/[.04] animate-rise">
                 <div className="flex items-center gap-2.5">
-                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${err ? "bg-danger" : ok ? "bg-active" : "bg-info animate-pulseline"}`} />
+                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${err ? "bg-danger" : ok ? "bg-active" : "bg-brand animate-pulseline"}`} />
                   <span className="flex-1 text-[11.5px] text-ink/85">{TOOL_COPY[e.name] ?? e.name}</span>
-                  <span className={`font-mono text-[10px] ${err ? "text-danger" : ok ? "text-active/70" : "text-info/70"}`}>{e.status}</span>
+                  <span className={`font-mono text-[10px] ${err ? "text-danger" : ok ? "text-active/70" : "text-brand/70"}`}>{e.status}</span>
                 </div>
                 {detail ? <div className="tabular ml-4 mt-0.5 text-[10.5px] text-muted">{detail}</div> : null}
                 {err && e.result !== null && typeof e.result === "object" && "error" in (e.result as object) ? (
@@ -224,14 +224,14 @@ export default function Investigation({
             autoComplete="off"
             disabled={disabled}
             placeholder={disabled ? "Select a site first" : "Ask about this site, or try a what-if…"}
-            className="flex-1 rounded-control bg-bg/60 px-3 py-2 text-[12px] text-ink placeholder:text-muted/60 ring-1 ring-white/10 focus:ring-active/50 disabled:opacity-40"
+            className="flex-1 rounded-control bg-bg/60 px-3 py-2 text-[12px] text-ink placeholder:text-muted/60 ring-1 ring-white/10 focus:ring-brand/50 disabled:opacity-40"
           />
           {busy ? (
             <button type="button" onClick={onCancel} className="rounded-control px-3 py-2 text-[12px] font-semibold text-danger ring-1 ring-danger/30 transition hover:bg-danger/10">
               Stop
             </button>
           ) : (
-            <button type="submit" disabled={disabled} className="rounded-control bg-white/10 px-3 py-2 text-[12px] font-semibold text-ink transition hover:bg-white/20 disabled:opacity-40">
+            <button type="submit" disabled={disabled} className="rounded-control bg-brand px-3 py-2 text-[12px] font-semibold text-bg transition hover:brightness-110 disabled:opacity-40">
               Ask
             </button>
           )}

@@ -9,6 +9,7 @@ const FIELDS: Array<{ k: keyof ProjectBrief; label: string; unit?: string; step:
   { k: "wueLitresPerITkWh", label: "WUE", unit: "L/kWh", step: 0.05, min: 0, max: 3 },
   { k: "tariffINRPerKWh", label: "Tariff", unit: "₹/kWh", step: 0.5, min: 0, max: 30 },
   { k: "requiredHectares", label: "Land needed", unit: "ha", step: 0.2, min: 0.1, max: 200 },
+  { k: "maxLatencyMs", label: "Max latency", unit: "ms", step: 1, min: 1, max: 200 },
 ];
 
 export default function BriefSheet({
@@ -28,7 +29,7 @@ export default function BriefSheet({
             onClick={() => onPreset(m)}
             aria-pressed={brief.mode === m}
             className={`rounded-[6px] px-3 py-1.5 text-[12px] font-semibold capitalize transition ${
-              brief.mode === m ? "bg-active text-bg" : "text-muted hover:text-ink"
+              brief.mode === m ? "bg-brand text-bg" : "text-muted hover:text-ink"
             }`}
           >
             {m}
@@ -55,7 +56,7 @@ export default function BriefSheet({
               step={f.step}
               value={brief[f.k] as number}
               onChange={(e) => onChange({ ...brief, [f.k]: Number(e.target.value) }, `${f.label} adjusted`)}
-              className="w-full accent-active"
+              className="w-full"
             />
           </label>
         ))}
@@ -68,19 +69,30 @@ export default function BriefSheet({
               {brief.waterCapLDay !== null && <span className="ml-0.5 text-[10px] font-normal text-muted">L/day</span>}
             </span>
           </div>
-          <input
-            type="range"
-            min={0}
-            max={400000}
-            step={10000}
-            value={brief.waterCapLDay ?? 400000}
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              onChange({ ...brief, waterCapLDay: v >= 400000 ? null : v }, "Water cap tightened");
-            }}
-            className="w-full accent-active"
-          />
-          <span className="block text-[9.5px] text-muted/70">Applies only where the site has no sourced allocation. Slide fully right for none.</span>
+          <div className="flex items-center gap-2">
+            <input
+              type="range"
+              min={0}
+              max={400000}
+              step={10000}
+              value={brief.waterCapLDay ?? 400000}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                onChange({ ...brief, waterCapLDay: v >= 400000 ? null : v }, "Water cap tightened");
+              }}
+              className="w-full"
+              aria-label="Project water cap in litres per day"
+            />
+            <button
+              type="button"
+              onClick={() => onChange({ ...brief, waterCapLDay: null }, "Water cap cleared")}
+              title="Clear the supplied cap so the criterion reads unknown where the site has no figure"
+              className="shrink-0 rounded-control px-2 py-1 text-[10px] font-medium text-muted ring-1 ring-white/10 transition hover:text-ink"
+            >
+              Clear
+            </button>
+          </div>
+          <span className="block text-[9.5px] text-muted/70">A sourced site allocation overrides this. With neither, water stays unknown.</span>
         </label>
 
         <label className="block">
@@ -89,7 +101,7 @@ export default function BriefSheet({
             type="date"
             value={brief.openingDate}
             onChange={(e) => onChange({ ...brief, openingDate: e.target.value }, "Opening date changed")}
-            className="w-full rounded-control bg-bg/60 px-2.5 py-1.5 text-[12px] text-ink ring-1 ring-white/10 focus:ring-active/50 [color-scheme:dark]"
+            className="w-full rounded-control bg-bg/60 px-2.5 py-1.5 text-[12px] text-ink ring-1 ring-white/10 focus:ring-brand/50 [color-scheme:dark]"
           />
         </label>
       </div>

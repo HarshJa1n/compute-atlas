@@ -1,0 +1,25 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 1 });
+await p.goto('http://localhost:3000', { waitUntil: 'networkidle' });
+await p.waitForTimeout(4000);
+await p.screenshot({ path: 'shots/01-india.png' });
+await p.getByRole('button', { name: 'Bhopal', exact: true }).click();
+await p.waitForTimeout(4500);
+await p.screenshot({ path: 'shots/02-bhopal-campus.png' });
+await p.getByRole('button', { name: 'Investigate' }).click();
+await p.waitForTimeout(12000);
+await p.screenshot({ path: 'shots/03-investigate.png' });
+await p.getByRole('button', { name: /Ingest broker brief/ }).click();
+await p.waitForTimeout(3000);
+await p.screenshot({ path: 'shots/04-conflict.png' });
+const modular = p.getByRole('button', { name: /^Modular$/ });
+if (await modular.count()) { await modular.first().click(); await p.waitForTimeout(3000); await p.screenshot({ path: 'shots/05-modular.png' }); }
+await p.getByRole('button', { name: 'Compare' }).click();
+await p.waitForTimeout(1500);
+await p.getByRole('button', { name: 'Indore', exact: true }).click();
+await p.waitForTimeout(4000);
+await p.getByRole('button', { name: 'Compare' }).click();
+await p.waitForTimeout(2000);
+await p.screenshot({ path: 'shots/06-compare.png' });
+await b.close();

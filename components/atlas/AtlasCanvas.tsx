@@ -47,11 +47,11 @@ function makeDraw(): MapboxDraw {
     displayControlsDefault: false,
     controls: { polygon: false, trash: false },
     styles: [
-      { id: "gl-draw-polygon-fill", type: "fill", filter: ["all", ["==", "$type", "Polygon"]], paint: { "fill-color": "#43dfc3", "fill-opacity": 0.12 } },
-      { id: "gl-draw-polygon-stroke", type: "line", filter: ["all", ["==", "$type", "Polygon"]], paint: { "line-color": "#43dfc3", "line-width": 2 } },
-      { id: "gl-draw-vertex", type: "circle", filter: ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"]], paint: { "circle-radius": 5, "circle-color": "#09131c", "circle-stroke-color": "#43dfc3", "circle-stroke-width": 2 } },
-      { id: "gl-draw-midpoint", type: "circle", filter: ["all", ["==", "meta", "midpoint"]], paint: { "circle-radius": 3, "circle-color": "#7ebbff" } },
-      { id: "gl-draw-line", type: "line", filter: ["all", ["==", "$type", "LineString"]], paint: { "line-color": "#43dfc3", "line-width": 2, "line-dasharray": [0.2, 2] } },
+      { id: "gl-draw-polygon-fill", type: "fill", filter: ["all", ["==", "$type", "Polygon"]], paint: { "fill-color": "#8b9eff", "fill-opacity": 0.14 } },
+      { id: "gl-draw-polygon-stroke", type: "line", filter: ["all", ["==", "$type", "Polygon"]], paint: { "line-color": "#8b9eff", "line-width": 2 } },
+      { id: "gl-draw-vertex", type: "circle", filter: ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"]], paint: { "circle-radius": 5, "circle-color": "#0a0d12", "circle-stroke-color": "#8b9eff", "circle-stroke-width": 2 } },
+      { id: "gl-draw-midpoint", type: "circle", filter: ["all", ["==", "meta", "midpoint"]], paint: { "circle-radius": 3, "circle-color": "#c98cff" } },
+      { id: "gl-draw-line", type: "line", filter: ["all", ["==", "$type", "LineString"]], paint: { "line-color": "#8b9eff", "line-width": 2, "line-dasharray": [0.2, 2] } },
     ],
   });
 }
@@ -59,10 +59,10 @@ function makeDraw(): MapboxDraw {
 // Voltage classes for the OpenStreetMap power layer. Untagged lines stay muted.
 const KV_COLOR: maplibregl.ExpressionSpecification = [
   "case",
-  [">=", ["coalesce", ["get", "kV"], 0], 400], "#ffcc75",
-  [">=", ["coalesce", ["get", "kV"], 0], 220], "#7ebbff",
-  [">=", ["coalesce", ["get", "kV"], 0], 100], "#5a8fc4",
-  "#35546a",
+  [">=", ["coalesce", ["get", "kV"], 0], 400], "#f472b6",
+  [">=", ["coalesce", ["get", "kV"], 0], 220], "#60a5fa",
+  [">=", ["coalesce", ["get", "kV"], 0], 100], "#3b82f6",
+  "#3a4a5c",
 ];
 
 export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite, onInteract, candidates, selectedId, layers, focus }: Props) {
@@ -129,7 +129,7 @@ export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite,
 
     map.on("load", () => {
       map.addSource("states", { type: "geojson", data: "/data/india-adm1.geojson" });
-      map.addLayer({ id: "states-line", type: "line", source: "states", paint: { "line-color": "#7ebbff", "line-width": 0.6, "line-opacity": 0.35 } });
+      map.addLayer({ id: "states-line", type: "line", source: "states", paint: { "line-color": "#6b7f95", "line-width": 0.6, "line-opacity": 0.4 } });
 
       // OpenStreetMap power infrastructure: lines by voltage class, substations as squares.
       map.addSource("power", { type: "geojson", data: "/data/osm-power-context.geojson" });
@@ -154,7 +154,7 @@ export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite,
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 2, 10, ["case", [">=", ["coalesce", ["get", "kV"], 0], 220], 6, 4], 13, ["case", [">=", ["coalesce", ["get", "kV"], 0], 220], 9, 6]],
           "circle-color": KV_COLOR,
           "circle-opacity": 0.9,
-          "circle-stroke-color": "#09131c",
+          "circle-stroke-color": "#0a0d12",
           "circle-stroke-width": 1,
         },
       });
@@ -166,9 +166,9 @@ export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite,
         source: "facilities",
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 2.2, 9, 5],
-          "circle-color": "#7ebbff",
-          "circle-opacity": 0.75,
-          "circle-stroke-color": "#09131c",
+          "circle-color": "#9fb7ff",
+          "circle-opacity": 0.8,
+          "circle-stroke-color": "#0a0d12",
           "circle-stroke-width": 0.6,
         },
       });
@@ -177,14 +177,14 @@ export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite,
       map.addLayer({
         id: "candidates-fill", type: "fill", source: "candidates",
         paint: {
-          "fill-color": ["case", ["==", ["get", "selected"], true], "#43dfc3", "#a8bac7"],
+          "fill-color": ["case", ["==", ["get", "selected"], true], "#8b9eff", "#c7d0dc"],
           "fill-opacity": ["case", ["==", ["get", "selected"], true], 0.22, 0.08],
         },
       });
       map.addLayer({
         id: "candidates-line", type: "line", source: "candidates",
         paint: {
-          "line-color": ["case", ["==", ["get", "selected"], true], "#43dfc3", "#a8bac7"],
+          "line-color": ["case", ["==", ["get", "selected"], true], "#8b9eff", "#c7d0dc"],
           "line-width": ["case", ["==", ["get", "selected"], true], 2.4, 1.2],
         },
       });
@@ -197,7 +197,7 @@ export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite,
           "text-offset": [0, -1.6],
           "text-allow-overlap": false,
         },
-        paint: { "text-color": "#f0f5f7", "text-halo-color": "#09131c", "text-halo-width": 1.4 },
+        paint: { "text-color": "#f2f4f7", "text-halo-color": "#0a0d12", "text-halo-width": 1.4 },
       });
 
       const pick = (e: maplibregl.MapMouseEvent) => {
@@ -221,9 +221,9 @@ export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite,
         map.on("mouseleave", layer, () => { map.getCanvas().style.cursor = ""; pop.remove(); });
       };
       const esc = (s: unknown) => String(s ?? "").replace(/[<>&]/g, (ch) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[ch] as string);
-      hover("facilities-dot", (p) => `<div style="font:500 11px Inter,sans-serif;color:#09131c">${esc(p.name)}<br><span style="color:#41606f">${esc(p.city)} · PeeringDB · context only</span></div>`);
-      hover("power-substation", (p) => `<div style="font:500 11px Inter,sans-serif;color:#09131c">${esc(p.name ?? "Substation (unnamed)")}${p.kV ? ` · ${esc(p.kV)} kV` : ""}<br><span style="color:#41606f">OpenStreetMap · presence, not capacity</span></div>`);
-      hover("power-line", (p) => `<div style="font:500 11px Inter,sans-serif;color:#09131c">Power line${p.kV ? ` · ${esc(p.kV)} kV` : " · voltage untagged"}<br><span style="color:#41606f">OpenStreetMap · presence, not capacity</span></div>`);
+      hover("facilities-dot", (p) => `<div style="font:500 11px Geist,sans-serif;color:#0a0d12">${esc(p.name)}<br><span style="color:#4f6b7a">${esc(p.city)} · PeeringDB · context only</span></div>`);
+      hover("power-substation", (p) => `<div style="font:500 11px Geist,sans-serif;color:#0a0d12">${esc(p.name ?? "Substation (unnamed)")}${p.kV ? ` · ${esc(p.kV)} kV` : ""}<br><span style="color:#4f6b7a">OpenStreetMap · presence, not capacity</span></div>`);
+      hover("power-line", (p) => `<div style="font:500 11px Geist,sans-serif;color:#0a0d12">Power line${p.kV ? ` · ${esc(p.kV)} kV` : " · voltage untagged"}<br><span style="color:#4f6b7a">OpenStreetMap · presence, not capacity</span></div>`);
 
       cbs.current.onControls({
         start: () => draw.changeMode("draw_polygon"),
