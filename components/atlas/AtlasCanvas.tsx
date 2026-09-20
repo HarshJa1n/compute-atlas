@@ -97,14 +97,28 @@ export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite,
     map.addControl(draw as unknown as maplibregl.IControl, "top-right");
     drawRef.current = draw;
 
-    const emit = () => {
-      const all = draw.getAll();
-      const poly = all.features.find((f) => f.geometry.type === "Polygon") as Feature<Polygon> | undefined;
-      cbs.current.onDraw(poly ?? null);
+    // One site polygon at a time: a new shape replaces the previous one, so a
+    // rejected outline can never linger and be re-read ahead of the new one.
+    const keepOnly = (id: string | number | undefined) => {
+      for (const f of draw.getAll().features) {
+        if (f.id !== undefined && String(f.id) !== String(id)) draw.delete(String(f.id));
+      }
     };
-    map.on("draw.create", emit);
-    map.on("draw.update", emit);
-    map.on("draw.delete", () => cbs.current.onDraw(null));
+    const emit = () => {
+      const feats = draw.getAll().features.filter((f) => f.geometry.type === "Polygon");
+      const latest = feats[feats.length - 1] as Feature<Polygon> | undefined;
+      cbs.current.onDraw(latest ?? null);
+    };
+    type DrawEvt = { features: Array<Feature<Polygon> & { id?: string | number }> };
+    map.on("draw.create", ((e: DrawEvt) => {
+      const created = e.features[0];
+      keepOnly(created?.id);
+      cbs.current.onDraw(created ?? null);
+    }) as unknown as () => void);
+    map.on("draw.update", ((e: DrawEvt) => {
+      cbs.current.onDraw(e.features[0] ?? null);
+    }) as unknown as () => void);
+    map.on("draw.delete", emit);
 
     map.on("load", () => {
       map.addSource("states", { type: "geojson", data: "/data/india-adm1.geojson" });

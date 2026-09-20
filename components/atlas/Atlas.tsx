@@ -54,6 +54,7 @@ export default function Atlas({
   const [leftTab, setLeftTab] = useState<"sites" | "brief" | "layers">("sites");
   const [drawing, setDrawing] = useState(false);
   const [geomError, setGeomError] = useState<string | null>(null);
+  const [hasGeometry, setHasGeometry] = useState(false);
   const controls = useRef<DrawControls | null>(null);
   const [railOpen, setRailOpen] = useState(true);
 
@@ -187,6 +188,7 @@ export default function Atlas({
 
   const handleDraw = useCallback((f: Feature<Polygon> | null) => {
     setDrawing(false);
+    setHasGeometry(Boolean(f));
     if (!f) {
       setDrawn(null);
       setGeomError(null);
@@ -216,8 +218,11 @@ export default function Atlas({
 
   const clearDraw = () => {
     controls.current?.clear();
+    setDrawn(null);
+    setHasGeometry(false);
     setDrawing(false);
     setGeomError(null);
+    setSelectedId((cur) => (cur === "drawn" ? null : cur));
   };
 
   const importGeoJSON = (text: string) => {
@@ -232,6 +237,7 @@ export default function Atlas({
       return;
     }
     setGeomError(null);
+    setHasGeometry(true);
     controls.current?.load(poly);
     mapRef.current?.fitBounds(turf.bbox(turf.polygon(poly.coordinates)) as [number, number, number, number], {
       padding: 160,
@@ -379,7 +385,7 @@ export default function Atlas({
             onClear={clearDraw}
             onImport={importGeoJSON}
             drawing={drawing}
-            hasDrawn={Boolean(drawn)}
+            hasDrawn={hasGeometry}
             error={geomError}
           />
         ) : leftTab === "brief" ? (

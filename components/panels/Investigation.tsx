@@ -59,6 +59,21 @@ function Markdownish({ text }: { text: string }) {
 
     if (!line.trim()) { out.push(<div key={i} className="h-1.5" />); return; }
 
+    // Horizontal rules and table separator rows carry no meaning in this panel.
+    if (/^\s*([-*_])\1{2,}\s*$/.test(line)) { out.push(<hr key={i} className="my-2 border-white/10" />); return; }
+    if (/^\s*\|[\s|:-]+\|\s*$/.test(line)) return;
+    if (/^\s*\|.*\|\s*$/.test(line)) {
+      const cells = line.split("|").slice(1, -1).map((c) => c.trim()).filter(Boolean);
+      if (cells.length) {
+        out.push(
+          <p key={i} className="text-[12px] leading-relaxed text-ink/90">
+            {inline(cells.join(" — "), `t${i}`)}
+          </p>
+        );
+      }
+      return;
+    }
+
     const heading = /^(#{1,4})\s+(.*)$/.exec(line);
     if (heading) {
       out.push(
