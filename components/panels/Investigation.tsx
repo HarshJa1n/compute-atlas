@@ -97,7 +97,7 @@ function Markdownish({ text }: { text: string }) {
 }
 
 export default function Investigation({
-  events, busy, mode, model, onAsk, onCancel, disabled, stale, onRerun, hasDocs, collapsed, onToggle,
+  events, busy, mode, model, onAsk, onCancel, disabled, stale, onRerun, hasDocs, collapsed, onToggle, onExpand, expanded = false,
 }: {
   events: Evt[];
   busy: boolean;
@@ -111,6 +111,9 @@ export default function Investigation({
   hasDocs: boolean;
   collapsed: boolean;
   onToggle: () => void;
+  /** Click on the title brings the panel to the centre of the screen (and back). */
+  onExpand?: () => void;
+  expanded?: boolean;
 }) {
   const endRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -125,21 +128,39 @@ export default function Investigation({
 
   return (
     <div className="flex h-full flex-col">
-      <div className={`flex items-center justify-between px-4 py-2.5 ${collapsed ? "" : "border-b hairline border-b"}`}>
-        <button onClick={onToggle} aria-expanded={!collapsed} className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[.14em] text-muted hover:text-ink">
-          <span aria-hidden className="text-[9px]">{collapsed ? "▲" : "▼"}</span> Investigation
+      <div className={`flex items-center justify-between gap-2 px-4 py-2 ${collapsed ? "" : "border-b hairline border-b"}`}>
+        <button
+          onClick={onExpand}
+          disabled={!onExpand}
+          title={expanded ? "Return to the side panel" : "Expand to the centre of the screen"}
+          className="group -mx-1.5 flex min-w-0 items-center gap-1.5 rounded-control px-1.5 py-1 text-[10.5px] font-semibold uppercase tracking-[.16em] text-muted hover:bg-white/[.05] hover:text-ink disabled:hover:bg-transparent"
+        >
+          Investigation
+          {onExpand && <span aria-hidden className="font-mono text-[11px] normal-case tracking-normal opacity-60 transition-opacity group-hover:opacity-100">{expanded ? "⤡" : "⤢"}</span>}
           {collapsed && events.length > 0 && <span className="ml-1 rounded-full bg-white/10 px-1.5 text-[9.5px] normal-case tracking-normal text-ink/80">{events.filter((e) => e.type === "tool").length} tool calls</span>}
         </button>
-        {mode && (
-          <span
-            title={mode === "live" && model ? model : undefined}
-            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${
-              mode === "live" ? "text-active ring-active/30" : "text-caution ring-caution/30"
-            }`}
-          >
-            {mode === "live" ? "Live model" : "Recorded run"}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          {mode && (
+            <span
+              title={mode === "live" && model ? model : undefined}
+              className={`chip rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${
+                mode === "live" ? "text-active ring-active/30" : "text-caution ring-caution/30"
+              }`}
+            >
+              {mode === "live" ? "Live model" : "Recorded run"}
+            </span>
+          )}
+          {!expanded && (
+            <button
+              onClick={onToggle}
+              aria-expanded={!collapsed}
+              aria-label={collapsed ? "Expand investigation panel" : "Collapse investigation panel"}
+              className="rounded-[6px] px-1.5 py-0.5 font-mono text-[10px] text-muted hover:bg-white/[.07] hover:text-ink"
+            >
+              {collapsed ? "▴" : "▾"}
+            </button>
+          )}
+        </div>
       </div>
 
       {collapsed ? null : (<>

@@ -24,6 +24,7 @@ import { Mark, btn } from "@/components/panels/ui";
 import { parsePolygon, validatePolygon } from "@/lib/analysis/geometry";
 import type { Bookmark } from "@/lib/data";
 import DemoStrip, { type DemoAction } from "./DemoStrip";
+import FocusLayer from "./FocusLayer";
 import Tour, { TOUR_STEPS, type TourStep } from "./Tour";
 import type { DrawControls, Focus, Layers } from "./AtlasCanvas";
 
@@ -81,6 +82,12 @@ export default function Atlas({
   const [present, setPresent] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [invCollapsed, setInvCollapsed] = useState(false);
+
+  // A side panel brought to the centre. `from` is the slot it grew out of, for the FLIP.
+  const [focused, setFocused] = useState<{ which: "dossier" | "investigation"; from: DOMRect | null } | null>(null);
+  const [focusOpen, setFocusOpen] = useState(true);
+  const dossierSlot = useRef<HTMLDivElement>(null);
+  const investigationSlot = useRef<HTMLDivElement>(null);
 
   // Change tracking: what moved, why, which criteria to flash, and a versioned history.
   const [delta, setDelta] = useState<Delta | null>(null);
@@ -299,6 +306,17 @@ export default function Atlas({
     setScenario(null);
   };
 
+  const expandPanel = useCallback((which: "dossier" | "investigation") => {
+    if (focused) { setFocusOpen(false); return; }
+    const slot = which === "dossier" ? dossierSlot.current : investigationSlot.current;
+    setFocused({ which, from: slot?.getBoundingClientRect() ?? null });
+    setFocusOpen(true);
+  }, [focused]);
+  const closeFocus = useCallback(() => { if (focused) setFocusOpen(false); }, [focused]);
+
+  // Deselecting the site leaves nothing to show in a focused dossier.
+  useEffect(() => { if (!active && focused) setFocusOpen(false); }, [active, focused]);
+
   const focusOn = (target: "facility" | "substation") => {
     if (!context) return;
     if (target === "facility" && context.nearestFacility) {
@@ -458,6 +476,7 @@ export default function Atlas({
       const typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable);
       if (e.key === "Escape") {
         if (tour !== null) { stopTour(); return; }
+        if (focused) { closeFocus(); return; }
         if (controls.current?.cancel()) { setDrawing(false); return; }
         if (exportOpen) { setExportOpen(false); return; }
         if (geomError) { setGeomError(null); return; }
@@ -476,6 +495,49 @@ export default function Atlas({
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   });
+
+  const dossierEl = (expanded: boolean) => (
+    <SiteDossier
+      name={active?.name ?? ""}
+      kind={active?.kind ?? ""}
+      notice={active?.notice}
+      areaHa={areaHa}
+      assessment={assessment}
+      context={context}
+      onInvestigate={() => ask(DEFAULT_QUESTION)}
+      onCompare={addToCompare}
+      busy={busy}
+      changed={changed}
+      delta={delta}
+      onDismissDelta={() => setDelta(null)}
+      scenario={scenario}
+      onApplyScenario={applyScenario}
+      onDismissScenario={() => setScenario(null)}
+      onFocus={focusOn}
+      onExpand={assessment ? () => expandPanel("dossier") : undefined}
+      expanded={expanded}
+    />
+  );
+  const investigationEl = (expanded: boolean) => (
+    <Investigation
+      collapsed={expanded ? false : invCollapsed}
+      onToggle={() => setInvCollapsed((v) => !v)}
+      events={events}
+      busy={busy}
+      mode={mode}
+      model={model}
+      onAsk={ask}
+      onCancel={() => abortRef.current?.abort()}
+      disabled={!active}
+      stale={stale}
+      onRerun={() => ask(lastQuestion.current)}
+      hasDocs={siteDocs.length > 0}
+      onExpand={() => expandPanel("investigation")}
+      expanded={expanded}
+    />
+  );
+  const tabs = ["sites", "brief", "evidence", "layers"] as const;
+  const tabIndex = tabs.indexOf(leftTab);
 
   const rightW = present ? 368 * 1.3 + 12 * 1.3 : 368;
   const leftW = present ? 262 * 1.3 + 12 * 1.3 : 262;
@@ -537,7 +599,7 @@ export default function Atlas({
             Export
           </button>
           {exportOpen && (
-            <div className="glass absolute right-1 top-full mt-1.5 flex w-[230px] flex-col rounded-panel p-1 animate-rise">
+            <div className="glass enter-pop absolute right-1 top-full mt-1.5 flex w-[230px] origin-top-right flex-col rounded-panel p-1">
               <button onClick={exportReport} className="rounded-[9px] px-3 py-2 text-left text-[12px] text-ink hover:bg-white/[.07]">
                 <span className="block font-medium">Open report</span>
                 <span className="block text-[10.5px] text-muted">Readable evidence pack, printable to PDF</span>
@@ -566,13 +628,19 @@ export default function Atlas({
 
       {/* Left rail */}
       <aside hidden={!railOpen} className="tour-hide glass zoomable absolute left-3 top-[86px] z-20 w-[262px] overflow-hidden rounded-panel">
-        <div className="flex gap-0.5 border-b hairline border-b p-1">
-          {(["sites", "brief", "evidence", "layers"] as const).map((t) => (
+        <div className="relative flex gap-0.5 border-b hairline border-b p-1">
+          {/* One pill slides between tabs, so background and label change in sync. */}
+          <span
+            aria-hidden
+            className="tab-pill absolute bottom-1 top-1 rounded-[9px] bg-white/[.07]"
+            style={{ width: `calc((100% - 8px - ${(tabs.length - 1) * 2}px) / ${tabs.length})`, left: 4, transform: `translateX(calc(${tabIndex} * (100% + 2px)))` }}
+          />
+          {tabs.map((t) => (
             <button
               key={t}
               onClick={() => setLeftTab(t)}
               aria-pressed={leftTab === t}
-              className={`flex flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-[9px] px-1 py-1.5 text-[11px] font-semibold transition ${leftTab === t ? "bg-white/[.07] text-ink" : "text-muted hover:text-ink"}`}
+              className={`relative z-10 flex flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-[9px] px-1 py-1.5 text-[11px] font-semibold ${leftTab === t ? "text-ink" : "text-muted hover:text-ink"}`}
             >
               {t === "sites" ? "Sites" : t === "brief" ? "Project" : t === "evidence" ? "Evidence" : "Layers"}
               {t === "evidence" && siteDocs.length > 0 && <span className="rounded-full bg-brand/20 px-1.5 font-mono text-[9.5px] text-brand">{siteDocs.length}</span>}
@@ -580,7 +648,7 @@ export default function Atlas({
           ))}
         </div>
 
-        <div className="rail-body overflow-y-auto">
+        <div key={leftTab} className="rail-body enter-up-soft overflow-y-auto">
           {leftTab === "sites" ? (
             <SitesPanel
               rows={[
@@ -646,54 +714,43 @@ export default function Atlas({
 
       {/* Right panels */}
       <aside className="tour-hide glass zoomable absolute right-3 top-[86px] bottom-3 z-20 flex w-[300px] flex-col overflow-hidden rounded-panel lg:w-[340px] xl:w-[368px]">
-        <div className="min-h-0 flex-[3] overflow-hidden border-b hairline border-b">
-          <SiteDossier
-            name={active?.name ?? ""}
-            kind={active?.kind ?? ""}
-            notice={active?.notice}
-            areaHa={areaHa}
-            assessment={assessment}
-            context={context}
-            onInvestigate={() => ask(DEFAULT_QUESTION)}
-            onCompare={addToCompare}
-            busy={busy}
-            changed={changed}
-            delta={delta}
-            onDismissDelta={() => setDelta(null)}
-            scenario={scenario}
-            onApplyScenario={applyScenario}
-            onDismissScenario={() => setScenario(null)}
-            onFocus={focusOn}
-          />
+        <div ref={dossierSlot} className="min-h-0 flex-[3] overflow-hidden border-b hairline border-b">
+          {focused?.which === "dossier" ? (
+            <SlotPlaceholder label="Dossier" onReturn={closeFocus} />
+          ) : (
+            dossierEl(false)
+          )}
         </div>
-        <div className={invCollapsed ? "shrink-0" : "min-h-[240px] flex-[2]"}>
-          <Investigation
-            collapsed={invCollapsed}
-            onToggle={() => setInvCollapsed((v) => !v)}
-            events={events}
-            busy={busy}
-            mode={mode}
-            model={model}
-            onAsk={ask}
-            onCancel={() => abortRef.current?.abort()}
-            disabled={!active}
-            stale={stale}
-            onRerun={() => ask(lastQuestion.current)}
-            hasDocs={siteDocs.length > 0}
-          />
+        <div ref={investigationSlot} className={invCollapsed && focused?.which !== "investigation" ? "shrink-0" : "min-h-[240px] flex-[2]"}>
+          {focused?.which === "investigation" ? (
+            <SlotPlaceholder label="Investigation" onReturn={closeFocus} />
+          ) : (
+            investigationEl(false)
+          )}
         </div>
       </aside>
 
+      {focused && (
+        <FocusLayer
+          open={focusOpen}
+          from={focused.from}
+          label={focused.which === "dossier" ? "Site dossier, expanded" : "Investigation, expanded"}
+          onClosed={() => { setFocused(null); setFocusOpen(true); }}
+        >
+          {focused.which === "dossier" ? dossierEl(true) : investigationEl(true)}
+        </FocusLayer>
+      )}
+
       {showCompare && compare.length > 0 && (
         <div className="absolute z-20" style={{ left: railOpen ? leftW + 24 : 12, right: rightW + 16, bottom: present ? 84 : 12 }}>
-          <div className="zoomable">
+          <div className="zoomable enter-up">
             <CompareTray rows={compare} onRemove={(id) => setCompare((p) => p.filter((x) => x.id !== id))} onClose={() => setShowCompare(false)} />
           </div>
         </div>
       )}
 
       {present && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-3 z-30 flex justify-center">
+        <div className="enter-up pointer-events-none absolute inset-x-0 bottom-3 z-30 flex justify-center">
           <DemoStrip actions={demoActions} />
         </div>
       )}
@@ -710,5 +767,19 @@ export default function Atlas({
         </div>
       )}
     </main>
+  );
+}
+
+/** What the side slot shows while its panel is expanded in the centre. */
+function SlotPlaceholder({ label, onReturn }: { label: string; onReturn: () => void }) {
+  return (
+    <button
+      onClick={onReturn}
+      className="enter-up-soft flex h-full w-full flex-col items-center justify-center gap-1.5 px-6 text-center hover:bg-white/[.03]"
+    >
+      <span className="font-mono text-[11px] text-muted">⤡</span>
+      <span className="text-[12px] font-medium text-ink/80">{label} is expanded</span>
+      <span className="text-[10.5px] text-muted">Click here or press Escape to bring it back</span>
+    </button>
   );
 }

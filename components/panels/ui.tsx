@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import type { CriterionState } from "@/lib/analysis/evaluate";
 
 /** Status is never colour alone — a glyph and a word accompany every hue. */
@@ -13,7 +14,7 @@ export const STATE_META: Record<CriterionState, { label: string; glyph: string; 
 export function StateChip({ state }: { state: CriterionState }) {
   const m = STATE_META[state];
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ${m.text} ${m.ring} ${m.bg}`}>
+    <span className={`chip inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ${m.text} ${m.ring} ${m.bg}`}>
       <span aria-hidden className="font-mono text-[10px]">{m.glyph}</span>
       {m.label}
     </span>
@@ -32,12 +33,26 @@ export function Section({ title, right, children }: { title: string; right?: Rea
   );
 }
 
+/** Renders a value that blurs for one frame when it changes, so a recompute reads as one number resolving. */
+export function SwapValue({ value, className = "" }: { value: string; className?: string }) {
+  const prev = useRef(value);
+  const [changing, setChanging] = useState(false);
+  useEffect(() => {
+    if (prev.current === value) return;
+    prev.current = value;
+    setChanging(true);
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setChanging(false)));
+    return () => cancelAnimationFrame(id);
+  }, [value]);
+  return <span className={`value-swap inline-block ${className}`} data-changing={changing ? "true" : "false"}>{value}</span>;
+}
+
 export function Stat({ label, value, unit, hint }: { label: string; value: string; unit?: string; hint?: string }) {
   return (
     <div className="rounded-control bg-white/[.03] px-3 py-2.5 ring-1 ring-white/[.06]">
       <div className="text-[10px] uppercase tracking-[.12em] text-muted">{label}</div>
       <div className="tabular mt-0.5 text-[18px] font-medium leading-tight text-ink">
-        {value}
+        <SwapValue value={value} />
         {unit && <span className="ml-1 font-sans text-[11px] font-medium text-muted">{unit}</span>}
       </div>
       {hint && <div className="mt-0.5 text-[10px] leading-snug text-muted/80">{hint}</div>}

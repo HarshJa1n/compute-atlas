@@ -120,6 +120,31 @@ npm run build      # must pass before pushing
   ways need their centroid computed. The output file records query, timestamp,
   byte count and sha256 of the raw response.
 
+## Motion
+
+Rules come from Emil Kowalski's animation skill (`.agents/skills/animate`,
+installed via `npx skills add emilkowalski/skill`; the `emil-design-eng` and
+`review-animations` skills are there too). The tokens live in `globals.css`:
+`--ease-out`, `--ease-in-out`, `--ease-drawer`. Tailwind's default `transition`
+easing and duration are set to them, so plain `transition` utilities are already
+on-curve.
+
+- **Gate first.** Keyboard-triggered and 100+/day actions do not animate. Digit
+  keys in Present mode change state instantly; only the resulting panel motion
+  (an occasional event) animates.
+- **`transform` and `opacity` only.** Entrances start at `scale(0.96)` or
+  `translateY(8px)`, never from nothing. UI durations stay under 300ms.
+- **Every `button` presses.** Global `:active { transform: scale(0.97) }`,
+  160ms out. Do not add per-button press styles.
+- **Panels grow from where they came.** `FocusLayer.tsx` plays a WAAPI FLIP from
+  the slot rectangle to the centre and back along the same path. Do not replace
+  it with a fade.
+- **Rapidly-fired things use transitions, not keyframes** (chips, values, the
+  tab pill). Mount-only entrances (`enter-up`, `enter-pop`, `stagger`) may use
+  keyframes.
+- **Reduced motion** falls back to opacity; hover styles only render where a
+  real pointer exists (`hoverOnlyWhenSupported`).
+
 ## Adding a dataset
 
 1. Put the processed extract in `public/data/` and record it in `SOURCES`

@@ -86,6 +86,12 @@ status hues are reserved for verdicts: green supported, red not met, amber
 unknown, violet conflict. Power lines are classed by voltage (pink 400 kV, blue
 220 kV). Panels are flat glass with a single hairline; the map carries the depth.
 
+Motion follows one set of curves (see the Motion section of AGENTS.md). Click the
+dossier or investigation title to bring that panel to the centre of the screen; it
+grows out of its slot and returns the same way. Every button presses, verdict
+chips recolour in place, changed figures resolve out of a blur, and a new site's
+criteria stagger in.
+
 ## Architecture
 
 ```

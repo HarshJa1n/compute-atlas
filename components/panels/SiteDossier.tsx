@@ -1,6 +1,6 @@
 "use client";
 
-import { Section, StateChip, Stat, SyntheticBadge } from "./ui";
+import { Section, StateChip, Stat, SwapValue, SyntheticBadge } from "./ui";
 import { DeltaCard, ScenarioCard, type Delta, type ScenarioResult } from "./Changes";
 import type { Assessment } from "@/lib/analysis/evaluate";
 import type { GeoContext } from "@/lib/analysis/site";
@@ -44,7 +44,7 @@ function ClimateStrip({ monthly, peak }: { monthly: Record<string, number>; peak
 
 export default function SiteDossier({
   name, kind, notice, areaHa, assessment, context, onInvestigate, onCompare, busy,
-  changed, delta, onDismissDelta, scenario, onApplyScenario, onDismissScenario, onFocus,
+  changed, delta, onDismissDelta, scenario, onApplyScenario, onDismissScenario, onFocus, onExpand, expanded = false,
 }: {
   name: string;
   kind: string;
@@ -62,6 +62,9 @@ export default function SiteDossier({
   onApplyScenario: () => void;
   onDismissScenario: () => void;
   onFocus: (target: "facility" | "substation") => void;
+  /** Click on the header brings the dossier to the centre of the screen (and back). */
+  onExpand?: () => void;
+  expanded?: boolean;
 }) {
   if (!assessment) {
     return (
@@ -88,7 +91,19 @@ export default function SiteDossier({
     <div className="flex h-full flex-col overflow-y-auto">
       <div className="px-4 pb-2.5 pt-3.5">
         <div className="flex items-start justify-between gap-2">
-          <h2 className="text-[14px] font-semibold leading-snug text-ink">{name}</h2>
+          <button
+            onClick={onExpand}
+            disabled={!onExpand}
+            title={expanded ? "Return to the side panel" : "Expand to the centre of the screen"}
+            className="group -mx-1.5 -my-1 flex min-w-0 items-start gap-2 rounded-control px-1.5 py-1 text-left hover:bg-white/[.05] disabled:hover:bg-transparent"
+          >
+            <h2 className="text-[14px] font-semibold leading-snug text-ink">{name}</h2>
+            {onExpand && (
+              <span aria-hidden className="mt-[3px] shrink-0 font-mono text-[11px] text-muted opacity-60 transition-opacity group-hover:opacity-100">
+                {expanded ? "⤡" : "⤢"}
+              </span>
+            )}
+          </button>
           {kind === "synthetic" && <SyntheticBadge>Fixture</SyntheticBadge>}
         </div>
         <div className="mt-2 flex items-center justify-between gap-2">
@@ -117,10 +132,12 @@ export default function SiteDossier({
       {scenario && <ScenarioCard scenario={scenario} onApply={onApplyScenario} onDismiss={onDismissScenario} />}
 
       <Section title="Criteria">
-        <ul className="space-y-1.5">
-          {assessment.criteria.map((c) => (
+        {/* Keyed on the site so the list staggers in once per site, not on every recompute. */}
+        <ul key={assessment.siteId} className="stagger space-y-1.5">
+          {assessment.criteria.map((c, i) => (
             <li
               key={c.id}
+              style={{ ["--i" as string]: i }}
               className={`rounded-control bg-white/[.02] p-2.5 ring-1 ring-white/[.04] ${changed.has(c.id) ? "animate-flash" : ""}`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -128,8 +145,8 @@ export default function SiteDossier({
                 <StateChip state={c.state} />
               </div>
               <div className="tabular mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px]">
-                <span className="text-muted">needs <span className="text-ink">{c.required}</span></span>
-                <span className="text-muted">have <span className="text-ink">{c.observed}</span></span>
+                <span className="text-muted">needs <SwapValue value={c.required} className="text-ink" /></span>
+                <span className="text-muted">have <SwapValue value={c.observed} className="text-ink" /></span>
               </div>
               {c.disagreement && (
                 <div className="mt-1.5 space-y-0.5 rounded bg-info/[.07] px-2 py-1.5 text-[10.5px] leading-snug ring-1 ring-info/20">

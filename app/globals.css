@@ -6,7 +6,18 @@
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-display: "Instrument Serif", Georgia, serif;
+  /* Motion tokens. Every curve in the app comes from here. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
+
+/* Every pressable element confirms the press. 160ms out, scale 0.97: felt, not seen. */
+button {
+  transition: transform 160ms var(--ease-out), background-color 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+}
+button:active:not(:disabled) { transform: scale(0.97); }
+button:disabled { cursor: not-allowed; }
 
 html, body { height: 100%; }
 body {
@@ -67,7 +78,31 @@ input[type="checkbox"] { accent-color: #8b9eff; }
 
 /* During the opening tour, the instrument panels step back */
 [data-tour="true"] .tour-hide { opacity: 0; transform: translateY(10px); pointer-events: none; }
-.tour-hide { transition: opacity 500ms ease, transform 500ms ease; }
+.tour-hide { transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out); }
+
+/* Entrances. Nothing appears from nothing: scale starts at 0.96, travel is a few pixels. */
+@keyframes enterUp { from { opacity: 0; transform: translateY(8px); } }
+@keyframes enterPop { from { opacity: 0; transform: scale(0.96); } }
+.enter-up { animation: enterUp 200ms var(--ease-out) both; }
+.enter-up-soft { animation: enterUp 140ms var(--ease-out) both; }
+.enter-pop { animation: enterPop 180ms var(--ease-out) both; }
+/* Group entrance for a list the user sees occasionally (a new site's criteria). Decorative; never blocks input. */
+.stagger > * { animation: enterUp 240ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
+
+/* Sliding indicator behind the rail tabs: one element moving, so text and background change in sync. */
+.tab-pill { transition: transform 220ms var(--ease-out); }
+
+/* Verdict chips recolour in place rather than swapping. */
+.chip { transition: background-color 200ms ease, color 200ms ease, box-shadow 200ms ease; }
+
+/* A figure that just changed resolves out of a 3px blur: the eye reads one number changing, not two swapping. */
+.value-swap { transition: filter 200ms ease, opacity 200ms ease; }
+.value-swap[data-changing="true"] { filter: blur(3px); opacity: 0.55; transition: none; }
+
+/* Focused panel: the dossier or investigation brought to the centre. Sized here; moved by WAAPI. */
+.focus-panel { width: min(940px, 92vw); height: min(86vh, 960px); transform-origin: 0 0; will-change: transform; }
+.focus-zoom { zoom: 1.15; }
+[data-present="true"] .focus-zoom { zoom: 1.32; }
 
 /* A criterion whose state just changed flashes once so the room sees it move */
 @keyframes flash {
