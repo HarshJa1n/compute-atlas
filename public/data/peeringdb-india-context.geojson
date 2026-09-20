@@ -1,0 +1,3862 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.83155,
+          19.020332
+        ]
+      },
+      "properties": {
+        "id": 554,
+        "name": "TATA Communications Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/554",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.937966,
+          19.144661
+        ]
+      },
+      "properties": {
+        "id": 698,
+        "name": "HNS - IDC01",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/698",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.248031,
+          13.065477
+        ]
+      },
+      "properties": {
+        "id": 1013,
+        "name": "Reliance Chennai IDC",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1013",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.998254,
+          19.063195
+        ]
+      },
+      "properties": {
+        "id": 1191,
+        "name": "DV-IDC-MUM01",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1191",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.792822,
+          13.352532
+        ]
+      },
+      "properties": {
+        "id": 1192,
+        "name": "DV-IDC-MAN01",
+        "city": "Manipal",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1192",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.571172,
+          12.99163
+        ]
+      },
+      "properties": {
+        "id": 1193,
+        "name": "DV-IDC-BAN01",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1193",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.932615,
+          18.518404
+        ]
+      },
+      "properties": {
+        "id": 1197,
+        "name": "DV-IDC-PUN01",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1197",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.275333,
+          28.524966
+        ]
+      },
+      "properties": {
+        "id": 1248,
+        "name": "DV-IDC-DEL01",
+        "city": "New Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1248",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.382204,
+          17.436304
+        ]
+      },
+      "properties": {
+        "id": 1256,
+        "name": "CtrlS Hyderabad DC1",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1256",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.023588,
+          19.108213
+        ]
+      },
+      "properties": {
+        "id": 1259,
+        "name": "CtrlS Mumbai DC1",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1259",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.207955,
+          28.630933
+        ]
+      },
+      "properties": {
+        "id": 1622,
+        "name": "TATA Communications Delhi",
+        "city": "New Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1622",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.008884,
+          19.141133
+        ]
+      },
+      "properties": {
+        "id": 1771,
+        "name": "Web Werks Mumbai 1",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1771",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.736512,
+          18.581465
+        ]
+      },
+      "properties": {
+        "id": 1772,
+        "name": "Web Werks Pune 1",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1772",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.391399,
+          17.441864
+        ]
+      },
+      "properties": {
+        "id": 1961,
+        "name": "RVR Hyderabad",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/1961",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.926288,
+          19.108487
+        ]
+      },
+      "properties": {
+        "id": 2003,
+        "name": "Netmagic Vikhroli",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2003",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.27241,
+          13.026469
+        ]
+      },
+      "properties": {
+        "id": 2006,
+        "name": "Bharti Airtel Santhome",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2006",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.835432,
+          19.066874
+        ]
+      },
+      "properties": {
+        "id": 2046,
+        "name": "Bharti Airtel Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2046",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.913693,
+          19.118436
+        ]
+      },
+      "properties": {
+        "id": 2171,
+        "name": "Sampark",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2171",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.892742,
+          19.113908
+        ]
+      },
+      "properties": {
+        "id": 2310,
+        "name": "Equinix MB1 - Mumbai (GPX Mumbai 1)",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2310",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.402103,
+          28.548464
+        ]
+      },
+      "properties": {
+        "id": 2319,
+        "name": "Nxtra Data Noida DC 2",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2319",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.37243,
+          28.513835
+        ]
+      },
+      "properties": {
+        "id": 2411,
+        "name": "Sify Greenfort - Noida",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2411",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.736179,
+          8.727028
+        ]
+      },
+      "properties": {
+        "id": 2424,
+        "name": "Niss Broadband-Tirunelveli",
+        "city": "Tirunelveli",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2424",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.99936,
+          19.168001
+        ]
+      },
+      "properties": {
+        "id": 2464,
+        "name": "Sify Airoli-DC- Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2464",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.248491,
+          12.989642
+        ]
+      },
+      "properties": {
+        "id": 2468,
+        "name": "Sify Tidel-DC- Chennai",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2468",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.218906,
+          12.84513
+        ]
+      },
+      "properties": {
+        "id": 2497,
+        "name": "Nxtra Data Chennai DC 1",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2497",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.893657,
+          19.113735
+        ]
+      },
+      "properties": {
+        "id": 2498,
+        "name": "Nxtra Data Mumbai DC 2",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2498",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.901561,
+          28.378818
+        ]
+      },
+      "properties": {
+        "id": 2499,
+        "name": "Nxtra Data Manesar DC 1",
+        "city": "Gurgaon",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2499",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.725227,
+          12.979886
+        ]
+      },
+      "properties": {
+        "id": 2500,
+        "name": "Nxtra Data Bangalore DC 1",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2500",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.961354,
+          18.552334
+        ]
+      },
+      "properties": {
+        "id": 2501,
+        "name": "Nxtra Data Pune DC 1",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/2501",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.261621,
+          24.110562
+        ]
+      },
+      "properties": {
+        "id": 3372,
+        "name": "MegaHostZone",
+        "city": "Berhampore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3372",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.235725,
+          28.541476
+        ]
+      },
+      "properties": {
+        "id": 3677,
+        "name": "Powergrid New Delhi",
+        "city": "New Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3677",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.886058,
+          19.123921
+        ]
+      },
+      "properties": {
+        "id": 3678,
+        "name": "Powergrid Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3678",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.156139,
+          28.565612
+        ]
+      },
+      "properties": {
+        "id": 3683,
+        "name": "Star Broadband Datacentre Delhi",
+        "city": "New Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3683",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.329723,
+          17.721652
+        ]
+      },
+      "properties": {
+        "id": 3915,
+        "name": "Andhra Pradesh State Fibernet",
+        "city": "Visakhapatnam",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3915",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.349243,
+          28.533258
+        ]
+      },
+      "properties": {
+        "id": 3941,
+        "name": "CtrlS Noida DC1",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3941",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.592581,
+          12.989871
+        ]
+      },
+      "properties": {
+        "id": 3942,
+        "name": "CtrlS Bangalore DC1",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3942",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.390912,
+          22.589379
+        ]
+      },
+      "properties": {
+        "id": 3944,
+        "name": "TATA Communications Kolkata",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/3944",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.355135,
+          22.539895
+        ]
+      },
+      "properties": {
+        "id": 4034,
+        "name": "Sify-LDT-Kolkata",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4034",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.268491,
+          28.551749
+        ]
+      },
+      "properties": {
+        "id": 4035,
+        "name": "Sify Okhla NewDelhi",
+        "city": "Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4035",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.89278,
+          19.113897
+        ]
+      },
+      "properties": {
+        "id": 4064,
+        "name": "Insta-DC, Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4064",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.889297,
+          19.114204
+        ]
+      },
+      "properties": {
+        "id": 4228,
+        "name": "Netmagic Chandivali - MUM-DC05",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4228",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.824245,
+          18.99091
+        ]
+      },
+      "properties": {
+        "id": 4378,
+        "name": "Railtel Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4378",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.351506,
+          22.586424
+        ]
+      },
+      "properties": {
+        "id": 4379,
+        "name": "Railtel Kolkata",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4379",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.510782,
+          17.43875
+        ]
+      },
+      "properties": {
+        "id": 4380,
+        "name": "Railtel Secundrabad",
+        "city": "Secundrabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4380",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          75.572205,
+          11.640404
+        ]
+      },
+      "properties": {
+        "id": 4464,
+        "name": "MistLayer Kerala (CLT01)",
+        "city": "Calicut",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4464",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.609723,
+          12.974603
+        ]
+      },
+      "properties": {
+        "id": 4466,
+        "name": "Bell Teleservices India Pvt Ltd",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4466",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.133915,
+          13.060871
+        ]
+      },
+      "properties": {
+        "id": 4701,
+        "name": "Netmagic Chennai",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/4701",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.789069,
+          19.269457
+        ]
+      },
+      "properties": {
+        "id": 5419,
+        "name": "GIGALINE Parbhani",
+        "city": "Parbhani",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/5419",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.593028,
+          16.535323
+        ]
+      },
+      "properties": {
+        "id": 5546,
+        "name": "Fastcom DC Facility - 1",
+        "city": "Guntur",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/5546",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.376152,
+          28.624843
+        ]
+      },
+      "properties": {
+        "id": 5554,
+        "name": "Netmagic Noida",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/5554",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.446524,
+          17.436717
+        ]
+      },
+      "properties": {
+        "id": 5700,
+        "name": "City Online Services Limited",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/5700",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.576885,
+          16.422679
+        ]
+      },
+      "properties": {
+        "id": 6139,
+        "name": "XConnect Amaravati IDC",
+        "city": "Mangalagiri",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6139",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.588004,
+          12.984844
+        ]
+      },
+      "properties": {
+        "id": 6355,
+        "name": "City Online Services Ltd , Bengaluru",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6355",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.655238,
+          16.499566
+        ]
+      },
+      "properties": {
+        "id": 6356,
+        "name": "City Online Services Ltd, Vijayawada",
+        "city": "Vijayawada",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6356",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.335846,
+          17.739533
+        ]
+      },
+      "properties": {
+        "id": 6357,
+        "name": "City Online Servces Ltd , Visakhapatnam",
+        "city": "Viskhapatnam",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6357",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.747015,
+          19.996201
+        ]
+      },
+      "properties": {
+        "id": 6524,
+        "name": "ESDS Nashik",
+        "city": "Nashik",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6524",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.021534,
+          19.102853
+        ]
+      },
+      "properties": {
+        "id": 6525,
+        "name": "ESDS Mumbai",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6525",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.998855,
+          19.063252
+        ]
+      },
+      "properties": {
+        "id": 6588,
+        "name": "Cyquator - Vashi Datacenter",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6588",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.793704,
+          34.000509
+        ]
+      },
+      "properties": {
+        "id": 6721,
+        "name": "Sheen Telecom Consultants Private Limited",
+        "city": "Srinagar",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6721",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.866068,
+          18.604032
+        ]
+      },
+      "properties": {
+        "id": 6777,
+        "name": "STT Pune 1",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6777",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.278869,
+          13.068351
+        ]
+      },
+      "properties": {
+        "id": 6778,
+        "name": "STT Chennai 1",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6778",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.167437,
+          13.132032
+        ]
+      },
+      "properties": {
+        "id": 6779,
+        "name": "STT Chennai 2",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6779",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.392964,
+          22.588218
+        ]
+      },
+      "properties": {
+        "id": 6780,
+        "name": "STT Kolkata 1",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6780",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.377811,
+          17.441478
+        ]
+      },
+      "properties": {
+        "id": 6781,
+        "name": "STT Hyderabad 1",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6781",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.725643,
+          12.98123
+        ]
+      },
+      "properties": {
+        "id": 6782,
+        "name": "STT Bangalore 1",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6782",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.237609,
+          28.5414
+        ]
+      },
+      "properties": {
+        "id": 6785,
+        "name": "STT Delhi 1",
+        "city": "Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6785",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.240201,
+          28.541514
+        ]
+      },
+      "properties": {
+        "id": 6786,
+        "name": "STT Delhi 2",
+        "city": "Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6786",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.208372,
+          28.629954
+        ]
+      },
+      "properties": {
+        "id": 6787,
+        "name": "STT Delhi 3",
+        "city": "Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6787",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.862963,
+          19.116312
+        ]
+      },
+      "properties": {
+        "id": 6788,
+        "name": "STT Mumbai 1",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6788",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.831062,
+          19.021325
+        ]
+      },
+      "properties": {
+        "id": 6789,
+        "name": "STT Mumbai 2",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6789",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.55841,
+          16.421067
+        ]
+      },
+      "properties": {
+        "id": 6888,
+        "name": "Pi Datacenters Amaravati",
+        "city": "Amaravati",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/6888",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.823702,
+          11.939329
+        ]
+      },
+      "properties": {
+        "id": 7363,
+        "name": "Airgenie Communications Pondicherry",
+        "city": "Pondicherry",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/7363",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.901441,
+          19.109353
+        ]
+      },
+      "properties": {
+        "id": 7377,
+        "name": "Equinix MB2 - Mumbai (GPX Mumbai 2)",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/7377",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          75.71191,
+          16.827797
+        ]
+      },
+      "properties": {
+        "id": 7650,
+        "name": "VIMITEL VIJAYPUX DC",
+        "city": "BIJAPUR",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/7650",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.449542,
+          22.582097
+        ]
+      },
+      "properties": {
+        "id": 7866,
+        "name": "Sify-DLF-Kolkata",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/7866",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.383239,
+          28.626683
+        ]
+      },
+      "properties": {
+        "id": 7887,
+        "name": "Web Werks NCR 2",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/7887",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.662274,
+          12.839551
+        ]
+      },
+      "properties": {
+        "id": 7988,
+        "name": "Netmagic Bangalore DC02",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/7988",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.757878,
+          13.038333
+        ]
+      },
+      "properties": {
+        "id": 7989,
+        "name": "Netmagic Bangalore DC03",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/7989",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.341596,
+          17.418749
+        ]
+      },
+      "properties": {
+        "id": 9123,
+        "name": "Sify Global Delivery Center (Hyderabad)",
+        "city": "Nanakaramguda",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9123",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.67782,
+          16.506155
+        ]
+      },
+      "properties": {
+        "id": 9543,
+        "name": "Myguru Vijayawada",
+        "city": "Vijayawada",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9543",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.783313,
+          12.852482
+        ]
+      },
+      "properties": {
+        "id": 9625,
+        "name": "HostPalace Sarjapur DC (Bengaluru)",
+        "city": "Sarjapura",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9625",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.875685,
+          12.88367
+        ]
+      },
+      "properties": {
+        "id": 9628,
+        "name": "DeeNet Data Center Mangalore",
+        "city": "Mangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9628",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.364587,
+          17.436221
+        ]
+      },
+      "properties": {
+        "id": 9724,
+        "name": "CtrlS Hyderabad DC2",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9724",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.023588,
+          19.108213
+        ]
+      },
+      "properties": {
+        "id": 9725,
+        "name": "CtrlS Mumbai DC2",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9725",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.024444,
+          19.109778
+        ]
+      },
+      "properties": {
+        "id": 9726,
+        "name": "CtrlS Mumbai DC3",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9726",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.364587,
+          17.436221
+        ]
+      },
+      "properties": {
+        "id": 9735,
+        "name": "CtrlS Hyderabad DC3",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9735",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.890391,
+          19.114685
+        ]
+      },
+      "properties": {
+        "id": 9868,
+        "name": "Netmagic Chandivali - MUM DC06",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9868",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.890391,
+          19.114685
+        ]
+      },
+      "properties": {
+        "id": 9869,
+        "name": "Netmagic Chandivali - MUM DC07",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/9869",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.11336,
+          18.996228
+        ]
+      },
+      "properties": {
+        "id": 10552,
+        "name": "YOTTA NM1",
+        "city": "Panvel, Raigad,",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/10552",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          75.872266,
+          22.685824
+        ]
+      },
+      "properties": {
+        "id": 10728,
+        "name": "Rackbank DC Central India",
+        "city": "Indore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/10728",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.941389,
+          32.642222
+        ]
+      },
+      "properties": {
+        "id": 11399,
+        "name": "FIBMESH EDGE DC - JMU 01",
+        "city": "JAMMU",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11399",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.329452,
+          21.206439
+        ]
+      },
+      "properties": {
+        "id": 11403,
+        "name": "Insta-DC, Bhilai",
+        "city": "Bhilai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11403",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.038164,
+          28.468586
+        ]
+      },
+      "properties": {
+        "id": 11442,
+        "name": "Extreme Gurgaon",
+        "city": "Gurugram",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11442",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.081353,
+          28.629393
+        ]
+      },
+      "properties": {
+        "id": 11444,
+        "name": "Extreme Janakpuri",
+        "city": "New Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11444",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.969051,
+          19.203306
+        ]
+      },
+      "properties": {
+        "id": 11445,
+        "name": "Extreme Thane",
+        "city": "Thane",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11445",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.12922,
+          19.240091
+        ]
+      },
+      "properties": {
+        "id": 11446,
+        "name": "Extreme Kalyan",
+        "city": "Kalyan",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11446",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.050387,
+          30.32434
+        ]
+      },
+      "properties": {
+        "id": 11766,
+        "name": "NIXI Dehradun",
+        "city": "Dehradun",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11766",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.277952,
+          26.49773
+        ]
+      },
+      "properties": {
+        "id": 11768,
+        "name": "NIXI Kanpur",
+        "city": "Kanpur",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11768",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.012758,
+          26.867327
+        ]
+      },
+      "properties": {
+        "id": 11769,
+        "name": "NIXI Lucknow",
+        "city": "Lucknow",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/11769",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.436278,
+          22.569577
+        ]
+      },
+      "properties": {
+        "id": 12295,
+        "name": "BASIS DC Kolkata",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12295",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.012758,
+          26.867327
+        ]
+      },
+      "properties": {
+        "id": 12447,
+        "name": "CtrlS Lucknow DC1",
+        "city": "Lucknow",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12447",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.10596,
+          25.63345
+        ]
+      },
+      "properties": {
+        "id": 12580,
+        "name": "CtrlS Patna DC1",
+        "city": "Patna",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12580",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.370172,
+          26.755813
+        ]
+      },
+      "properties": {
+        "id": 12703,
+        "name": "NIXI Gorakhpur",
+        "city": "Gorakhpur",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12703",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.86958,
+          23.249819
+        ]
+      },
+      "properties": {
+        "id": 12715,
+        "name": "NIXI Burdwan",
+        "city": "Burdwan",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12715",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.345851,
+          23.518222
+        ]
+      },
+      "properties": {
+        "id": 12716,
+        "name": "NIXI Durgapur",
+        "city": "Durgapur",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12716",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.17325,
+          22.31036
+        ]
+      },
+      "properties": {
+        "id": 12717,
+        "name": "NIXI Baroda",
+        "city": "Baroda",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12717",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.081243,
+          28.494032
+        ]
+      },
+      "properties": {
+        "id": 12723,
+        "name": "NIXI Gurgaon",
+        "city": "Gurugram",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12723",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          75.86528,
+          22.752445
+        ]
+      },
+      "properties": {
+        "id": 12733,
+        "name": "NIXI Indore",
+        "city": "Indore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12733",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.361843,
+          23.301266
+        ]
+      },
+      "properties": {
+        "id": 12734,
+        "name": "NIXI Bhopal",
+        "city": "Bhopal",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12734",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.51403,
+          23.041238
+        ]
+      },
+      "properties": {
+        "id": 12741,
+        "name": "NIXI Ahmedabad",
+        "city": "Ahmedabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12741",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          91.786092,
+          26.185805
+        ]
+      },
+      "properties": {
+        "id": 12742,
+        "name": "NIXI Guwahati",
+        "city": "Guwahati",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12742",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.392604,
+          22.588914
+        ]
+      },
+      "properties": {
+        "id": 12744,
+        "name": "NIXI Kolkata",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12744",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.897744,
+          19.121328
+        ]
+      },
+      "properties": {
+        "id": 12750,
+        "name": "NIXI Mumbai GPX",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12750",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.998648,
+          19.063309
+        ]
+      },
+      "properties": {
+        "id": 12751,
+        "name": "NIXI Mumbai SIFY",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12751",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.825736,
+          15.500517
+        ]
+      },
+      "properties": {
+        "id": 12752,
+        "name": "NIXI Panaji",
+        "city": "Panaji",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12752",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.278493,
+          13.069292
+        ]
+      },
+      "properties": {
+        "id": 12769,
+        "name": "NIXI Chennai STT",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12769",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.381149,
+          28.620251
+        ]
+      },
+      "properties": {
+        "id": 12770,
+        "name": "NIXI Noida Netmagic",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12770",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.110078,
+          25.628102
+        ]
+      },
+      "properties": {
+        "id": 12793,
+        "name": "NIXI Patna",
+        "city": "Patna",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12793",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.173267,
+          22.31034
+        ]
+      },
+      "properties": {
+        "id": 12927,
+        "name": "Ishan Technologies Baroda",
+        "city": "Baroda",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/12927",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.97974,
+          10.996028
+        ]
+      },
+      "properties": {
+        "id": 13107,
+        "name": "NIXI Coimbatore",
+        "city": "Coimbatore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13107",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.994749,
+          19.172883
+        ]
+      },
+      "properties": {
+        "id": 13124,
+        "name": "MU1",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13124",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.819144,
+          21.181279
+        ]
+      },
+      "properties": {
+        "id": 13131,
+        "name": "Ishan Technologies Surat",
+        "city": "Surat",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13131",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.892768,
+          19.113774
+        ]
+      },
+      "properties": {
+        "id": 13132,
+        "name": "Ishan Technologies Mumbai Edge DC",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13132",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          70.790579,
+          22.293421
+        ]
+      },
+      "properties": {
+        "id": 13133,
+        "name": "Ishan Technologies Rajkot",
+        "city": "Rajkot",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13133",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.325629,
+          28.569332
+        ]
+      },
+      "properties": {
+        "id": 13135,
+        "name": "Ishan Technologies Noida",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13135",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.4332,
+          22.575819
+        ]
+      },
+      "properties": {
+        "id": 13136,
+        "name": "Ishan Technologies Kolkata",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13136",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.606149,
+          12.967268
+        ]
+      },
+      "properties": {
+        "id": 13137,
+        "name": "Ishan Technologies Bengaluru",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13137",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.525576,
+          23.074645
+        ]
+      },
+      "properties": {
+        "id": 13138,
+        "name": "Ishan Technologies Ahmedabad",
+        "city": "Ahmedabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13138",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.754627,
+          20.002902
+        ]
+      },
+      "properties": {
+        "id": 13146,
+        "name": "Ishan Technologies Nashik",
+        "city": "Nashik",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13146",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.085532,
+          21.142105
+        ]
+      },
+      "properties": {
+        "id": 13147,
+        "name": "Ishan Technologies Nagpur",
+        "city": "Nagpur",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13147",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.656264,
+          21.225554
+        ]
+      },
+      "properties": {
+        "id": 13149,
+        "name": "Ishan Technologies Raipur",
+        "city": "Raipur",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13149",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.909205,
+          23.182624
+        ]
+      },
+      "properties": {
+        "id": 13150,
+        "name": "Ishan Technologies Jabalpur",
+        "city": "Jabalpur",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13150",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.896562,
+          20.466632
+        ]
+      },
+      "properties": {
+        "id": 13151,
+        "name": "Ishan Technologies Cuttack",
+        "city": "Cuttack",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13151",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.971552,
+          10.99461
+        ]
+      },
+      "properties": {
+        "id": 13152,
+        "name": "Ishan Technologies Coimbatore",
+        "city": "Coimbatore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13152",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.469861,
+          28.659428
+        ]
+      },
+      "properties": {
+        "id": 13160,
+        "name": "CJ Online Ghaziabad",
+        "city": "Ghaziabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13160",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.219345,
+          12.826015
+        ]
+      },
+      "properties": {
+        "id": 13368,
+        "name": "AdaniConneX Chennai 1",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13368",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.613867,
+          12.973163
+        ]
+      },
+      "properties": {
+        "id": 13373,
+        "name": "Infynix Bengaluru",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13373",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.733138,
+          12.963937
+        ]
+      },
+      "properties": {
+        "id": 13413,
+        "name": "Web Werks Bangalore 1",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13413",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.219345,
+          12.826015
+        ]
+      },
+      "properties": {
+        "id": 13460,
+        "name": "Nxtra Data Chennai DC 2",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13460",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.372389,
+          28.628056
+        ]
+      },
+      "properties": {
+        "id": 13506,
+        "name": "Nxtra Data Noida DC 1",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13506",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.343068,
+          17.461865
+        ]
+      },
+      "properties": {
+        "id": 13532,
+        "name": "Web Werks Hyderabad",
+        "city": "Serilingampally,Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13532",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.833282,
+          20.272076
+        ]
+      },
+      "properties": {
+        "id": 13537,
+        "name": "SIFY Bhubaneswar",
+        "city": "Bhubaneswar",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13537",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.709914,
+          30.726978
+        ]
+      },
+      "properties": {
+        "id": 13539,
+        "name": "SIFY Chandigarh",
+        "city": "Chandigarh",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13539",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.948057,
+          8.498169
+        ]
+      },
+      "properties": {
+        "id": 13541,
+        "name": "SIFY Trivandrum",
+        "city": "Thiruvananthapuram",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13541",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          75.833388,
+          30.901902
+        ]
+      },
+      "properties": {
+        "id": 13542,
+        "name": "SIFY Ludhiana",
+        "city": "Ludhiana",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13542",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.324759,
+          23.351496
+        ]
+      },
+      "properties": {
+        "id": 13543,
+        "name": "SIFY Ranchi",
+        "city": "Ranchi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13543",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          75.58285,
+          31.320923
+        ]
+      },
+      "properties": {
+        "id": 13544,
+        "name": "SIFY Jalandhar",
+        "city": "Jalandhar",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13544",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.6436,
+          16.502014
+        ]
+      },
+      "properties": {
+        "id": 13545,
+        "name": "SIFY CVR Chambers Vijayawada",
+        "city": "Vijaywada",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13545",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.131783,
+          9.936466
+        ]
+      },
+      "properties": {
+        "id": 13548,
+        "name": "SIFY GP BUILDING Madurai",
+        "city": "Madurai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13548",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.733138,
+          12.963937
+        ]
+      },
+      "properties": {
+        "id": 13553,
+        "name": "Iron Mountain Data Center - Bangalore (BLR-1)",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13553",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.355122,
+          17.459932
+        ]
+      },
+      "properties": {
+        "id": 13554,
+        "name": "Iron Mountain Data Center - Hyderabad (HYD-1)",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13554",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.008703,
+          19.141169
+        ]
+      },
+      "properties": {
+        "id": 13555,
+        "name": "Iron Mountain Data Center - Mumbai (MUM-1)",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13555",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.008196,
+          19.140998
+        ]
+      },
+      "properties": {
+        "id": 13556,
+        "name": "Iron Mountain Data Center - Mumbai (MUM-2)",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13556",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.383923,
+          28.627458
+        ]
+      },
+      "properties": {
+        "id": 13557,
+        "name": "Iron Mountain Data Center - Delhi (NCR-1)",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13557",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.727651,
+          18.592588
+        ]
+      },
+      "properties": {
+        "id": 13558,
+        "name": "Iron Mountain Data Center - Pune (PUN-1)",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13558",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.413517,
+          28.354371
+        ]
+      },
+      "properties": {
+        "id": 13563,
+        "name": "Sify Bareilly",
+        "city": "Bareilly",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13563",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.024247,
+          19.171907
+        ]
+      },
+      "properties": {
+        "id": 13647,
+        "name": "NTT NAV01 Mahape",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13647",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.48342,
+          28.55235
+        ]
+      },
+      "properties": {
+        "id": 13846,
+        "name": "YOTTA D1",
+        "city": "Greater Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13846",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.954374,
+          19.191161
+        ]
+      },
+      "properties": {
+        "id": 13870,
+        "name": "Ishan Technologies Thane",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13870",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.468844,
+          17.440151
+        ]
+      },
+      "properties": {
+        "id": 13884,
+        "name": "D-ATUM VILCOM",
+        "city": "Hyderabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13884",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.839838,
+          19.400344
+        ]
+      },
+      "properties": {
+        "id": 13886,
+        "name": "Ishan Technologies Vasai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13886",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.840574,
+          19.815779
+        ]
+      },
+      "properties": {
+        "id": 13887,
+        "name": "Ishan Technologies Puri",
+        "city": "Puri",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13887",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.503345,
+          15.831347
+        ]
+      },
+      "properties": {
+        "id": 13888,
+        "name": "Ishan Technologies Belgaum",
+        "city": "Belgaum",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13888",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.805797,
+          20.340792
+        ]
+      },
+      "properties": {
+        "id": 13908,
+        "name": "Nxtra Data Bhubaneswar DC1",
+        "city": "Bhubaneswar",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/13908",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.16404,
+          13.1008
+        ]
+      },
+      "properties": {
+        "id": 14111,
+        "name": "Digital Connexion MAA10 Chennai (Ambattur)",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14111",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.441273,
+          28.675216
+        ]
+      },
+      "properties": {
+        "id": 14116,
+        "name": "Extreme RDC",
+        "city": "Ghaziabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14116",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.284699,
+          28.639031
+        ]
+      },
+      "properties": {
+        "id": 14117,
+        "name": "Extreme Laxminagar",
+        "city": "Delhi",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14117",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.663899,
+          12.838728
+        ]
+      },
+      "properties": {
+        "id": 14229,
+        "name": "ESDS Bengaluru",
+        "city": "Bangalore",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14229",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.001355,
+          19.169975
+        ]
+      },
+      "properties": {
+        "id": 14254,
+        "name": "ESDS Airoli",
+        "city": "Airoli",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14254",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.163027,
+          13.107271
+        ]
+      },
+      "properties": {
+        "id": 14354,
+        "name": "CtrlS Chennai DC1",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14354",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.163027,
+          13.107271
+        ]
+      },
+      "properties": {
+        "id": 14355,
+        "name": "CtrlS Chennai DC2",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14355",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.483151,
+          28.553441
+        ]
+      },
+      "properties": {
+        "id": 14438,
+        "name": "Bharat Datacenter D1",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14438",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.00138,
+          19.17619
+        ]
+      },
+      "properties": {
+        "id": 14476,
+        "name": "Nxtra Data Mumbai DC 1",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14476",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.043499,
+          28.413221
+        ]
+      },
+      "properties": {
+        "id": 14558,
+        "name": "Nirmal Mondal",
+        "city": "Gurgaon",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14558",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.462613,
+          22.614157
+        ]
+      },
+      "properties": {
+        "id": 14993,
+        "name": "CtrlS Kolkata DC1",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/14993",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.996005,
+          19.180426
+        ]
+      },
+      "properties": {
+        "id": 15050,
+        "name": "Equinix MB4 - Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15050",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.165827,
+          13.100416
+        ]
+      },
+      "properties": {
+        "id": 15060,
+        "name": "NTT CNN2A",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15060",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.890131,
+          19.114468
+        ]
+      },
+      "properties": {
+        "id": 15362,
+        "name": "Netmagic Chandivali - MUM DC09",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15362",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.02522,
+          19.103301
+        ]
+      },
+      "properties": {
+        "id": 15363,
+        "name": "NTT NAV02 Airoli",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15363",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.43574,
+          28.594001
+        ]
+      },
+      "properties": {
+        "id": 15364,
+        "name": "NTT Noida DC2A",
+        "city": "Greater Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15364",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.02043,
+          19.100473
+        ]
+      },
+      "properties": {
+        "id": 15540,
+        "name": "Nxtra Data Mumbai DC 3",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15540",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.024815,
+          19.10898
+        ]
+      },
+      "properties": {
+        "id": 15546,
+        "name": "CtrlS Mumbai DC4",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15546",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.024815,
+          19.10892
+        ]
+      },
+      "properties": {
+        "id": 15547,
+        "name": "CtrlS Mumbai DC5",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15547",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.892808,
+          19.113556
+        ]
+      },
+      "properties": {
+        "id": 15715,
+        "name": "Ishan Technologies Mumbai DC1",
+        "city": "Mumbai,",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15715",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.998076,
+          19.173795
+        ]
+      },
+      "properties": {
+        "id": 15727,
+        "name": "BBY01",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15727",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.004055,
+          19.189298
+        ]
+      },
+      "properties": {
+        "id": 15846,
+        "name": "Digital Edge BOM1",
+        "city": "Navi Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15846",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.777943,
+          30.367963
+        ]
+      },
+      "properties": {
+        "id": 15990,
+        "name": "Velosting Ambala",
+        "city": "Ambala",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/15990",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.799431,
+          20.340478
+        ]
+      },
+      "properties": {
+        "id": 16133,
+        "name": "CtrlS Bhubaneswar DC1",
+        "city": "Bhubaneswar",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16133",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.019263,
+          26.791895
+        ]
+      },
+      "properties": {
+        "id": 16477,
+        "name": "Sify Infinit Spaces Limited - Lucknow",
+        "city": "Lucknow",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16477",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.790266,
+          18.645199
+        ]
+      },
+      "properties": {
+        "id": 16560,
+        "name": "Extreme Highway Tower",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16560",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.871851,
+          18.500893
+        ]
+      },
+      "properties": {
+        "id": 16569,
+        "name": "Extreme Vega Center Swargate",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16569",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.219345,
+          12.826015
+        ]
+      },
+      "properties": {
+        "id": 16763,
+        "name": "Equinix CN1 - Chennai",
+        "city": "Siruseri",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16763",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.10596,
+          25.63516
+        ]
+      },
+      "properties": {
+        "id": 16802,
+        "name": "CtrlS Patna DC2",
+        "city": "Patna",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16802",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.691181,
+          23.168011
+        ]
+      },
+      "properties": {
+        "id": 16803,
+        "name": "CtrlS Ahmedabad DC1",
+        "city": "Ahmedabad",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16803",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.352953,
+          28.608961
+        ]
+      },
+      "properties": {
+        "id": 16810,
+        "name": "URLSTART",
+        "city": "Gautam Buddha Nagar",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16810",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.93876,
+          28.372387
+        ]
+      },
+      "properties": {
+        "id": 16861,
+        "name": "Dbyte Manesar HR",
+        "city": "Manesar",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16861",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.896533,
+          19.114404
+        ]
+      },
+      "properties": {
+        "id": 16886,
+        "name": "Equinix MB3 - Mumbai",
+        "city": "Mumbai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16886",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.691173,
+          18.593282
+        ]
+      },
+      "properties": {
+        "id": 16968,
+        "name": "Nxtra Data Pune DC2",
+        "city": "Pune",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16968",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.456639,
+          22.61275
+        ]
+      },
+      "properties": {
+        "id": 16969,
+        "name": "Nxtra Data Kolkata DC 1",
+        "city": "Kolkata",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/16969",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.219345,
+          12.826015
+        ]
+      },
+      "properties": {
+        "id": 17073,
+        "name": "Sify Infinit Spaces Limited",
+        "city": "Chennai",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/17073",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.109005,
+          18.998325
+        ]
+      },
+      "properties": {
+        "id": 17200,
+        "name": "L&T Network Services - BOM 01",
+        "city": "Panvel",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/17200",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.809789,
+          12.900553
+        ]
+      },
+      "properties": {
+        "id": 17201,
+        "name": "L&T Network Services - MAA 01",
+        "city": "Kancheepuram",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/17201",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.377758,
+          28.513261
+        ]
+      },
+      "properties": {
+        "id": 17462,
+        "name": "Sify Infinit Spaces Limited- Noida 02",
+        "city": "Noida",
+        "country": "IN",
+        "kind": "recorded-public-data",
+        "sourceUrl": "https://www.peeringdb.com/fac/17462",
+        "notice": "Facility context, not network capacity or latency"
+      }
+    }
+  ]
+}

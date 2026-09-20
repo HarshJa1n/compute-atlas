@@ -1,0 +1,248 @@
+[
+  {
+    "id": "bhopal",
+    "kind": "recorded-public-data",
+    "sourceFile": "nasa-power-bhopal.json",
+    "coordinates": [
+      77.413,
+      23.26,
+      475.01
+    ],
+    "period": "20-year Meteorological and Solar Monthly & Annual Climatologies (January 2001 - December 2020)",
+    "monthlyTemperatureC": {
+      "JAN": 17.17,
+      "FEB": 20.76,
+      "MAR": 25.95,
+      "APR": 31.43,
+      "MAY": 34.94,
+      "JUN": 32.03,
+      "JUL": 27.18,
+      "AUG": 25.85,
+      "SEP": 25.54,
+      "OCT": 23.76,
+      "NOV": 20.73,
+      "DEC": 17.92,
+      "ANN": 25.28
+    },
+    "monthlyRelativeHumidityPercent": {
+      "JAN": 42.39,
+      "FEB": 35.28,
+      "MAR": 26.75,
+      "APR": 20.37,
+      "MAY": 23.58,
+      "JUN": 52.6,
+      "JUL": 81.17,
+      "AUG": 87.85,
+      "SEP": 83.4,
+      "OCT": 68.79,
+      "NOV": 58.27,
+      "DEC": 49.34,
+      "ANN": 52.6
+    }
+  },
+  {
+    "id": "chennai",
+    "kind": "recorded-public-data",
+    "sourceFile": "nasa-power-chennai.json",
+    "coordinates": [
+      80.271,
+      13.083,
+      48.95
+    ],
+    "period": "20-year Meteorological and Solar Monthly & Annual Climatologies (January 2001 - December 2020)",
+    "monthlyTemperatureC": {
+      "JAN": 24.09,
+      "FEB": 25.6,
+      "MAR": 28.43,
+      "APR": 30.51,
+      "MAY": 31.51,
+      "JUN": 30.6,
+      "JUL": 29.7,
+      "AUG": 28.99,
+      "SEP": 28.28,
+      "OCT": 27.4,
+      "NOV": 25.76,
+      "DEC": 24.41,
+      "ANN": 27.95
+    },
+    "monthlyRelativeHumidityPercent": {
+      "JAN": 76.62,
+      "FEB": 71.27,
+      "MAR": 66.11,
+      "APR": 65.91,
+      "MAY": 64.52,
+      "JUN": 64.37,
+      "JUL": 67.47,
+      "AUG": 72.41,
+      "SEP": 77.27,
+      "OCT": 79.96,
+      "NOV": 82.33,
+      "DEC": 80.41,
+      "ANN": 72.39
+    }
+  },
+  {
+    "id": "hyderabad",
+    "kind": "recorded-public-data",
+    "sourceFile": "nasa-power-hyderabad.json",
+    "coordinates": [
+      78.487,
+      17.385,
+      494.59
+    ],
+    "period": "20-year Meteorological and Solar Monthly & Annual Climatologies (January 2001 - December 2020)",
+    "monthlyTemperatureC": {
+      "JAN": 21.61,
+      "FEB": 24.85,
+      "MAR": 28.67,
+      "APR": 31.73,
+      "MAY": 33.3,
+      "JUN": 28.84,
+      "JUL": 26.52,
+      "AUG": 25.53,
+      "SEP": 25.18,
+      "OCT": 24.08,
+      "NOV": 22.07,
+      "DEC": 20.76,
+      "ANN": 26.1
+    },
+    "monthlyRelativeHumidityPercent": {
+      "JAN": 52.98,
+      "FEB": 44.05,
+      "MAR": 37.41,
+      "APR": 38.18,
+      "MAY": 37.85,
+      "JUN": 62.48,
+      "JUL": 73.99,
+      "AUG": 80.3,
+      "SEP": 82.95,
+      "OCT": 78.36,
+      "NOV": 71.63,
+      "DEC": 62.43,
+      "ANN": 60.3
+    }
+  },
+  {
+    "id": "indore",
+    "kind": "recorded-public-data",
+    "sourceFile": "nasa-power-indore.json",
+    "coordinates": [
+      75.858,
+      22.72,
+      402.35
+    ],
+    "period": "20-year Meteorological and Solar Monthly & Annual Climatologies (January 2001 - December 2020)",
+    "monthlyTemperatureC": {
+      "JAN": 19.25,
+      "FEB": 22.75,
+      "MAR": 27.35,
+      "APR": 32.03,
+      "MAY": 34.35,
+      "JUN": 31.12,
+      "JUL": 27.07,
+      "AUG": 25.76,
+      "SEP": 25.78,
+      "OCT": 24.63,
+      "NOV": 22.23,
+      "DEC": 19.89,
+      "ANN": 26.02
+    },
+    "monthlyRelativeHumidityPercent": {
+      "JAN": 36.12,
+      "FEB": 28.25,
+      "MAR": 23.0,
+      "APR": 21.03,
+      "MAY": 30.27,
+      "JUN": 58.29,
+      "JUL": 80.37,
+      "AUG": 86.51,
+      "SEP": 83.17,
+      "OCT": 67.11,
+      "NOV": 54.72,
+      "DEC": 43.33,
+      "ANN": 51.15
+    }
+  },
+  {
+    "id": "nagpur",
+    "kind": "recorded-public-data",
+    "sourceFile": "nasa-power-nagpur.json",
+    "coordinates": [
+      79.088,
+      21.146,
+      282.6
+    ],
+    "period": "20-year Meteorological and Solar Monthly & Annual Climatologies (January 2001 - December 2020)",
+    "monthlyTemperatureC": {
+      "JAN": 20.51,
+      "FEB": 24.41,
+      "MAR": 28.99,
+      "APR": 33.83,
+      "MAY": 36.73,
+      "JUN": 32.0,
+      "JUL": 27.29,
+      "AUG": 26.4,
+      "SEP": 26.4,
+      "OCT": 24.53,
+      "NOV": 21.86,
+      "DEC": 19.97,
+      "ANN": 26.91
+    },
+    "monthlyRelativeHumidityPercent": {
+      "JAN": 43.11,
+      "FEB": 34.85,
+      "MAR": 29.18,
+      "APR": 23.17,
+      "MAY": 25.21,
+      "JUN": 57.8,
+      "JUL": 82.46,
+      "AUG": 87.3,
+      "SEP": 85.03,
+      "OCT": 76.16,
+      "NOV": 68.21,
+      "DEC": 56.1,
+      "ANN": 55.84
+    }
+  },
+  {
+    "id": "navi-mumbai",
+    "kind": "recorded-public-data",
+    "sourceFile": "nasa-power-navi-mumbai.json",
+    "coordinates": [
+      73.03,
+      19.033,
+      97.15
+    ],
+    "period": "20-year Meteorological and Solar Monthly & Annual Climatologies (January 2001 - December 2020)",
+    "monthlyTemperatureC": {
+      "JAN": 23.19,
+      "FEB": 25.69,
+      "MAR": 28.69,
+      "APR": 30.73,
+      "MAY": 31.19,
+      "JUN": 28.66,
+      "JUL": 26.63,
+      "AUG": 26.05,
+      "SEP": 26.19,
+      "OCT": 26.22,
+      "NOV": 24.63,
+      "DEC": 23.33,
+      "ANN": 26.77
+    },
+    "monthlyRelativeHumidityPercent": {
+      "JAN": 51.18,
+      "FEB": 44.45,
+      "MAR": 44.74,
+      "APR": 52.5,
+      "MAY": 60.19,
+      "JUN": 79.51,
+      "JUL": 89.56,
+      "AUG": 90.36,
+      "SEP": 88.55,
+      "OCT": 77.57,
+      "NOV": 68.9,
+      "DEC": 59.83,
+      "ANN": 67.39
+    }
+  }
+]

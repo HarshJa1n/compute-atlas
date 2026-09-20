@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --font-sans: Inter, ui-sans-serif, system-ui, sans-serif; }
+
+html, body { height: 100%; }
+body { background: #09131c; color: #f0f5f7; -webkit-font-smoothing: antialiased; }
+
+/* Frosted instrument panel */
+.glass {
+  background: linear-gradient(180deg, rgba(23,48,63,.82), rgba(18,35,48,.88));
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(67,223,195,.10);
+  box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 18px 40px -24px rgba(0,0,0,.9);
+}
+.hairline { border-color: rgba(126,187,255,.12); }
+
+/* Scrollbars stay out of the way but remain visible */
+* { scrollbar-width: thin; scrollbar-color: #1f3d4f transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: #1f3d4f; border-radius: 99px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* Focus is always obvious — a keyboard quality gate in the design spec */
+:focus-visible { outline: 2px solid #43dfc3; outline-offset: 2px; border-radius: 6px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* MapLibre + mapbox-gl-draw chrome */
+.maplibregl-ctrl-attrib { background: rgba(9,19,28,.78) !important; color: #a8bac7 !important; font-size: 10px !important; }
+.maplibregl-ctrl-attrib a { color: #7ebbff !important; }
+.maplibregl-canvas:focus { outline: none; }
+.mapbox-gl-draw_ctrl-draw-btn { background-color: rgba(18,35,48,.92) !important; border-color: rgba(126,187,255,.15) !important; }
+.mapbox-gl-draw_ctrl-draw-btn.active { background-color: rgba(67,223,195,.22) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+}
