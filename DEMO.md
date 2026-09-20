@@ -31,7 +31,9 @@ figure recomputes, the change card explains it, and a version is logged.
 
 ## Their document
 
-Evidence → **Upload PDF or text**, or paste. Figures like `18 MW` or
+Evidence → **paste text**, or upload a `.txt`/`.md`. **PDF upload is disabled** —
+extraction works under `next dev` but misreads the same bytes in a production
+build, so do not promise it on stage. Figures like `18 MW` or
 `connection by March 2028` are extracted with their paragraph. A second figure
 for the same thing produces a conflict automatically. A figure the document
 hedges ("indicative", "subject to") is marked *qualified*; that is a fact about

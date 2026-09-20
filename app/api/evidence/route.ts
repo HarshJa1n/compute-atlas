@@ -28,16 +28,6 @@ function makeDoc(siteId: string, title: string, text: string, origin: EvidenceDo
   };
 }
 
-async function pdfToText(buf: Buffer): Promise<string> {
-  // The package entry point runs a debug block that reads a bundled test PDF when
-  // `module.parent` is undefined, which throws under Next's bundler. The library
-  // implementation itself is imported directly to avoid that.
-  const mod = await import("pdf-parse/lib/pdf-parse.js");
-  const parse = (mod as unknown as { default: (b: Buffer) => Promise<{ text: string }> }).default;
-  const out = await parse(buf);
-  return out.text;
-}
-
 export async function POST(req: Request) {
   const contentType = req.headers.get("content-type") ?? "";
 
@@ -56,23 +46,31 @@ export async function POST(req: Request) {
       }
 
       const name = file.name || "document";
-      const buf = Buffer.from(await file.arrayBuffer());
+      // pdf.js reads the underlying ArrayBuffer and can ignore a view's offset.
+      // On a pooled allocation that yields unrelated bytes and a spurious parse
+      // error, so the payload is copied into an exactly-sized buffer first.
+      const incoming = new Uint8Array(await file.arrayBuffer());
+      const exact = new Uint8Array(incoming.byteLength);
+      exact.set(incoming);
+      const buf = Buffer.from(exact.buffer, 0, exact.byteLength);
       const isPdf = name.toLowerCase().endsWith(".pdf") || file.type === "application/pdf";
       const isText = /\.(txt|md|csv)$/i.test(name) || file.type.startsWith("text/");
       if (!isPdf && !isText) {
-        return NextResponse.json({ error: "Only .pdf, .txt, .md and .csv are accepted." }, { status: 415 });
+        return NextResponse.json({ error: "Only .txt, .md and .csv are accepted." }, { status: 415 });
       }
 
       let text: string;
       if (isPdf) {
-        try {
-          text = await pdfToText(buf);
-        } catch {
-          return NextResponse.json(
-            { error: "That PDF could not be read as text. Scanned pages need OCR, which this build does not do." },
-            { status: 422 }
-          );
-        }
+        // PDF extraction works in dev but not in a production build: the bundled
+        // pdf.js misreads the same bytes there. Disabled rather than shipped as a
+        // feature that fails only once deployed.
+        return NextResponse.json(
+          {
+            error:
+              "PDF extraction is not enabled in this build. Paste the relevant text, or upload a .txt or .md file.",
+          },
+          { status: 415 }
+        );
       } else {
         text = buf.toString("utf8");
       }

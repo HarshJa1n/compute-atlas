@@ -113,12 +113,12 @@ export default function EvidencePanel({
             disabled={busy}
             className="flex-1 rounded-control bg-white/[.04] px-3 py-1.5 text-[11px] font-semibold text-ink ring-1 ring-white/[.08] transition hover:bg-white/[.08] disabled:opacity-40"
           >
-            {busy ? "Reading…" : "Upload PDF or text"}
+            {busy ? "Reading…" : "Upload a text file"}
           </button>
           <input
             ref={fileRef}
             type="file"
-            accept=".pdf,.txt,.md,.csv,application/pdf,text/*"
+            accept=".txt,.md,.csv,text/*"
             className="sr-only"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }}
           />
