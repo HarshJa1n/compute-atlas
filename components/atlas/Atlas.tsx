@@ -713,7 +713,7 @@ export default function Atlas({
       )}
 
       {/* Right panels */}
-      <aside className="tour-hide glass zoomable absolute right-3 top-[86px] bottom-3 z-20 flex w-[300px] flex-col overflow-hidden rounded-panel lg:w-[340px] xl:w-[368px]">
+      <aside className="tour-hide glass zoomable right-rail absolute right-3 top-[86px] z-20 flex w-[300px] flex-col overflow-hidden rounded-panel lg:w-[340px] xl:w-[368px]">
         <div ref={dossierSlot} className="min-h-0 flex-[3] overflow-hidden border-b hairline border-b">
           {focused?.which === "dossier" ? (
             <SlotPlaceholder label="Dossier" onReturn={closeFocus} />
