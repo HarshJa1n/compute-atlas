@@ -15,7 +15,8 @@ export default function BriefSheet({
   brief, onChange, onPreset,
 }: {
   brief: ProjectBrief;
-  onChange: (b: ProjectBrief) => void;
+  /** The label names what moved so the change summary can say why the verdict changed. */
+  onChange: (b: ProjectBrief, label: string) => void;
   onPreset: (m: "campus" | "modular") => void;
 }) {
   return (
@@ -53,18 +54,41 @@ export default function BriefSheet({
               max={f.max}
               step={f.step}
               value={brief[f.k] as number}
-              onChange={(e) => onChange({ ...brief, [f.k]: Number(e.target.value) })}
+              onChange={(e) => onChange({ ...brief, [f.k]: Number(e.target.value) }, `${f.label} adjusted`)}
               className="w-full accent-active"
             />
           </label>
         ))}
 
         <label className="block">
+          <div className="mb-1 flex items-baseline justify-between">
+            <span className="text-[11px] font-medium text-muted">Water cap (brief)</span>
+            <span className="tabular text-[12px] font-semibold text-ink">
+              {brief.waterCapLDay === null ? <span className="text-muted">none</span> : brief.waterCapLDay.toLocaleString("en-IN")}
+              {brief.waterCapLDay !== null && <span className="ml-0.5 text-[10px] font-normal text-muted">L/day</span>}
+            </span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={400000}
+            step={10000}
+            value={brief.waterCapLDay ?? 400000}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              onChange({ ...brief, waterCapLDay: v >= 400000 ? null : v }, "Water cap tightened");
+            }}
+            className="w-full accent-active"
+          />
+          <span className="block text-[9.5px] text-muted/70">Applies only where the site has no sourced allocation. Slide fully right for none.</span>
+        </label>
+
+        <label className="block">
           <span className="mb-1 block text-[11px] font-medium text-muted">Target opening</span>
           <input
             type="date"
             value={brief.openingDate}
-            onChange={(e) => onChange({ ...brief, openingDate: e.target.value })}
+            onChange={(e) => onChange({ ...brief, openingDate: e.target.value }, "Opening date changed")}
             className="w-full rounded-control bg-bg/60 px-2.5 py-1.5 text-[12px] text-ink ring-1 ring-white/10 focus:ring-active/50 [color-scheme:dark]"
           />
         </label>

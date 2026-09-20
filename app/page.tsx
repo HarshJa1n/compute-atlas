@@ -1,5 +1,5 @@
 import Atlas from "@/components/atlas/Atlas";
-import { demoSites, indiaBounds, regionBookmarks } from "@/lib/data";
+import { demoSites, evidenceFixtures, indiaBounds, regionBookmarks, SOURCES } from "@/lib/data";
 import type { Polygon } from "geojson";
 
 export default function Page() {
@@ -13,5 +13,5 @@ export default function Page() {
     availableMW: (s.availableMW ?? null) as number | null,
     waterCapLDay: (s.waterCapLDay ?? null) as number | null,
   }));
-  return <Atlas sites={sites} bookmarks={regionBookmarks()} indiaBounds={indiaBounds()} />;
+  return <Atlas sites={sites} bookmarks={regionBookmarks()} indiaBounds={indiaBounds()} fixtures={evidenceFixtures()} sources={SOURCES} />;
 }
