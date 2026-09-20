@@ -4,7 +4,13 @@ import { z } from "zod";
 import { evaluate, type ProjectBrief, type SiteInput } from "@/lib/analysis/evaluate";
 import { evidenceDocs, nearestClimate, nearestFacility, peakTemp, MONTHS } from "@/lib/data";
 
-export type ToolContext = { brief: ProjectBrief; site: SiteInput; centroid: [number, number] };
+export type ToolContext = {
+  brief: ProjectBrief;
+  site: SiteInput;
+  centroid: [number, number];
+  /** Document ids the user has actually ingested into this project. */
+  evidenceIds: string[];
+};
 
 export type ToolResult = { ok: true; data: unknown; sources: string[] } | { ok: false; error: string };
 
@@ -67,8 +73,15 @@ export const TOOLS = [
       "Read the project's ingested documents and return extracted claims with exact document and paragraph references.",
     schema: empty,
     run: (ctx: ToolContext): ToolResult => {
-      const docs = evidenceDocs().filter((d) => d.siteId === ctx.site.id);
-      if (!docs.length) return { ok: true, data: { claims: [], note: "No documents ingested for this site." }, sources: [] };
+      // Only documents the user has ingested are visible; the fixture store is not the project.
+      const docs = evidenceDocs().filter((d) => d.siteId === ctx.site.id && ctx.evidenceIds.includes(d.id));
+      if (!docs.length) {
+        return {
+          ok: true,
+          data: { claims: [], note: "No documents have been ingested for this site, so there is no document evidence to weigh." },
+          sources: [],
+        };
+      }
       const claims = docs.flatMap((d) =>
         d.text
           .split("\n")

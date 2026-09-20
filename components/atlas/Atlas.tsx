@@ -156,7 +156,13 @@ export default function Atlas({
       const res = await fetch("/api/investigate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, brief, site, centroid: centroidOf(active.geometry) }),
+        body: JSON.stringify({
+          question,
+          brief,
+          site,
+          centroid: centroidOf(active.geometry),
+          evidenceIds: evidenceAdded && active.id === "A" ? ["demo-broker-A", "demo-utility-A"] : [],
+        }),
         signal: ac.signal,
       });
       if (!res.body) throw new Error("No stream");
@@ -184,7 +190,7 @@ export default function Atlas({
     } finally {
       setBusy(false);
     }
-  }, [brief, active, sitePayload]);
+  }, [brief, active, sitePayload, evidenceAdded]);
 
   const handleDraw = useCallback((f: Feature<Polygon> | null) => {
     setDrawing(false);
