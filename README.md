@@ -54,11 +54,25 @@ cannot supply an observation or overturn a verdict. That boundary lives in
 
 ## Using it
 
-Pick a regional bookmark, or open the **Sites** panel and draw a polygon —
-click corners, double-click to finish, Escape to cancel. Drawn and imported
+Pick a regional bookmark, search any place in India, or press **✎ Draw a site**
+on the map — click corners, double-click to finish, Escape to cancel. Drawn and imported
 shapes are validated for self-intersection, area and containment in India, and
 a rejected shape stays on the map with the reason shown so you can edit it.
 Every candidate is also listed in the Sites panel, so nothing needs a mouse.
+
+**Ingesting evidence.** The **Docs** tab takes a PDF, `.txt`, `.md` or pasted
+text. Claims are extracted with paragraph references, and figures the document
+itself disclaims are marked *qualified*. Two documents stating different
+capacities produce a **conflict** and no number — the contradiction is derived
+from the documents, not configured.
+
+**Scenario runs.** Changing an assumption or ingesting a document creates a new
+version. Earlier runs are preserved and criteria whose verdict moved are listed
+as changed findings.
+
+**Report.** The header **Report** button opens a printable evidence pack at
+`/report` with the brief, criteria, unresolved checks and their owners, extracted
+claims and the source list. **JSON** exports the same snapshot as data.
 
 ## Demo path (about 3 minutes)
 
@@ -68,7 +82,7 @@ Every candidate is also listed in the Sites panel, so nothing needs a mouse.
 2. **Investigate** → real tools execute; NASA returns Bhopal's 34.9 °C May peak,
    PeeringDB returns NIXI Bhopal at 22 km. Before anything is ingested, the agent
    says plainly that there are no documents to weigh.
-3. **Ingest broker brief + utility note** → power becomes **conflict**
+3. **Docs → Load demo pair** → power becomes **conflict**
    (30 MW claimed vs 12 MW conditional) and energisation **fails** (Dec 2027 vs Jun 2027).
    This is the point of the product: the contradiction is surfaced, not resolved.
 4. **Modular** → 5.9 MW, 5,100 L/day. Water now passes; the contradiction does not go away.

@@ -37,6 +37,11 @@ app/api/assess            deterministic screening; server derives geography
 app/api/investigate       NDJSON stream of real tool calls; recorded fallback
 lib/analysis/evaluate.ts  the authority — pure, versioned, tested
 lib/analysis/geometry.ts  polygon validation for drawn and imported shapes
+lib/analysis/extract.ts   document extraction and reconciliation
+lib/analysis/checks.ts    prioritised next investigations (shared by UI and tool)
+lib/analysis/scenario.ts  versioned runs and verdict deltas
+app/api/evidence          ingestion: paste, text upload, PDF
+app/report                printable evidence pack
 lib/agent/tools.ts        five tools + the system prompt
 lib/data.ts               dataset registry, provenance, derived bookmarks
 lib/map/mapbox.ts         Mapbox style/sprite/glyph resolution for MapLibre
@@ -84,6 +89,16 @@ npm run build      # must pass before pushing
   from the Sites panel so the controls are labelled and keyboard reachable.
 - **Only one drawn polygon exists at a time.** A new shape replaces the old one;
   without that, a rejected outline lingers and gets re-validated.
+- **`pdf-parse` must be imported as `pdf-parse/lib/pdf-parse.js`.** Its package
+  entry runs a debug block that reads a bundled test PDF when `module.parent`
+  is undefined, which throws under Next's bundler.
+- **Never call a setter inside a state updater.** Updaters run during render.
+  Doing so once left every assessment dropped by the stale-run guard; deltas are
+  computed against a ref instead.
+- **Extraction and inference stay separate.** `extractClaims` records what a
+  document says; `reconcile` decides what it means. Disagreement returns a
+  conflict and no value — never a chosen figure, and never a ranking of which
+  source is more credible.
 
 ## Adding a dataset
 
