@@ -11,7 +11,7 @@ const C = {
   ink: "F0F5F7", muted: "A8BAC7", dim: "6F8594", teal: "43DFC3",
   blue: "7EBBFF", amber: "FFCC75", red: "FF8E91", line: "1F3140",
 };
-const FONT = "Helvetica Neue";
+const FONT = "Arial";
 const W = 13.333, H = 7.5, M = 0.7;
 const SHOTS = path.join(process.cwd(), "shots");
 const shot = (f) => path.join(SHOTS, f);
@@ -52,8 +52,10 @@ function base(p, { tag, n, total, source, notes, footer }) {
   return s;
 }
 
-const title = (s, t, opts = {}) =>
-  s.addText(t, { x: M, y: opts.y ?? 0.85, w: opts.w ?? W - 2 * M, h: opts.h ?? 1.1, fontFace: FONT, fontSize: opts.size ?? 34, color: C.ink, bold: true, valign: "top", ...opts });
+const title = (s, t, opts = {}) => {
+  const size = opts.size ?? (t.length > 60 ? 26 : t.length > 42 ? 29 : 34);
+  return s.addText(t, { x: M, y: opts.y ?? 0.8, w: opts.w ?? W - 2 * M, h: opts.h ?? 1.1, fontFace: FONT, fontSize: size, color: C.ink, bold: true, valign: "top", fit: "shrink", ...opts });
+};
 
 const body = (s, t, opts = {}) =>
   s.addText(t, { x: M, y: opts.y ?? 2.1, w: opts.w ?? W - 2 * M, h: opts.h ?? 1, fontFace: FONT, fontSize: opts.size ?? 18, color: opts.color ?? C.muted, valign: "top", paraSpaceAfter: 6, ...opts });
@@ -69,7 +71,7 @@ function bullets(s, items, opts = {}) {
   s.addText(out, { x: opts.x ?? M, y: opts.y ?? 2.1, w: opts.w ?? W - 2 * M, h: opts.h ?? 4, fontFace: FONT, fontSize: opts.size ?? 16, valign: "top", paraSpaceAfter: opts.gap ?? 8 });
 }
 
-function card(p, s, { x, y, w, h, label, value, unit, note, accent = C.teal, valueSize = 30 }) {
+function card(p, s, { x, y, w, h, label, value, unit, note, accent = C.teal, valueSize = 30, noteSize = 11.5 }) {
   s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: C.surface }, line: { color: C.line, width: 0.75 }, rectRadius: 0.08 });
   s.addShape(p.shapes.RECTANGLE, { x, y: y + 0.18, w: 0.05, h: h - 0.36, fill: { color: accent }, line: { color: accent, width: 0 } });
   if (label) s.addText(label.toUpperCase(), { x: x + 0.22, y: y + 0.15, w: w - 0.35, h: 0.28, fontFace: FONT, fontSize: 9.5, color: C.muted, charSpacing: 2 });
@@ -77,7 +79,7 @@ function card(p, s, { x, y, w, h, label, value, unit, note, accent = C.teal, val
     s.addText([{ text: String(value), options: { fontSize: valueSize, bold: true, color: C.ink } }, ...(unit ? [{ text: "  " + unit, options: { fontSize: 12, color: C.muted } }] : [])],
       { x: x + 0.22, y: y + 0.42, w: w - 0.35, h: 0.7, fontFace: FONT, valign: "middle" });
   }
-  if (note) s.addText(note, { x: x + 0.22, y: y + (value !== undefined ? 1.12 : 0.48), w: w - 0.4, h: h - (value !== undefined ? 1.2 : 0.6), fontFace: FONT, fontSize: 11.5, color: C.muted, valign: "top" });
+  if (note) s.addText(note, { x: x + 0.22, y: y + (value !== undefined ? 1.12 : 0.48), w: w - 0.4, h: h - (value !== undefined ? 1.2 : 0.6), fontFace: FONT, fontSize: noteSize, color: C.muted, valign: "top" });
 }
 
 function pill(p, s, text, x, y, color, w = 1.4) {
@@ -145,7 +147,7 @@ function buildProblemDeck() {
     body(s, "Delivering compute at scale is a chain of physical dependencies. Every link has to hold at a specific place.", { h: 0.7 });
     const items = [["Chips & networking", "the part everyone talks about"], ["Dependable electricity", "at full load, on a date, under contract"], ["Heat removal", "cooling design, water or dry systems"], ["Land & permission", "net buildable area, zoning, rights"], ["Connectivity", "fibre routes, diversity, latency"], ["Operations & capital", "people, uptime, financing"]];
     const cw = (W - 2 * M - 0.3 * 2) / 3;
-    items.forEach((it, i) => card(p, s, { x: M + (i % 3) * (cw + 0.3), y: 2.95 + Math.floor(i / 3) * 1.55, w: cw, h: 1.35, label: it[0], note: it[1], accent: i === 0 ? C.blue : C.teal }));
+    items.forEach((it, i) => card(p, s, { x: M + (i % 3) * (cw + 0.3), y: 2.95 + Math.floor(i / 3) * 1.55, w: cw, h: 1.35, label: it[0], note: it[1], accent: i === 0 ? C.blue : C.teal, noteSize: 13.5 }));
   }
 
   // 4 IEA
@@ -162,8 +164,8 @@ function buildProblemDeck() {
   {
     const s = base(p, { tag: "Why India · dated government statement", n: nx(), total: T, source: "S02", notes: "IndiaAI reported more than 38,000 GPUs empaneled through 14 providers in March 2026, with another 20,000 being added under a process then underway. Empaneled capacity is not continuously available capacity and not a homogeneous benchmark." });
     title(s, "India is expanding compute access — and will need places to put it.");
-    card(p, s, { x: M, y: 2.1, w: 5.8, h: 1.9, label: "GPUs empaneled · March 2026", value: "38,000+", unit: "through 14 providers", note: "Another 20,000 were being added under a process then underway.", accent: C.blue, valueSize: 40 });
-    card(p, s, { x: M + 6.1, y: 2.1, w: W - 2 * M - 6.1, h: 1.9, label: "What that does not mean", note: "Empaneled is not continuously available. The hardware is heterogeneous. It is a dated statement about a procurement pool, not a live capacity meter.", accent: C.amber });
+    card(p, s, { x: M, y: 2.2, w: 5.8, h: 1.9, label: "GPUs empaneled · March 2026", value: "38,000+", unit: "through 14 providers", note: "Another 20,000 were being added under a process then underway.", accent: C.blue, valueSize: 40 });
+    card(p, s, { x: M + 6.1, y: 2.2, w: W - 2 * M - 6.1, h: 1.9, label: "What that does not mean", note: "Empaneled is not continuously available. The hardware is heterogeneous. It is a dated statement about a procurement pool, not a live capacity meter.", accent: C.amber });
     body(s, "The opportunity is access plus execution: helping capable teams turn ambitions into sites whose dependencies are understood. Local-language applications, research and industry can benefit from domestic access. Construction alone guarantees none of it.", { y: 4.35, h: 1.4, size: 17 });
   }
 
@@ -197,7 +199,7 @@ function buildProblemDeck() {
     title(s, "Five ideas we took from the energy-first playbook.");
     const items = [["Workload and energy together", "Never evaluate the site without the load it must carry."], ["Campus versus modular", "Compare centralised and distributed deployment where it makes sense."], ["Time to usable capacity", "Energisation date matters as much as land price."], ["Potential ≠ deliverable power", "Annual renewable potential is not hourly reliability."], ["Move compute toward energy", "Only if latency, network and operations still hold."]];
     const cw = (W - 2 * M - 0.25 * 4) / 5;
-    items.forEach((it, i) => card(p, s, { x: M + i * (cw + 0.25), y: 2.2, w: cw, h: 2.6, label: `0${i + 1}`, note: `${it[0]}\n\n${it[1]}`, accent: C.teal }));
+    items.forEach((it, i) => card(p, s, { x: M + i * (cw + 0.25), y: 2.2, w: cw, h: 2.6, label: `0${i + 1}`, note: `${it[0]}\n\n${it[1]}`, accent: C.teal, noteSize: 12.5 }));
     body(s, "Nuclear and flare-gas supply stay research scenarios. Proximity to a generator is never a supply contract. Flexible batch training and latency-sensitive inference do not share uptime requirements.", { y: 5.1, h: 1, size: 14, color: C.dim });
   }
 
@@ -207,8 +209,8 @@ function buildProblemDeck() {
     title(s, "One 20 MW AI campus, in numbers a utility will ask about.");
     const cards = [["Grid connection at full load", "26.0", "MW", "IT MW × PUE. Utilisation excluded on purpose.", C.teal], ["Annual energy", "1,82,208", "MWh", "20 × 0.8 × 1.3 × 8,760 hours.", C.blue], ["Energy bill per year", "₹127.5", "crore", "At an assumed ₹7 per kWh.", C.blue], ["Water withdrawal", "1,92,000", "L/day", "At WUE 0.5 litres per IT-kWh.", C.amber]];
     const cw = (W - 2 * M - 0.3 * 3) / 4;
-    cards.forEach((c, i) => card(p, s, { x: M + i * (cw + 0.3), y: 2.05, w: cw, h: 2.0, label: c[0], value: c[1], unit: c[2], note: c[3], accent: c[4], valueSize: 28 }));
-    bullets(s, [["Every one of these is a claim on someone else.", "The DISCOM must connect 26 MW by a date. A municipality or aquifer must give up 1.9 lakh litres a day. The land must be net buildable after setbacks. A carrier must run fibre."], ["MW is power; MWh is energy.", "A 20 MW load running 24 hours uses 480 MWh. Mixing them up is the most common error in siting conversations."]], { y: 4.4, h: 1.9, size: 15 });
+    cards.forEach((c, i) => card(p, s, { x: M + i * (cw + 0.3), y: 2.2, w: cw, h: 2.0, label: c[0], value: c[1], unit: c[2], note: c[3], accent: c[4], valueSize: 28 }));
+    bullets(s, [["Every one of these is a claim on someone else.", "The DISCOM must connect 26 MW by a date. A municipality or aquifer must give up 1.9 lakh litres a day. The land must be net buildable after setbacks. A carrier must run fibre."], ["MW is power; MWh is energy.", "A 20 MW load running 24 hours uses 480 MWh. Mixing them up is the most common error in siting conversations."]], { y: 4.5, h: 1.9, size: 15 });
   }
 
   // 10 where it goes wrong
@@ -231,7 +233,7 @@ function buildProblemDeck() {
     const s = base(p, { tag: "The evidence problem in India", n: nx(), total: T, notes: "From the data plan: NASA POWER and PeeringDB were retrieved; CEA power maps failed web access; Bhuvan flood portal reachable but no parcel extract; Aqueduct documented but basin-scale. Utility letters, land title and supply agreements exist only as private documents." });
     title(s, "The facts that decide a site are fragmented, and the decisive ones are private.");
     const rows = [["Public and retrievable", "Climate climatology (NASA POWER), carrier facility inventory (PeeringDB), state boundaries (geoBoundaries).", C.teal], ["Public but not usable yet", "CEA power maps (access failed), NRSC Bhuvan flood hazard (no parcel extract), WRI Aqueduct water risk (basin scale).", C.amber], ["Private, and decisive", "Utility feasibility letters, sanctioned-load letters, connection agreements, land title, zoning, water allocations, broker briefs.", C.red]];
-    rows.forEach((r, i) => card(p, s, { x: M, y: 2.1 + i * 1.25, w: W - 2 * M, h: 1.1, label: r[0], note: r[1], accent: r[2] }));
+    rows.forEach((r, i) => card(p, s, { x: M, y: 2.1 + i * 1.25, w: W - 2 * M, h: 1.1, label: r[0], note: r[1], accent: r[2], noteSize: 13 }));
     body(s, "And the private documents disagree with each other. A broker's 30 MW and a utility's conditional 12 MW can describe the same parcel in the same month. Today that contradiction is resolved in someone's head, or not at all.", { y: 5.95, h: 0.8, size: 14, color: C.ink });
   }
 
@@ -239,8 +241,8 @@ function buildProblemDeck() {
   {
     const s = base(p, { tag: "Whose decision this is", n: nx(), total: T, notes: "First customer hypothesis: boutique data-centre engineering and site-selection advisory firms. The analyst uses it repeatedly; the practice head buys. Secondary users listed. Avoid pitching every AI developer as the buyer: they feel the constraint but rarely acquire land or utility connections. No confirmed customers or revenue." });
     title(s, "\"Which of these sites deserves the next round of diligence, and what could invalidate it?\"", { size: 28, h: 1.3 });
-    card(p, s, { x: M, y: 2.35, w: 5.9, h: 3.4, label: "First customer hypothesis", note: "Boutique data-centre engineering and site-selection advisory firms.\n\nAn analyst uses the workspace on every shortlist; a practice head buys it. Their project documents are the private evidence public maps cannot supply.\n\nEntry point: a paid pilot on a real three-to-six-site shortlist. A hypothesis, not a validated sale.", accent: C.teal });
-    card(p, s, { x: M + 6.2, y: 2.35, w: W - 2 * M - 6.2, h: 3.4, label: "Secondary users and what they look at", note: "Data-centre expansion teams: repeatable screening.\nInvestor technical-diligence teams: unresolved risks.\nIndustrial-park developers: what a parcel can host.\nState investment-promotion teams: which infrastructure gaps recur.\n\nNot the direct buyer: individual AI developers. They feel the constraint but do not acquire land or utility connections.", accent: C.blue });
+    card(p, s, { x: M, y: 2.35, w: 5.9, h: 3.4, noteSize: 13, label: "First customer hypothesis", note: "Boutique data-centre engineering and site-selection advisory firms.\n\nAn analyst uses the workspace on every shortlist; a practice head buys it. Their project documents are the private evidence public maps cannot supply.\n\nEntry point: a paid pilot on a real three-to-six-site shortlist. A hypothesis, not a validated sale.", accent: C.teal });
+    card(p, s, { x: M + 6.2, y: 2.35, w: W - 2 * M - 6.2, h: 3.4, noteSize: 13, label: "Secondary users and what they look at", note: "Data-centre expansion teams: repeatable screening.\nInvestor technical-diligence teams: unresolved risks.\nIndustrial-park developers: what a parcel can host.\nState investment-promotion teams: which infrastructure gaps recur.\n\nNot the direct buyer: individual AI developers. They feel the constraint but do not acquire land or utility connections.", accent: C.blue });
   }
 
   // 13 JTBD
@@ -249,7 +251,7 @@ function buildProblemDeck() {
     title(s, "Five moments where the analyst needs a better instrument.");
     const jobs = [["Several sites look attractive", "Separate what is supported by evidence from what is only claimed."], ["Requirements change", "Find which sites just became infeasible, and why."], ["A new document contradicts the brief", "Locate the affected assumptions and recompute."], ["Diligence budget is limited", "Prioritise the questions that can change the decision."], ["Time to recommend", "Export a concise, traceable evidence pack."]];
     jobs.forEach((j, i) => {
-      const y = 2.05 + i * 0.82;
+      const y = 2.2 + i * 0.8;
       s.addText(`0${i + 1}`, { x: M, y, w: 0.7, h: 0.7, fontFace: FONT, fontSize: 22, bold: true, color: C.teal, valign: "middle" });
       s.addText([{ text: j[0], options: { bold: true, color: C.ink, fontSize: 16, breakLine: true } }, { text: j[1], options: { color: C.muted, fontSize: 13.5 } }], { x: M + 0.8, y, w: W - 2 * M - 0.8, h: 0.7, fontFace: FONT, valign: "middle" });
       s.addShape(p.shapes.LINE, { x: M, y: y + 0.78, w: W - 2 * M, h: 0, line: { color: C.line, width: 0.5 } });
@@ -259,13 +261,13 @@ function buildProblemDeck() {
   // 14 landscape
   {
     const s = base(p, { tag: "What exists today", n: nx(), total: T, source: "S08", notes: "Civarea: public marketing page inspected only; private product, model quality, adoption and coverage not established; its speed and coverage figures are vendor claims that do not transfer to us. Open-source engines: TerraSelect (EU, Apache-2.0), CERF-DC (US, BSD-3), Decision Explorer (MIT), OSDCI (US). None installed or executed; licenses checked from documentation. Advisory firms such as Colliers show the workflow exists. India alone is not a moat." });
-    title(s, "Screening tools exist. None is built for this evidence problem.", { h: 0.8 });
+    title(s, "Screening tools exist. None is built for this evidence problem.", { h: 1.2 });
     table(p, s, [
       ["Category", "Examples", "What we learned", "The gap we see"],
       ["Commercial screening", "Civarea, DC Byte Site Selector", "Polygon-led screening, evidence views, exports. Speed and coverage figures are vendor claims.", { text: "Not India-focused; unknowns folded into scores.", color: C.ink }],
       ["Open-source siting engines", "TerraSelect (EU), CERF-DC (US), OSDCI (US), Decision Explorer", "Transparent pass/fail and cost structures; EU and US data and weights.", { text: "No unknown or conflict state; no private-document reconciliation.", color: C.ink }],
       ["Advisory practice", "Data-centre advisory teams at large brokerages", "The workflow is real and repeated; evidence lives in documents and heads.", { text: "Manual reconciliation; nothing versioned or exportable.", color: C.ink }],
-    ], { y: 1.85, colW: [2.3, 2.9, 3.6, W - 2 * M - 8.8], size: 11.5 });
+    ], { y: 2.1, colW: [2.3, 2.9, 3.6, W - 2 * M - 8.8], size: 11.5 });
     body(s, "India alone is not a moat. A durable advantage would need local evidence integrations, expert-reviewed workflows and measured reliability. For now these are product hypotheses, not proven unique capabilities.", { y: 5.45, h: 0.9, size: 13.5, color: C.dim });
   }
 
@@ -275,7 +277,7 @@ function buildProblemDeck() {
     title(s, "Why a map, why an agent, why now.");
     const cols = [["Why a map", "Sites have neighbours: substations, carrier facilities, rivers, other candidates. Geography makes those relationships inspectable. It is not proof of feasibility by itself."], ["Why an agent", "Every project brings different documents, requirements and gaps. Something has to read them, notice contradictions and decide which check comes next. The arithmetic must never be that something."], ["Why now", "Demand is projected to nearly double by 2030. India is empaneling tens of thousands of GPUs. Modular facilities widen the set of places worth investigating. More sites, same fragmented evidence."]];
     const cw = (W - 2 * M - 0.35 * 2) / 3;
-    cols.forEach((c, i) => card(p, s, { x: M + i * (cw + 0.35), y: 2.1, w: cw, h: 3.6, label: c[0], note: c[1], accent: [C.blue, C.teal, C.amber][i] }));
+    cols.forEach((c, i) => card(p, s, { x: M + i * (cw + 0.35), y: 2.1, w: cw, h: 3.6, label: c[0], note: c[1], accent: [C.blue, C.teal, C.amber][i], noteSize: 15 }));
   }
 
   // 16 problem statement
@@ -284,7 +286,7 @@ function buildProblemDeck() {
     s.addShape(p.shapes.RECTANGLE, { x: M, y: 1.0, w: 0.08, h: 2.4, fill: { color: C.teal }, line: { color: C.teal, width: 0 } });
     s.addText("An agent that investigates whether a proposed Indian data-centre site can meet a project's requirements — and shows exactly what remains unproven.", { x: M + 0.35, y: 0.95, w: W - 2 * M - 0.4, h: 2.5, fontFace: FONT, fontSize: 30, bold: true, color: C.ink, valign: "top" });
     const rem = [["AI has physical requirements.", "Power, cooling, water, land, fibre, time."], ["Location choices combine interacting constraints.", "One requirement change can flip a site."], ["A good system says what it knows and what still needs proof.", "Unknown is an answer. So is conflict."]];
-    rem.forEach((r, i) => card(p, s, { x: M + i * ((W - 2 * M - 0.6) / 3 + 0.3), y: 4.0, w: (W - 2 * M - 0.6) / 3, h: 1.9, label: `Remember ${i + 1}`, note: `${r[0]}\n\n${r[1]}`, accent: C.teal }));
+    rem.forEach((r, i) => card(p, s, { x: M + i * ((W - 2 * M - 0.6) / 3 + 0.3), y: 4.0, w: (W - 2 * M - 0.6) / 3, h: 1.9, label: `Remember ${i + 1}`, note: `${r[0]}\n\n${r[1]}`, accent: C.teal, noteSize: 13.5 }));
     body(s, "Deck 2 shows how Compute Atlas does this, what we chose not to do, and what we measured.", { y: 6.15, h: 0.5, size: 13, color: C.dim });
   }
 
@@ -358,7 +360,7 @@ function buildSolutionDeck() {
   // 6 arithmetic
   {
     const s = base(p, { tag: "Deterministic screening core · lib/analysis", n: nx(), total: T, notes: "Formulas from the methodology doc, implemented in evaluate.ts and covered by tests. Modular preset in the product is 5 MW IT, PUE 1.18, utilisation 0.85, WUE 0.05: full load 5.9 MW, 43,931 MWh, INR 30.75 crore, 5,100 L/day. Shared factors isolate scale; real PUE and WUE differ by cooling design." });
-    title(s, "The maths is small, explicit and tested. The model never touches it.", { h: 0.8 });
+    title(s, "The maths is small, explicit and tested. The model never touches it.", { h: 1.2 });
     table(p, s, [
       ["Quantity", "Formula", "Campus preset (20 MW IT)", "Modular preset (5 MW IT)"],
       ["Full-load connection", "IT MW × PUE", { text: "26.0 MW", color: C.ink, bold: true }, { text: "5.9 MW", color: C.ink, bold: true }],
@@ -366,14 +368,14 @@ function buildSolutionDeck() {
       ["Annual energy", "average MW × 8,760 h", "1,82,208 MWh", "43,931 MWh"],
       ["Annual energy cost", "MWh × 1,000 × ₹/kWh", "₹127.55 crore @ ₹7", "₹30.75 crore @ ₹7"],
       ["Daily water", "IT MW × util. × 24,000 × WUE", "1,92,000 L/day @ 0.5", "5,100 L/day @ 0.05"],
-    ], { y: 1.85, colW: [2.6, 3.3, 3.0, W - 2 * M - 8.9], size: 12.5 });
+    ], { y: 2.15, colW: [2.6, 3.3, 3.0, W - 2 * M - 8.9], size: 12.5 });
     bullets(s, [["Utilisation is excluded from the connection figure on purpose.", "The DISCOM must carry full load, not the average."], ["Presets differ in PUE and WUE", "because a modular unit with a different cooling design is not a scaled-down campus. Both remain editable assumptions."]], { y: 5.05, h: 1.3, size: 13.5 });
   }
 
   // 7 architecture
   {
     const s = base(p, { tag: "Architecture", n: nx(), total: T, notes: "Next.js App Router, TypeScript, Tailwind. MapLibre GL JS renders a Mapbox dark style (projection and fog stripped, mapbox:// URLs rewritten) with mapbox-gl-draw shimmed for MapLibre and Turf for geodesic area. /api/assess is deterministic; the client sends a centroid and the server derives nearest facility, climate and distances. /api/investigate streams NDJSON tool events and narrative; with no API key it runs the same tools with deterministic narration labelled 'recorded run'. Model selected by ANTHROPIC_MODEL_ID; switching to Fable is an env change." });
-    title(s, "Three layers. Only the middle one is allowed to state a fact.", { h: 0.8 });
+    title(s, "Three layers. Only the middle one may state a fact.", { h: 0.8 });
     const layers = [["Browser", "MapLibre GL JS + Mapbox dark style · mapbox-gl-draw · Turf area\nMap, polygon editing, dossier, compare tray, export.\nSends a centroid. Asserts no geography.", C.blue], ["Next.js route handlers", "/api/assess: validates the brief, derives nearest facility, climate and distances on the server, returns a versioned assessment.\n/api/investigate: NDJSON stream of real tool calls and narrative. Recorded fallback when the provider is absent or fails.", C.teal], ["Pure core + data registry", "lib/analysis: evaluate.ts and geometry.ts — pure, versioned (atlas-2), 18 node:test cases.\nlib/agent/tools.ts: five server-owned tools + system prompt.\nlib/data.ts: every record carries provenance and scale.", C.amber]];
     layers.forEach((l, i) => {
       const y = 1.85 + i * 1.45;
@@ -411,40 +413,40 @@ function buildSolutionDeck() {
   // 10 conflict
   {
     const s = base(p, { tag: "Investigation · after ingesting two documents that disagree", n: nx(), total: T, notes: "Ingesting the synthetic broker brief (30 MW by June 2027, indicative) and the synthetic utility note (12 MW conditional, earliest December 2027, no binding commitment) turns power into conflict and energisation into fail against a 30 June 2027 opening. The agent cites both, picks no winner, and asks for a DISCOM connection study. This is the point of the product." });
-    title(s, "Two documents, one parcel. The contradiction is surfaced, not resolved.", { h: 0.8 });
-    screenshot(p, s, "08-investigate-conflict.png", { y: 1.85, w: 7.6, caption: "Parcel A after ingesting the broker brief and utility note · power: conflict · energisation: not met" });
-    card(p, s, { x: M + 8.0, y: 1.85, w: W - 2 * M - 8.0, h: 1.35, label: "Broker brief · synthetic", value: "30 MW", unit: "by June 2027 · indicative", accent: C.blue, valueSize: 24 });
-    card(p, s, { x: M + 8.0, y: 3.35, w: W - 2 * M - 8.0, h: 1.35, label: "Utility note · synthetic", value: "12 MW", unit: "conditional · earliest Dec 2027", accent: C.amber, valueSize: 24 });
-    s.addText([{ text: "Grid capacity → ", options: { color: C.muted } }, { text: "Conflict", options: { color: C.blue, bold: true } }, { text: "\nEnergisation before 30 Jun 2027 → ", options: { color: C.muted } }, { text: "Not met", options: { color: C.red, bold: true } }, { text: "\n\nNext check the agent asks for: a DISCOM connection study naming this parcel.", options: { color: C.ink } }], { x: M + 8.0, y: 4.9, w: W - 2 * M - 8.0, h: 1.4, fontFace: FONT, fontSize: 12.5, valign: "top" });
+    title(s, "Two documents, one parcel. The contradiction is surfaced, not resolved.", { h: 1.2 });
+    screenshot(p, s, "08-investigate-conflict.png", { y: 2.1, w: 7.6, caption: "Parcel A after ingesting the broker brief and utility note · power: conflict · energisation: not met" });
+    card(p, s, { x: M + 8.0, y: 2.1, w: W - 2 * M - 8.0, h: 1.35, label: "Broker brief · synthetic", value: "30 MW", unit: "by June 2027 · indicative", accent: C.blue, valueSize: 24 });
+    card(p, s, { x: M + 8.0, y: 3.6, w: W - 2 * M - 8.0, h: 1.35, label: "Utility note · synthetic", value: "12 MW", unit: "conditional · earliest Dec 2027", accent: C.amber, valueSize: 24 });
+    s.addText([{ text: "Grid capacity → ", options: { color: C.muted } }, { text: "Conflict", options: { color: C.blue, bold: true } }, { text: "\nEnergisation before 30 Jun 2027 → ", options: { color: C.muted } }, { text: "Not met", options: { color: C.red, bold: true } }, { text: "\n\nNext check the agent asks for: a DISCOM connection study naming this parcel.", options: { color: C.ink } }], { x: M + 8.0, y: 5.1, w: W - 2 * M - 8.0, h: 1.3, fontFace: FONT, fontSize: 12.5, valign: "top" });
   }
 
   // 11 modular
   {
     const s = base(p, { tag: "Scenario · same parcel, different workload", n: nx(), total: T, notes: "Switching to the modular preset (5 MW IT, PUE 1.18, utilisation 0.85, WUE 0.05) yields 5.9 MW full load and 5,100 L/day. Water now passes the 1,50,000 L/day cap. The power conflict does not go away: 12 MW conditional versus 30 MW claimed is still two sources disagreeing. Changing a preset creates a new assessment version; history is not rewritten." });
-    title(s, "Change the workload and watch which constraints move. Some do not.", { h: 0.8 });
-    screenshot(p, s, "09-modular.png", { y: 1.85, w: 7.6, caption: "Modular preset · 5.9 MW full load · 5,100 L/day · water now passes; the power conflict remains" });
+    title(s, "Change the workload and watch which constraints move. Some do not.", { h: 1.2 });
+    screenshot(p, s, "09-modular.png", { y: 2.1, w: 7.6, caption: "Modular preset · 5.9 MW full load · 5,100 L/day · water now passes; the power conflict remains" });
     table(p, s, [
       ["Criterion", "Campus", "Modular"],
       ["Full-load connection", "26.0 MW", "5.9 MW"],
       ["Water per day", { text: "1,92,000 L · fail", color: C.red }, { text: "5,100 L · pass", color: C.teal }],
       ["Grid capacity", { text: "conflict", color: C.blue }, { text: "conflict", color: C.blue }],
-      ["Energisation", { text: "not met", color: C.red }, { text: "not met (Dec 2027 > Dec 2026)", color: C.red }],
-    ], { x: M + 8.0, y: 1.85, w: W - 2 * M - 8.0, colW: [1.9, 1.15, W - 2 * M - 8.0 - 3.05], size: 11 });
-    body(s, "A location can be wrong for one mode and worth investigating for the other. That is a hypothesis the product tests against declared requirements, not a promised conclusion.", { x: M + 8.0, y: 4.35, w: W - 2 * M - 8.0, h: 1.8, size: 12, color: C.muted });
+      ["Energisation", { text: "not met", color: C.red }, { text: "not met", color: C.red }],
+    ], { x: M + 8.0, y: 2.1, w: W - 2 * M - 8.0, colW: [1.9, 1.15, W - 2 * M - 8.0 - 3.05], size: 11 });
+    body(s, "A location can be wrong for one mode and worth investigating for the other. That is a hypothesis the product tests against declared requirements, not a promised conclusion.", { x: M + 8.0, y: 4.6, w: W - 2 * M - 8.0, h: 1.8, size: 12, color: C.muted });
   }
 
   // 12 compare + export
   {
     const s = base(p, { tag: "Compare and export", n: nx(), total: T, notes: "Comparison of parcels A and B on identical criteria. Coverage differs between sites (B has a sourced 30 MW figure and no energisation date), so no overall score is produced; a single ranking number would hide the reason. Export writes a JSON evidence pack with inputs, sources, criterion states, unknowns and calculationVersion." });
-    title(s, "Compare on identical criteria. Refuse to produce a single number.", { h: 0.8 });
-    screenshot(p, s, "06-compare.png", { y: 1.85, w: 8.3, caption: "Comparison tray · Bhopal versus Indore parcels · the footer says why there is no overall score" });
-    bullets(s, [["Same criteria, side by side.", "Up to three candidates. Where one site has a sourced figure and another does not, the difference in coverage is visible, not averaged."], ["Unresolved count per site", "is shown separately from pass or fail."], ["Export", "writes a JSON evidence pack: brief, geometry, every criterion with required, observed and basis, sources, unknowns and the calculation version."], ["Fixture labels survive export.", "A synthetic parcel stays synthetic in the file."]], { x: M + 8.7, y: 1.85, w: W - 2 * M - 8.7, h: 4.6, size: 12, gap: 9 });
+    title(s, "Compare on identical criteria. Refuse to produce a single number.", { h: 1.2 });
+    screenshot(p, s, "06-compare.png", { y: 2.1, w: 7.9, caption: "Comparison tray · Bhopal versus Indore parcels · the footer says why there is no overall score" });
+    bullets(s, [["Same criteria, side by side.", "Up to three candidates. Where one site has a sourced figure and another does not, the difference in coverage is visible, not averaged."], ["Unresolved count per site", "is shown separately from pass or fail."], ["Export", "writes a JSON evidence pack: brief, geometry, every criterion with required, observed and basis, sources, unknowns and the calculation version."], ["Fixture labels survive export.", "A synthetic parcel stays synthetic in the file."]], { x: M + 8.7, y: 2.1, w: W - 2 * M - 8.7, h: 4.4, size: 12, gap: 9 });
   }
 
   // 13 data
   {
     const s = base(p, { tag: "What is real and what is not", n: nx(), total: T, source: "S24", notes: "Real: NASA POWER monthly climatology 2001-2020 for six cities (six HTTP 200 responses saved with receipts); PeeringDB India facilities, 246 records of which 203 have coordinates; geoBoundaries India ADM1, 36 features, represented year 2011 flagged for review; Mapbox basemap. Synthetic: three parcels, broker brief, utility note, every 'available MW' figure. Invariant 4: synthetic stays labelled." });
-    title(s, "Real context data. Synthetic parcels. Never the two confused.", { h: 0.8 });
+    title(s, "Real context data. Synthetic parcels. Never the two confused.", { h: 1.2 });
     table(p, s, [
       ["Dataset", "Status", "Scale", "What it is not"],
       ["NASA POWER climatology 2001–2020, six cities", { text: "Retrieved · six HTTP 200 receipts", color: C.teal }, "~0.5° grid cell, monthly means", "Not a site sensor. Not a cooling design day."],
@@ -454,7 +456,7 @@ function buildSolutionDeck() {
       ["Three demonstration parcels", { text: "Synthetic · labelled FIXTURE", color: C.amber }, "Fictional", "Not land offers, ownership or utility commitments."],
       ["Broker brief and utility note", { text: "Synthetic · labelled", color: C.amber }, "Fictional", "Not issued by anyone. Exist to show a conflict."],
       ["Power network, water stress, flood hazard", { text: "Unavailable · reported as unknown", color: C.red }, "—", "Not approximated. Not interpolated."],
-    ], { y: 1.85, colW: [3.4, 3.1, 2.4, W - 2 * M - 8.9], size: 11 });
+    ], { y: 2.1, colW: [3.4, 3.1, 2.4, W - 2 * M - 8.9], size: 11 });
   }
 
   // 14 constraints we chose
@@ -463,14 +465,14 @@ function buildSolutionDeck() {
     title(s, "Six rules we wrote down before writing the code.", { h: 0.8 });
     const inv = [["Absent evidence is unknown, never pass.", "No default, no estimate, no reasonable assumption fills a missing capacity figure."], ["Contradictory evidence is conflict.", "Both figures and sources are shown. No winner, in code or in the prompt."], ["The model cannot supply observations.", "Every number it states comes from a tool result. evaluateConstraints is authoritative."], ["Synthetic data stays labelled.", "Parcels and documents are fictional and every surface says so."], ["Context is not commitment.", "A nearby carrier facility is not fibre; a stated date is not a signed agreement. Caveats travel with values."], ["Server owns geography; pure logic gets a test.", "The client sends a centroid. UI does no arithmetic. Screening maths changes bump the calculation version."]];
     const cw = (W - 2 * M - 0.3 * 2) / 3;
-    inv.forEach((it, i) => card(p, s, { x: M + (i % 3) * (cw + 0.3), y: 1.85 + Math.floor(i / 3) * 2.2, w: cw, h: 2.0, label: `Invariant ${i + 1}`, note: `${it[0]}\n\n${it[1]}`, accent: i < 3 ? C.teal : C.blue }));
+    inv.forEach((it, i) => card(p, s, { x: M + (i % 3) * (cw + 0.3), y: 1.85 + Math.floor(i / 3) * 2.2, w: cw, h: 2.0, label: `Invariant ${i + 1}`, note: `${it[0]}\n\n${it[1]}`, accent: i < 3 ? C.teal : C.blue, noteSize: 13 }));
   }
 
   // 15 constraints we have
   {
     const s = base(p, { tag: "Constraints we have · known limits", n: nx(), total: T, notes: "Honest boundaries. Screening only: no ownership, permitting, utility commitment or power-flow certification is implied, and the product says so in every assessment notice." });
     title(s, "What the prototype cannot tell you, and says so.", { h: 0.8 });
-    bullets(s, [["No power-network or water-stress layers yet.", "CEA access failed, Aqueduct is basin-scale and not extracted. Those criteria read unknown, not approximated."], ["Climate is a coarse grid cell.", "Six sample points; beyond 400 km from a sample the profile reports unknown. Monthly means, not design days."], ["Land area is gross polygon area.", "Not net buildable after setbacks. The label says so."], ["Parcels and documents are synthetic.", "Real utility letters and a real shortlist need a consenting partner."], ["Boundary vintage needs review", "before any public deployment; the dataset represents 2011."], ["PeeringDB redistribution terms", "need review before shipping the extract publicly."], ["Single-user, local state.", "No accounts, persistence or private document storage yet."], ["Screening, not certification.", "No ownership, permitting, utility commitment or power-flow certification is implied."]], { y: 1.85, h: 4.6, size: 13.5, gap: 7, w: W - 2 * M });
+    bullets(s, [["No power-network or water-stress layers yet.", "CEA access failed, Aqueduct is basin-scale and not extracted. Those criteria read unknown, not approximated."], ["Climate is a coarse grid cell.", "Six sample points; beyond 400 km from a sample the profile reports unknown. Monthly means, not design days."], ["Land area is gross polygon area.", "Not net buildable after setbacks. The label says so."], ["Parcels and documents are synthetic.", "Real utility letters and a real shortlist need a consenting partner."], ["Boundary vintage needs review", "before any public deployment; the dataset represents 2011."], ["PeeringDB redistribution terms", "need review before shipping the extract publicly."], ["Single-user, local state.", "No accounts, persistence or private document storage yet."], ["Screening, not certification.", "No ownership, permitting, utility commitment or power-flow certification is implied."]], { y: 1.9, h: 4.6, size: 14.5, gap: 9, w: W - 2 * M });
   }
 
   // 16 results
@@ -494,8 +496,8 @@ function buildSolutionDeck() {
   {
     const s = base(p, { tag: "Credit where it is due", n: nx(), total: T, notes: "Do not attribute MapLibre rendering, fixed formulas or prerecorded animation to model intelligence. 'Built with Claude Code' and 'powered by a Claude model at runtime' are different claims; both are true here and are stated separately. Tool events and resulting actions are the evidence of work; no hidden chain of thought is shown or manufactured." });
     title(s, "What the model does, and what is just software.", { h: 0.8 });
-    card(p, s, { x: M, y: 1.85, w: (W - 2 * M - 0.4) / 2, h: 4.2, label: "The model, at runtime", note: "Decides which tools to call for a given question.\nReads ingested documents and extracts claims with paragraph references.\nRecognises when two claims cannot both be true and names both.\nDistinguishes context from commitment in its narrative.\nChooses the single most valuable next check and who owns it.\nAdmits when there is nothing to weigh.", accent: C.teal });
-    card(p, s, { x: M + (W - 2 * M - 0.4) / 2 + 0.4, y: 1.85, w: (W - 2 * M - 0.4) / 2, h: 4.2, label: "Ordinary, deterministic software", note: "Map rendering, polygon drawing, geodesic area.\nEvery MW, MWh, litre and rupee figure.\nEvery pass, fail, unknown or conflict state.\nNearest facility and climate cell.\nVersioning, export, stale-response guarding.\n\nThe model narrates these. It cannot change them.", accent: C.blue });
+    card(p, s, { x: M, y: 1.85, w: (W - 2 * M - 0.4) / 2, h: 4.2, noteSize: 14.5, label: "The model, at runtime", note: "Decides which tools to call for a given question.\nReads ingested documents and extracts claims with paragraph references.\nRecognises when two claims cannot both be true and names both.\nDistinguishes context from commitment in its narrative.\nChooses the single most valuable next check and who owns it.\nAdmits when there is nothing to weigh.", accent: C.teal });
+    card(p, s, { x: M + (W - 2 * M - 0.4) / 2 + 0.4, y: 1.85, w: (W - 2 * M - 0.4) / 2, h: 4.2, noteSize: 14.5, label: "Ordinary, deterministic software", note: "Map rendering, polygon drawing, geodesic area.\nEvery MW, MWh, litre and rupee figure.\nEvery pass, fail, unknown or conflict state.\nNearest facility and climate cell.\nVersioning, export, stale-response guarding.\n\nThe model narrates these. It cannot change them.", accent: C.blue });
     body(s, "Built with Claude Code; investigated at runtime by a Claude model selected by environment variable. Two separate claims, both true, stated separately.", { y: 6.15, h: 0.5, size: 12, color: C.dim });
   }
 
@@ -505,7 +507,7 @@ function buildSolutionDeck() {
     title(s, "From a labelled prototype to an expert-reviewed pilot.", { h: 0.8 });
     const stages = [["Now · demonstration", "Connected polygon-to-export journey, six anchors, real context data, synthetic fixtures, live and recorded investigation."], ["Next · expert pilot", "One consenting advisory partner. One real three-to-six-site shortlist, redacted utility letters, a domain reviewer and a fixed rubric."], ["Then · operational", "Projects, versioned evidence libraries, permissions, report templates, async GIS jobs, source-refresh alerts, audit history."], ["Later · advanced modelling", "Hourly supply profiles, cooling-engineering integration, route-aware connection costs, reliability scenarios."]];
     const cw = (W - 2 * M - 0.3 * 3) / 4;
-    stages.forEach((st, i) => card(p, s, { x: M + i * (cw + 0.3), y: 1.85, w: cw, h: 2.35, label: st[0], note: st[1], accent: i === 0 ? C.teal : i === 1 ? C.blue : C.dim }));
+    stages.forEach((st, i) => card(p, s, { x: M + i * (cw + 0.3), y: 1.85, w: cw, h: 2.35, label: st[0], note: st[1], accent: i === 0 ? C.teal : i === 1 ? C.blue : C.dim, noteSize: 12.5 }));
     bullets(s, [["Data backlog:", "bounded WRI Aqueduct extract · CEA power-map reference · NRSC Bhuvan flood extract · OSM Overpass substations and lines for bounded areas · real redacted utility letters."], ["Pilot metrics:", "analyst time to a sourced shortlist · share of findings with valid citations · correction rate after expert review · does the team come back for a second project."], ["Not claimed:", "revenue, pricing, time-saving percentages or superiority over a consultant. All of those wait for the pilot to measure them."]], { y: 4.4, h: 2.0, size: 13, gap: 8 });
   }
 
