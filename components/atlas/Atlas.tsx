@@ -11,9 +11,16 @@ import Investigation, { type Evt } from "@/components/panels/Investigation";
 import BriefSheet from "@/components/panels/BriefSheet";
 import CompareTray from "@/components/panels/CompareTray";
 import SitesPanel from "@/components/panels/SitesPanel";
+import EvidencePanel, { type IngestedDoc } from "@/components/panels/EvidencePanel";
+import LayerLegend from "@/components/panels/LayerLegend";
+import PlaceSearch from "@/components/panels/PlaceSearch";
+import { reconcile, type Claim } from "@/lib/analysis/extract";
+import { appendRun, describeChange, diff, type Delta, type Run } from "@/lib/analysis/scenario";
+import { stashReport } from "@/lib/report";
 import { parsePolygon, validatePolygon } from "@/lib/analysis/geometry";
 import { SyntheticBadge } from "@/components/panels/ui";
 import type { Bookmark } from "@/lib/data";
+import { SOURCES_PUBLIC } from "@/lib/sources";
 
 import type { DrawControls } from "./AtlasCanvas";
 
@@ -22,6 +29,10 @@ const AtlasCanvas = dynamic(() => import("./AtlasCanvas"), { ssr: false });
 export type DemoSite = {
   id: string; name: string; kind: string; notice: string;
   geometry: Polygon; availableMW: number | null; waterCapLDay: number | null;
+};
+
+const STATE_WORDS: Record<string, string> = {
+  pass: "Supported", fail: "Not met", unknown: "Unknown", conflict: "Conflict",
 };
 
 const hectares = (g: Polygon) => turf.area(turf.polygon(g.coordinates)) / 10_000;
@@ -48,10 +59,14 @@ export default function Atlas({
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<"live" | "recorded" | null>(null);
   const [layers, setLayers] = useState({ states: true, facilities: true, candidates: true });
-  const [evidenceAdded, setEvidenceAdded] = useState(false);
   const [compare, setCompare] = useState<Array<{ id: string; name: string; assessment: Assessment }>>([]);
   const [showCompare, setShowCompare] = useState(false);
-  const [leftTab, setLeftTab] = useState<"sites" | "brief" | "layers">("sites");
+  const [leftTab, setLeftTab] = useState<"sites" | "brief" | "evidence" | "layers">("sites");
+  const [docs, setDocs] = useState<IngestedDoc[]>([]);
+  const [evidenceBusy, setEvidenceBusy] = useState(false);
+  const [evidenceError, setEvidenceError] = useState<string | null>(null);
+  const [history, setHistory] = useState<Run[]>([]);
+  const [deltas, setDeltas] = useState<Delta[]>([]);
   const [drawing, setDrawing] = useState(false);
   const [geomError, setGeomError] = useState<string | null>(null);
   const [hasGeometry, setHasGeometry] = useState(false);
@@ -84,27 +99,37 @@ export default function Atlas({
 
   const areaHa = active ? hectares(active.geometry) : null;
 
-  /** Site A gains a documented contradiction once the utility note is ingested. */
+  /** Claims for the selected site, and what they reconcile to. */
+  const siteDocs = useMemo(
+    () => docs.filter((d) => d.meta.siteId === (active?.id ?? "")),
+    [docs, active]
+  );
+  const reconciled = useMemo(
+    () => reconcile(siteDocs.flatMap((d) => d.claims) as Claim[]),
+    [siteDocs]
+  );
+
   const sitePayload = useCallback(() => {
     if (!active) return null;
-    const conflict =
-      evidenceAdded && active.id === "A"
-        ? { claim: "Broker brief: 30 MW by June 2027", counterClaim: "Utility note: 12 MW, conditional, Dec 2027" }
-        : (false as const);
+    // Ingested evidence takes precedence over a fixture figure; a contradiction
+    // resolves to no number at all, which the engine reports as a conflict.
     return {
       id: active.id,
       name: active.name,
       kind: active.kind,
       areaHectares: areaHa,
-      availableMW: active.availableMW,
-      availableFromDate: evidenceAdded && active.id === "A" ? "2027-12-01" : null,
-      waterCapLDay: active.waterCapLDay,
-      powerConflict: conflict,
+      availableMW: reconciled.powerConflict
+        ? null
+        : reconciled.availableMW ?? active.availableMW,
+      availableFromDate: reconciled.availableFromDate,
+      waterCapLDay: reconciled.waterCapLDay ?? active.waterCapLDay,
+      powerConflict: reconciled.powerConflict,
     };
-  }, [active, areaHa, evidenceAdded]);
+  }, [active, areaHa, reconciled]);
 
   // Re-assess whenever the brief, site or evidence changes. Stale responses are dropped.
   const runId = useRef(0);
+  const lastRun = useRef<{ brief: ProjectBrief; assessment: Assessment } | null>(null);
   useEffect(() => {
     const site = sitePayload();
     if (!site || !active) { setAssessment(null); setContext(null); return; }
@@ -118,8 +143,24 @@ export default function Atlas({
       .then((r) => r.json())
       .then((d) => {
         if (id !== runId.current) return; // a newer request has superseded this one
+        // Deltas are computed against the previous run held in a ref, never
+        // inside a state updater — updaters run during render and must be pure.
+        const prev = lastRun.current;
+        const sameSite = prev?.assessment.siteId === d.assessment.siteId;
+        setDeltas(sameSite && prev ? diff(prev.assessment, d.assessment) : []);
         setAssessment(d.assessment);
         setContext(d.context);
+
+        const movedCriteria =
+          !prev || !sameSite || JSON.stringify(prev.assessment.criteria) !== JSON.stringify(d.assessment.criteria);
+        const movedBrief = !prev || JSON.stringify(prev.brief) !== JSON.stringify(brief);
+        if (movedCriteria || movedBrief) {
+          const label = sameSite && prev ? describeChange(prev.brief, brief) : `${site.name} — initial run`;
+          setHistory((h) =>
+            appendRun(h, { at: new Date().toISOString(), siteId: d.assessment.siteId, label, brief, assessment: d.assessment })
+          );
+          lastRun.current = { brief, assessment: d.assessment };
+        }
       })
       .catch(() => {});
   }, [brief, sitePayload, active]);
@@ -161,7 +202,12 @@ export default function Atlas({
           brief,
           site,
           centroid: centroidOf(active.geometry),
-          evidenceIds: evidenceAdded && active.id === "A" ? ["demo-broker-A", "demo-utility-A"] : [],
+          documents: siteDocs.map((d) => ({
+            id: d.meta.id,
+            title: d.meta.title,
+            origin: d.meta.origin,
+            claims: d.claims,
+          })),
         }),
         signal: ac.signal,
       });
@@ -190,7 +236,7 @@ export default function Atlas({
     } finally {
       setBusy(false);
     }
-  }, [brief, active, sitePayload, evidenceAdded]);
+  }, [brief, active, sitePayload, siteDocs]);
 
   const handleDraw = useCallback((f: Feature<Polygon> | null) => {
     setDrawing(false);
@@ -252,6 +298,83 @@ export default function Atlas({
     });
   };
 
+  const ingest = useCallback(async (payload: FormData | { title: string; text: string }) => {
+    if (!active) return;
+    setEvidenceBusy(true);
+    setEvidenceError(null);
+    try {
+      const res =
+        payload instanceof FormData
+          ? await fetch("/api/evidence", { method: "POST", body: payload })
+          : await fetch("/api/evidence", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ siteId: active.id, ...payload }),
+            });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error ?? "Could not read that document.");
+      setDocs((d) => [...d, { meta: data.document, claims: data.claims }]);
+      setLeftTab("evidence");
+    } catch (e) {
+      setEvidenceError(e instanceof Error ? e.message : "Ingestion failed.");
+    } finally {
+      setEvidenceBusy(false);
+    }
+  }, [active]);
+
+  const uploadEvidence = (file: File) => {
+    if (!active) return;
+    const fd = new FormData();
+    fd.append("siteId", active.id);
+    fd.append("file", file);
+    void ingest(fd);
+  };
+
+  /** Loads the two synthetic demo documents through the same ingestion path. */
+  const loadFixtures = useCallback(async () => {
+    if (!active) return;
+    setEvidenceBusy(true);
+    setEvidenceError(null);
+    try {
+      for (const [file, title] of [
+        ["/data/sample-broker-brief.txt", "Broker brief (synthetic)"],
+        ["/data/sample-utility-note.txt", "Utility note (synthetic)"],
+      ] as const) {
+        const text = await fetch(file).then((r) => r.text());
+        const res = await fetch("/api/evidence", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ siteId: active.id, title, text }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error ?? "Could not load the demo documents.");
+        setDocs((d) => [...d, { meta: { ...data.document, origin: "fixture" }, claims: data.claims }]);
+      }
+      setLeftTab("evidence");
+    } catch (e) {
+      setEvidenceError(e instanceof Error ? e.message : "Could not load the demo documents.");
+    } finally {
+      setEvidenceBusy(false);
+    }
+  }, [active]);
+
+  const openReport = () => {
+    if (!assessment || !active) return;
+    const key = stashReport({
+      generatedAt: new Date().toISOString(),
+      siteName: active.name,
+      siteKind: active.kind,
+      areaHectares: areaHa,
+      brief,
+      assessment,
+      history: history.map((r) => ({ version: r.version, label: r.label, at: r.at })),
+      documents: siteDocs.map((d) => ({ title: d.meta.title, origin: d.meta.origin, claims: d.claims })),
+      context,
+      sources: SOURCES_PUBLIC,
+    });
+    window.open(`/report?k=${encodeURIComponent(key)}`, "_blank", "noopener");
+  };
+
   const addToCompare = () => {
     if (!active || !assessment) return;
     setCompare((p) =>
@@ -267,7 +390,8 @@ export default function Atlas({
       site: sitePayload(),
       assessment,
       context,
-      evidenceIngested: evidenceAdded ? ["demo-broker-A", "demo-utility-A"] : [],
+      evidence: siteDocs.map((d) => ({ ...d.meta, claims: d.claims })),
+      history: history.map((r) => ({ version: r.version, label: r.label, at: r.at })),
       notice: "Screening export. Synthetic parcels and documents. Not an engineering or legal opinion.",
     };
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
@@ -315,19 +439,21 @@ export default function Atlas({
           </p>
         </div>
 
-        <div className="glass pointer-events-auto flex items-center gap-1 rounded-panel p-1">
+        <div className="glass pointer-events-auto flex min-w-0 max-w-[calc(100vw-24px)] items-center gap-1 rounded-panel p-1">
           <button
             onClick={() => setRailOpen((v) => !v)}
             aria-expanded={railOpen}
             aria-label={railOpen ? "Hide project panel" : "Show project panel"}
-            className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink"
+            className="shrink-0 rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink"
           >
             {railOpen ? "◀ Panel" : "▶ Panel"}
           </button>
-          <span className="mx-1 h-4 w-px bg-white/10" />
+          <span className="mx-1 h-4 w-px shrink-0 bg-white/10" />
+          {/* Regional anchors scroll rather than pushing the actions off-screen. */}
+          <div className="flex min-w-0 items-center gap-1 overflow-x-auto">
           <button
             onClick={flyNational}
-            className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink"
+            className="shrink-0 rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink"
           >
             India
           </button>
@@ -336,18 +462,32 @@ export default function Atlas({
               key={b.id}
               onClick={() => flyTo(b)}
               title={b.parcelId ? `Frames parcel ${b.parcelId}` : "Regional climate anchor"}
-              className="hidden rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink sm:block"
+              className="hidden shrink-0 rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink sm:block"
             >
               {b.name}
             </button>
           ))}
-          <span className="mx-1 h-4 w-px bg-white/10" />
+          </div>
+          <span className="mx-1 hidden h-4 w-px shrink-0 bg-white/10 lg:block" />
+          <div className="hidden shrink-0 lg:block">
+          <PlaceSearch
+            onPick={(pl) => mapRef.current?.flyTo({ center: pl.center, zoom: 11, duration: 1100 })}
+          />
+          </div>
+          <span className="mx-1 h-4 w-px shrink-0 bg-white/10" />
+          <button
+            onClick={openReport}
+            disabled={!assessment}
+            className="shrink-0 rounded-[6px] px-2.5 py-1.5 text-[11px] font-semibold text-active transition hover:bg-active/10 disabled:opacity-30"
+          >
+            Report
+          </button>
           <button
             onClick={exportBrief}
             disabled={!assessment}
-            className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-semibold text-active transition hover:bg-active/10 disabled:opacity-30"
+            className="shrink-0 rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink disabled:opacity-30"
           >
-            Export
+            JSON
           </button>
         </div>
       </header>
@@ -358,16 +498,16 @@ export default function Atlas({
         className="glass absolute left-3 top-[86px] z-20 w-[262px] overflow-hidden rounded-panel"
       >
         <div className="flex border-b hairline border-b">
-          {(["sites", "brief", "layers"] as const).map((t) => (
+          {(["sites", "brief", "evidence", "layers"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setLeftTab(t)}
               aria-pressed={leftTab === t}
-              className={`flex-1 px-2 py-2 text-[11px] font-semibold uppercase tracking-[.1em] transition ${
+              className={`flex-1 px-1.5 py-2 text-[10px] font-semibold uppercase tracking-[.08em] transition ${
                 leftTab === t ? "text-active" : "text-muted hover:text-ink"
               }`}
             >
-              {t === "sites" ? "Sites" : t === "brief" ? "Project" : "Layers"}
+              {t === "sites" ? "Sites" : t === "brief" ? "Project" : t === "evidence" ? `Docs${docs.length ? ` ${docs.length}` : ""}` : "Layers"}
             </button>
           ))}
         </div>
@@ -396,56 +536,61 @@ export default function Atlas({
           />
         ) : leftTab === "brief" ? (
           <BriefSheet brief={brief} onChange={setBrief} onPreset={(m) => setBrief(PRESETS[m])} />
+        ) : leftTab === "evidence" ? (
+          <EvidencePanel
+            docs={siteDocs}
+            siteId={active?.id ?? null}
+            siteName={active?.name ?? ""}
+            busy={evidenceBusy}
+            error={evidenceError}
+            onUpload={uploadEvidence}
+            onPaste={(title, text) => void ingest({ title, text })}
+            onRemove={(id) => setDocs((d) => d.filter((x) => x.meta.id !== id))}
+            onLoadFixtures={loadFixtures}
+            fixturesLoaded={siteDocs.some((d) => d.meta.origin === "fixture")}
+          />
         ) : (
-          <div className="space-y-2.5 p-4">
-            {([
-              ["states", "State boundaries", "geoBoundaries ADM1"],
-              ["facilities", "Carrier facilities", "PeeringDB · 203 points"],
-              ["candidates", "Candidate parcels", "Synthetic fixtures"],
-            ] as const).map(([k, label, src]) => (
-              <label key={k} className="flex cursor-pointer items-start gap-2.5">
-                <input
-                  type="checkbox"
-                  checked={layers[k]}
-                  onChange={(e) => setLayers((p) => ({ ...p, [k]: e.target.checked }))}
-                  className="mt-0.5 accent-active"
-                />
-                <span>
-                  <span className="block text-[12px] font-medium text-ink">{label}</span>
-                  <span className="block text-[10px] text-muted">{src}</span>
-                </span>
-              </label>
-            ))}
-            <div className="border-t hairline border-t pt-2.5">
-              <p className="text-[10px] leading-snug text-muted/80">
-                Layers shown are context, not capacity. Power network and water-stress layers are{" "}
-                <span className="text-caution">unavailable</span> in this prototype rather than approximated.
-              </p>
-            </div>
-          </div>
+          <LayerLegend layers={layers} onToggle={(k, v) => setLayers((p) => ({ ...p, [k]: v }))} />
         )}
       </aside>
 
-      {/* Evidence action */}
+      {/* Scenario history */}
       <div hidden={!railOpen} className="glass absolute bottom-3 left-3 z-20 w-[262px] rounded-panel p-3">
         <div className="mb-1.5 flex items-center justify-between">
-          <h3 className="text-[11px] font-semibold uppercase tracking-[.14em] text-muted">Evidence</h3>
-          <SyntheticBadge>Fixtures</SyntheticBadge>
+          <h3 className="text-[11px] font-semibold uppercase tracking-[.14em] text-muted">Scenario runs</h3>
+          <span className="tabular text-[10px] text-muted">{history.length}</span>
         </div>
-        <button
-          onClick={() => setEvidenceAdded((v) => !v)}
-          className={`w-full rounded-control px-3 py-2 text-left text-[11.5px] font-medium transition ring-1 ${
-            evidenceAdded
-              ? "bg-info/[.10] text-info ring-info/25"
-              : "bg-white/[.03] text-ink ring-white/[.06] hover:bg-white/[.06]"
-          }`}
-        >
-          {evidenceAdded ? "Utility note ingested — remove" : "Ingest broker brief + utility note"}
-        </button>
-        <p className="mt-1.5 text-[10px] leading-snug text-muted/80">
-          {evidenceAdded
-            ? "Parcel A now carries a documented contradiction: 30 MW claimed against 12 MW conditional."
-            : "Adds two synthetic documents to Parcel A. Their figures disagree."}
+        {history.length === 0 ? (
+          <p className="text-[10.5px] leading-snug text-muted/80">
+            Change an assumption or ingest a document to create a versioned run.
+          </p>
+        ) : (
+          <>
+            <ol className="max-h-[92px] space-y-0.5 overflow-y-auto">
+              {[...history].reverse().map((r) => (
+                <li key={r.version} className="flex gap-1.5 text-[10.5px] leading-snug">
+                  <span className="tabular shrink-0 text-active">v{r.version}</span>
+                  <span className="truncate text-muted" title={r.label}>{r.label}</span>
+                </li>
+              ))}
+            </ol>
+            {deltas.length > 0 && (
+              <div className="mt-2 border-t hairline border-t pt-2">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-caution">
+                  {deltas.length} finding{deltas.length > 1 ? "s" : ""} changed
+                </p>
+                {deltas.slice(0, 3).map((d) => (
+                  <p key={d.criterionId} className="mt-0.5 text-[10px] leading-snug text-muted">
+                    {d.label}: <span className="text-muted/80">{STATE_WORDS[d.from]}</span> →{" "}
+                    <span className="text-ink">{STATE_WORDS[d.to]}</span>
+                  </p>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+        <p className="mt-2 border-t hairline border-t pt-1.5 text-[10px] leading-snug text-muted/75">
+          Earlier runs are preserved; a change creates a version rather than rewriting one.
         </p>
       </div>
 
@@ -485,10 +630,32 @@ export default function Atlas({
         </div>
       )}
 
-      {!selectedId && (
+      {/* Drawing is reachable from the map itself, not only the collapsible rail. */}
+      <div className="absolute left-1/2 top-[86px] z-20 -translate-x-1/2">
+        <button
+          onClick={drawing ? clearDraw : startDraw}
+          aria-pressed={drawing}
+          className={`glass rounded-panel px-3.5 py-2 text-[12px] font-semibold shadow-lg transition ${
+            drawing ? "text-active ring-1 ring-active/40" : "text-ink hover:text-active"
+          }`}
+        >
+          {drawing ? "Cancel drawing" : "✎ Draw a site"}
+        </button>
+      </div>
+
+      {drawing && (
+        <div className="glass pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-panel px-4 py-2.5">
+          <p className="text-[11.5px] text-ink">
+            Click to place each corner · <span className="text-muted">double-click to finish</span> ·{" "}
+            <span className="text-muted">Escape cancels</span>
+          </p>
+        </div>
+      )}
+
+      {!selectedId && !drawing && (
         <div className="glass pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-panel px-4 py-2.5">
           <p className="text-[11.5px] text-muted">
-            Click a parcel, or use the polygon tool to draw anywhere in India.
+            Click a candidate parcel, or use <span className="text-ink">Draw a site</span> above.
           </p>
         </div>
       )}

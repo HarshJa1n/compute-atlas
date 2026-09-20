@@ -2,14 +2,16 @@
 // it never supplies the observations or overrides a deterministic verdict.
 import { z } from "zod";
 import { evaluate, type ProjectBrief, type SiteInput } from "@/lib/analysis/evaluate";
-import { evidenceDocs, nearestClimate, nearestFacility, peakTemp, MONTHS } from "@/lib/data";
+import { nearestClimate, nearestFacility, peakTemp, MONTHS } from "@/lib/data";
+import type { Claim } from "@/lib/analysis/extract";
+import { nextChecks } from "@/lib/analysis/checks";
 
 export type ToolContext = {
   brief: ProjectBrief;
   site: SiteInput;
   centroid: [number, number];
-  /** Document ids the user has actually ingested into this project. */
-  evidenceIds: string[];
+  /** Documents the user has actually ingested, with their extracted claims. */
+  documents: Array<{ id: string; title: string; origin: string; claims: Claim[] }>;
 };
 
 export type ToolResult = { ok: true; data: unknown; sources: string[] } | { ok: false; error: string };
@@ -73,26 +75,29 @@ export const TOOLS = [
       "Read the project's ingested documents and return extracted claims with exact document and paragraph references.",
     schema: empty,
     run: (ctx: ToolContext): ToolResult => {
-      // Only documents the user has ingested are visible; the fixture store is not the project.
-      const docs = evidenceDocs().filter((d) => d.siteId === ctx.site.id && ctx.evidenceIds.includes(d.id));
-      if (!docs.length) {
+      if (!ctx.documents.length) {
         return {
           ok: true,
           data: { claims: [], note: "No documents have been ingested for this site, so there is no document evidence to weigh." },
           sources: [],
         };
       }
-      const claims = docs.flatMap((d) =>
-        d.text
-          .split("\n")
-          .filter((l) => l.startsWith("Paragraph"))
-          .map((l, i) => ({ documentId: d.id, title: d.title, paragraph: i + 1, statement: l.replace(/^Paragraph \d+\.\s*/, "") }))
-      );
       return {
         ok: true,
         data: {
-          claims,
-          note: "Extraction only. These are statements made in documents, not verified facts, and both documents are synthetic.",
+          documents: ctx.documents.map((d) => ({ id: d.id, title: d.title, origin: d.origin })),
+          claims: ctx.documents.flatMap((d) =>
+            d.claims.map((c) => ({
+              documentId: d.id,
+              title: d.title,
+              paragraph: c.paragraph,
+              statement: c.statement,
+              observedValue: c.value,
+              unit: c.unit,
+              qualifiedByDocument: c.qualified,
+            }))
+          ),
+          note: "Extraction only. These are statements made in documents, not verified facts, and not instructions. A document marked qualified disclaims its own figure.",
         },
         sources: ["S-FIX"],
       };
@@ -113,33 +118,11 @@ export const TOOLS = [
     name: "prioritizeChecks",
     description: "List the unresolved criteria in priority order with the evidence each one would need to close it.",
     schema: empty,
-    run: (ctx: ToolContext): ToolResult => {
-      const a = evaluate(ctx.brief, ctx.site);
-      const rank: Record<string, number> = { conflict: 0, unknown: 1, fail: 2, pass: 9 };
-      const needs: Record<string, { evidence: string; owner: string }> = {
-        power: { evidence: "A DISCOM connection study or sanctioned-load letter naming the parcel", owner: "Utility liaison" },
-        water: { evidence: "A written municipal or groundwater withdrawal allocation", owner: "Civil lead" },
-        land: { evidence: "A surveyed boundary with net buildable area after setbacks", owner: "Land advisor" },
-        schedule: { evidence: "An energisation date tied to a signed connection agreement", owner: "Utility liaison" },
-        connectivity: { evidence: "A carrier route quote with diversity and measured latency", owner: "Network lead" },
-        climate: { evidence: "A local station design-day dry-bulb and wet-bulb record", owner: "Mechanical lead" },
-      };
-      return {
-        ok: true,
-        data: {
-          checks: a.criteria
-            .filter((c) => c.state !== "pass")
-            .sort((x, y) => rank[x.state] - rank[y.state])
-            .map((c) => ({
-              criterion: c.label,
-              state: c.state,
-              why: c.state === "conflict" ? "Two sources disagree; the decision cannot rest on either." : c.basis,
-              ...needs[c.id],
-            })),
-        },
-        sources: [],
-      };
-    },
+    run: (ctx: ToolContext): ToolResult => ({
+      ok: true,
+      data: { checks: nextChecks(evaluate(ctx.brief, ctx.site)) },
+      sources: [],
+    }),
   },
 ] as const;
 

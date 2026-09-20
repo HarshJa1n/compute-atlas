@@ -9,6 +9,7 @@ const FIELDS: Array<{ k: keyof ProjectBrief; label: string; unit?: string; step:
   { k: "wueLitresPerITkWh", label: "WUE", unit: "L/kWh", step: 0.05, min: 0, max: 3 },
   { k: "tariffINRPerKWh", label: "Tariff", unit: "₹/kWh", step: 0.5, min: 0, max: 30 },
   { k: "requiredHectares", label: "Land needed", unit: "ha", step: 0.2, min: 0.1, max: 200 },
+  { k: "maxLatencyMs", label: "Max latency", unit: "ms", step: 1, min: 1, max: 200 },
 ];
 
 export default function BriefSheet({
@@ -58,6 +59,45 @@ export default function BriefSheet({
             />
           </label>
         ))}
+
+        <label className="block">
+          <div className="mb-1 flex items-baseline justify-between">
+            <span className="text-[11px] font-medium text-muted">Water cap</span>
+            <span className="tabular text-[12px] font-semibold text-ink">
+              {brief.waterCapLDay === null ? (
+                <span className="text-caution">not supplied</span>
+              ) : (
+                <>
+                  {brief.waterCapLDay.toLocaleString("en-IN")}
+                  <span className="ml-0.5 text-[10px] font-normal text-muted">L/day</span>
+                </>
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="range"
+              min={0}
+              max={1_000_000}
+              step={10_000}
+              value={brief.waterCapLDay ?? 0}
+              onChange={(e) => onChange({ ...brief, waterCapLDay: Number(e.target.value) || null })}
+              className="w-full accent-active"
+              aria-label="Project water cap in litres per day"
+            />
+            <button
+              type="button"
+              onClick={() => onChange({ ...brief, waterCapLDay: null })}
+              title="Clear the supplied cap so the criterion reads unknown"
+              className="shrink-0 rounded-control px-2 py-1 text-[10px] font-medium text-muted ring-1 ring-white/10 transition hover:text-ink"
+            >
+              Clear
+            </button>
+          </div>
+          <p className="mt-0.5 text-[10px] leading-snug text-muted/75">
+            A site figure overrides this. With neither supplied, water stays unknown.
+          </p>
+        </label>
 
         <label className="block">
           <span className="mb-1 block text-[11px] font-medium text-muted">Target opening</span>

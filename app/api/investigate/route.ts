@@ -13,7 +13,9 @@ const Body = z.object({
   brief: z.record(z.any()),
   site: z.record(z.any()),
   centroid: z.tuple([z.number(), z.number()]),
-  evidenceIds: z.array(z.string()).default([]),
+  documents: z
+    .array(z.object({ id: z.string(), title: z.string(), origin: z.string(), claims: z.array(z.any()) }))
+    .default([]),
 });
 
 const MODEL = process.env.ANTHROPIC_MODEL_ID || "claude-sonnet-4-5";
@@ -33,7 +35,7 @@ export async function POST(req: Request) {
       peakTempC: clim.km < 400 ? peakTemp(clim.record).value : null,
     },
     centroid,
-    evidenceIds: parsed.data.evidenceIds,
+    documents: parsed.data.documents as ToolContext["documents"],
   };
 
   const encoder = new TextEncoder();

@@ -2,6 +2,7 @@
 
 import { Section, StateChip, Stat, SyntheticBadge } from "./ui";
 import type { Assessment } from "@/lib/analysis/evaluate";
+import { nextChecks } from "@/lib/analysis/checks";
 
 export type AssessContext = {
   nearestFacility: { name: string; city: string; km: number; url: string } | null;
@@ -162,6 +163,33 @@ export default function SiteDossier({
           )}
         </Section>
       )}
+
+      {(() => {
+        const checks = nextChecks(assessment);
+        if (!checks.length) return null;
+        return (
+          <Section title="Next investigations" right={<span className="text-[10px] text-muted">{checks.length} open</span>}>
+            <ol className="space-y-1.5">
+              {checks.map((c, i) => (
+                <li key={c.criterionId} className="rounded-control bg-white/[.02] p-2.5 ring-1 ring-white/[.04]">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-[12.5px] font-medium text-ink">
+                      <span className="tabular mr-1.5 text-muted">{i + 1}.</span>
+                      {c.criterion}
+                    </span>
+                    <StateChip state={c.state} />
+                  </div>
+                  <p className="mt-1 text-[11px] leading-snug text-muted">{c.why}</p>
+                  <p className="mt-1 text-[11px] leading-snug text-ink/85">
+                    <span className="text-muted">Obtain: </span>{c.evidence}
+                  </p>
+                  <p className="mt-0.5 text-[10.5px] text-muted/80">Owner: {c.owner}</p>
+                </li>
+              ))}
+            </ol>
+          </Section>
+        );
+      })()}
 
       <Section title="Boundaries">
         <p className="text-[10.5px] leading-relaxed text-muted/85">{assessment.notice}</p>
