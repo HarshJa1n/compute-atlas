@@ -1,4 +1,4 @@
-# Compute Atlas — Build Day prototype
+# Compute Atlas
 
 **Before you build an AI factory, prove the site can support it.**
 
@@ -10,12 +10,22 @@ unproven — with every number traced to an input and a source.
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
+cp .env.example .env.local   # then fill in the two keys
+npm run dev                  # http://localhost:3000
 ```
 
-`.env.local` holds the Mapbox token. Without `ANTHROPIC_API_KEY`, the investigation
-runs in **recorded mode**: the same real tools execute, with deterministic narration
-instead of a model. The badge in the panel always says which mode is live.
+| Variable | Needed for | If missing |
+|---|---|---|
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | Mapbox basemap | Falls back to the CARTO dark basemap |
+| `NEXT_PUBLIC_MAPBOX_STYLE` | Style override | Defaults to `mapbox/dark-v11` |
+| `ANTHROPIC_API_KEY` | Live investigation | Runs a labelled **recorded run** instead |
+| `ANTHROPIC_MODEL_ID` | Model choice | Defaults to `claude-sonnet-4-5` |
+
+Without `ANTHROPIC_API_KEY` the investigation still executes the same real tools
+and narrates them deterministically. The badge in the panel always says which
+mode is live, so a network failure mid-demo degrades visibly rather than silently.
+
+Contributors: read [AGENTS.md](AGENTS.md) before changing the analysis or agent code.
 
 ```bash
 npm run typecheck
@@ -42,13 +52,22 @@ never a silent pick. The model chooses which tools to call and how to narrate; i
 cannot supply an observation or overturn a verdict. That boundary lives in
 `lib/analysis/evaluate.ts`, which is pure, versioned (`calculationVersion`) and tested.
 
+## Using it
+
+Pick a regional bookmark, or open the **Sites** panel and draw a polygon —
+click corners, double-click to finish, Escape to cancel. Drawn and imported
+shapes are validated for self-intersection, area and containment in India, and
+a rejected shape stays on the map with the reason shown so you can edit it.
+Every candidate is also listed in the Sites panel, so nothing needs a mouse.
+
 ## Demo path (about 3 minutes)
 
-1. **Bhopal** bookmark → click **Parcel A**.
+1. **Bhopal** bookmark — it frames Parcel A and selects it.
    Campus 20 MW → 26.0 MW full load, 1,92,000 L/day. Water **fails** (cap 1,50,000),
    power and energisation are **unknown**.
-2. **Investigate** → five real tools execute; NASA returns Bhopal's 34.9 °C May peak,
-   PeeringDB returns NIXI Bhopal at 22 km.
+2. **Investigate** → real tools execute; NASA returns Bhopal's 34.9 °C May peak,
+   PeeringDB returns NIXI Bhopal at 22 km. Before anything is ingested, the agent
+   says plainly that there are no documents to weigh.
 3. **Ingest broker brief + utility note** → power becomes **conflict**
    (30 MW claimed vs 12 MW conditional) and energisation **fails** (Dec 2027 vs Jun 2027).
    This is the point of the product: the contradiction is surfaced, not resolved.
