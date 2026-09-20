@@ -27,6 +27,7 @@ const SOURCES = {
   S24: ["NASA POWER climatology API", "https://power.larc.nasa.gov/docs/services/api/temporal/"],
   S29: ["PeeringDB facilities API", "https://www.peeringdb.com/api/fac?country=IN&depth=0"],
   S28: ["geoBoundaries India ADM1", "https://www.geoboundaries.org/api/current/gbOpen/IND/ADM1/"],
+  SVID: ["\"AI Token Factory\" video presentation (YouTube) · figures as stated in the video, not independently verified by us", "https://www.youtube.com/"],
   S33: ["NVIDIA newsroom, European AI supercomputers", "https://nvidianews.nvidia.com/news/europe-unveils-a-record-35-new-nvidia-ai-supercomputers"],
 };
 
@@ -120,7 +121,8 @@ function cover(p, { kicker, big, sub, n, total, small }) {
 // =====================================================================
 function buildProblemDeck() {
   const p = deck("Compute Atlas — The problem");
-  const T = 16; let n = 0;
+  const videoShots = fs.existsSync(SHOTS) ? fs.readdirSync(SHOTS).filter((f) => /^video.*\.png$/i.test(f)).sort() : [];
+  const T = 19 + (videoShots.length ? 1 : 0); let n = 0;
   const nx = () => ++n;
 
   cover(p, {
@@ -158,6 +160,58 @@ function buildProblemDeck() {
     s.addText("2025", { x: M + 0.1, y: 4.0, w: 2, h: 0.4, fontFace: FONT, fontSize: 14, color: C.dim });
     s.addText("2030 · about 3% of global electricity demand", { x: M + 5.1, y: 4.0, w: 6, h: 0.4, fontFace: FONT, fontSize: 14, color: C.dim });
     card(p, s, { x: M, y: 4.9, w: W - 2 * M, h: 1.2, label: "Read it carefully", note: "This is a projection of consumption, not metered demand. The same outlook flags supply-chain bottlenecks and uncertain investment returns. Growth in demand is exactly why the siting question gets harder, not easier.", accent: C.amber });
+  }
+
+  // 4b heavy industry (video)
+  {
+    const s = base(p, { tag: "Software became heavy industry · third-party figures", n: nx(), total: T, source: "SVID", notes: "Figures as stated in the 'AI Token Factory' presentation: the four largest US tech companies projected to spend about $725 billion on AI infrastructure in 2026, described as 1.2x the inflation-adjusted cost of the US Interstate Highway System; Goldman Sachs projection of $7.6 trillion of build-out 2026-2031. We have not verified these against primary sources; say 'as reported in the video'. The librarian/writer framing: search retrieves from an index for fractions of a cent; generation computes every word, 10x to 100x the cost per query." });
+    title(s, "Software used to have zero marginal cost. Now it is measured in megawatts.", { h: 1.2 });
+    card(p, s, { x: M, y: 2.15, w: 3.9, h: 2.0, label: "2026 AI infrastructure spend · four hyperscalers", value: "$725B", note: "About 1.2× the inflation-adjusted cost of the entire US Interstate Highway System, in one year.", accent: C.blue, valueSize: 36 });
+    card(p, s, { x: M + 4.05, y: 2.15, w: 3.9, h: 2.0, label: "Projected build-out 2026–2031", value: "$7.6T", note: "Goldman Sachs projection as cited in the video. A projection, not a commitment.", accent: C.blue, valueSize: 36 });
+    card(p, s, { x: M + 8.1, y: 2.15, w: W - 2 * M - 8.1, h: 2.0, label: "Cost per query · generation vs search", value: "10–100×", note: "Search retrieves from an index. A model computes every word from scratch.", accent: C.amber, valueSize: 36 });
+    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x: M, y: 4.45, w: W - 2 * M, h: 1.75, fill: { color: C.surface }, line: { color: C.line, width: 0.75 }, rectRadius: 0.1 });
+    s.addText([{ text: "Google is a librarian. ", options: { bold: true, color: C.ink } }, { text: "It finds a page that already exists, in milliseconds, for a fraction of a cent.\n", options: { color: C.muted } }, { text: "A model is a writer. ", options: { bold: true, color: C.ink } }, { text: "It runs hundreds of billions of arithmetic operations to produce each token, then does it again for the next one. That labour is electricity, and electricity has an address.", options: { color: C.muted } }], { x: M + 0.35, y: 4.55, w: W - 2 * M - 0.7, h: 1.55, fontFace: FONT, fontSize: 15, valign: "middle" });
+  }
+
+  // 4c the trip (video)
+  {
+    const s = base(p, { tag: "The trip · what happens to one question", n: nx(), total: T, source: "SVID", notes: "Six-step journey of a query as described in the video. Steps 2 to 5 all happen inside a data centre: the API gateway, tokenisation, prefill (building the KV cache, the model's working memory) and decode (one token at a time, the whole network run for every word). Point at the middle four boxes: that is the building we are siting. Fibre carries light at roughly two thirds of the speed of light in vacuum." });
+    title(s, "Every prompt takes a physical trip. Four of its six steps happen inside one building.", { h: 1.2 });
+    const steps = [["1 · The trip out", "Radio to a tower, then light through fibre at about ⅔ the speed of light.", false], ["2 · The front door", "An API gateway checks identity, limits and loads the conversation context.", true], ["3 · Tokenisation", "Text is chopped into numeric pieces, about ¾ of a word each.", true], ["4 · Prefill", "The model reads the whole prompt at once and builds its working memory, the KV cache.", true], ["5 · Decode", "One token at a time. The entire network runs for every single word.", true], ["6 · The trip home", "Tokens stream back to the device the same way they came.", false]];
+    const cw = (W - 2 * M - 0.2 * 5) / 6;
+    // bracket over the building steps
+    const bx = M + (cw + 0.2), bw = 4 * cw + 3 * 0.2;
+    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x: bx - 0.1, y: 2.1, w: bw + 0.2, h: 3.15, fill: { color: C.surface2 }, line: { color: C.teal, width: 1, dashType: "dash" }, rectRadius: 0.12 });
+    s.addText("INSIDE THE DATA CENTRE  ·  THE BUILDING WE ARE SITING", { x: bx, y: 2.15, w: bw, h: 0.3, fontFace: FONT, fontSize: 10, bold: true, color: C.teal, charSpacing: 2, align: "center" });
+    steps.forEach((st, i) => {
+      const x = M + i * (cw + 0.2), y = 2.55;
+      s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w: cw, h: 2.55, fill: { color: st[2] ? C.surface : C.bg }, line: { color: st[2] ? C.teal : C.line, width: 0.75 }, rectRadius: 0.08 });
+      s.addText(st[0], { x: x + 0.12, y: y + 0.1, w: cw - 0.24, h: 0.5, fontFace: FONT, fontSize: 12.5, bold: true, color: C.ink });
+      s.addText(st[1], { x: x + 0.12, y: y + 0.62, w: cw - 0.24, h: 1.85, fontFace: FONT, fontSize: 11, color: C.muted, valign: "top" });
+    });
+    body(s, "The network is fast and the device is cheap. The expensive, slow, physical part of the trip is the building in the middle: its power feed, its cooling, its fibre and the years it takes to get all three.", { y: 5.45, h: 0.8, size: 14.5, color: C.ink });
+  }
+
+  // 4d the bottleneck moved (video)
+  {
+    const s = base(p, { tag: "Where the bottleneck is now · third-party figures", n: nx(), total: T, source: "SVID", notes: "As stated in the video, for the US market: a traditional rack draws 5-10 kW; an Nvidia GB200 rack about 120 kW; next-generation Vera Rubin projected around 600 kW. Air cooling is effective to roughly 30-50 kW per rack, so flagship racks require liquid cooling. Grid interconnection queues of 4-5 years; high-voltage transformer lead times from about 1 year to nearly 4. PUE around 1.1 for modern liquid-cooled facilities versus near 2.0 for older ones. Chips, memory and networking are supply-chain problems that ship eventually; the building, its grid connection and its heat rejection are the gating item, and that is a siting problem. India's grid and approvals differ, so treat the numbers as the shape of the problem, not local values." });
+    title(s, "Chips ship eventually. The next bottleneck is the building.", { h: 0.8 });
+    const cards = [["Power per rack", "10 → 120 kW", "A traditional rack draws 5–10 kW; an Nvidia GB200 rack about 120 kW. Next generation projected near 600 kW.", C.red], ["Grid interconnection wait", "4–5 years", "US queue times as stated. The grid was built for 1–2% annual growth.", C.red], ["Transformer lead time", "1 → ~4 years", "High-voltage transformers, from about a year to nearly four.", C.amber], ["Air cooling gives out at", "30–50 kW", "Per rack. Beyond that, liquid cooling is mandatory, and liquid means water design.", C.amber]];
+    const cw = (W - 2 * M - 0.3 * 3) / 4;
+    cards.forEach((c, i) => card(p, s, { x: M + i * (cw + 0.3), y: 1.85, w: cw, h: 2.15, label: c[0], value: c[1], note: c[2], accent: c[3], valueSize: 24 }));
+    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x: M, y: 4.25, w: W - 2 * M, h: 1.95, fill: { color: C.surface }, line: { color: C.teal, width: 1.25 }, rectRadius: 0.1 });
+    s.addText([{ text: "Layer by layer, the constraint has moved down the stack. ", options: { bold: true, color: C.ink } }, { text: "Chips, high-bandwidth memory and networking are supply-chain problems: scarce, expensive, but they ship. The grid connection, the substation, the transformer and the heat rejection do not ship. They are built, permitted and energised at one specific place over years.\n", options: { color: C.muted } }, { text: "That is a siting problem. ", options: { bold: true, color: C.teal } }, { text: "India's grid, approvals and water differ from the US, so these numbers are the shape of the problem, not local values. The local values are exactly what nobody has in one place.", options: { color: C.muted } }], { x: M + 0.35, y: 4.35, w: W - 2 * M - 0.7, h: 1.75, fontFace: FONT, fontSize: 14, valign: "middle" });
+  }
+
+  // 4e video screenshot (only when a frame is supplied)
+  if (videoShots.length) {
+    const s = base(p, { tag: "From the “AI Token Factory” presentation", n: nx(), total: T, source: "SVID", notes: "Screenshot from the video, used for illustration with attribution. Replace or crop as needed." });
+    title(s, "The factory view: electricity in, tokens out.", { h: 0.8 });
+    const f = shot(videoShots[0]);
+    const w = 10.4, h = w * 9 / 16;
+    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x: (W - w) / 2 - 0.06, y: 1.85 - 0.06, w: w + 0.12, h: h + 0.12, fill: { color: C.surface }, line: { color: C.line, width: 0.75 }, rectRadius: 0.08 });
+    s.addImage({ path: f, x: (W - w) / 2, y: 1.85, w, h });
+    s.addText("Frame from the “AI Token Factory” video presentation. Used for illustration; figures on the preceding slides are as stated there.", { x: M, y: 1.85 + h + 0.12, w: W - 2 * M, h: 0.3, fontFace: FONT, fontSize: 10, italic: true, color: C.dim, align: "center" });
   }
 
   // 5 India
