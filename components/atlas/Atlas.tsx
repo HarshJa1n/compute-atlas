@@ -6,7 +6,7 @@ import * as turf from "@turf/turf";
 import type { Feature, Polygon } from "geojson";
 import type { Map as MLMap } from "maplibre-gl";
 import { PRESETS, type Assessment, type ProjectBrief } from "@/lib/analysis/evaluate";
-import SiteDossier, { type AssessContext } from "@/components/panels/SiteDossier";
+import SiteDossier, { type AssessContext, type InvestigationSummary } from "@/components/panels/SiteDossier";
 import Investigation, { type Evt } from "@/components/panels/Investigation";
 import BriefSheet from "@/components/panels/BriefSheet";
 import CompareTray from "@/components/panels/CompareTray";
@@ -67,6 +67,7 @@ export default function Atlas({
   const [evidenceError, setEvidenceError] = useState<string | null>(null);
   const [history, setHistory] = useState<Run[]>([]);
   const [deltas, setDeltas] = useState<Delta[]>([]);
+  const [lastRun, setLastRun] = useState<InvestigationSummary | null>(null);
   const [drawing, setDrawing] = useState(false);
   const [geomError, setGeomError] = useState<string | null>(null);
   const [hasGeometry, setHasGeometry] = useState(false);
@@ -99,6 +100,17 @@ export default function Atlas({
 
   const areaHa = active ? hectares(active.geometry) : null;
 
+  /** Identifies the inputs a run was made against, so a stale narrative is flagged. */
+  const signature = useMemo(
+    () =>
+      JSON.stringify({
+        site: active?.id ?? null,
+        criteria: assessment?.criteria.map((c) => [c.id, c.state, c.observed]) ?? null,
+        docs: docs.map((d) => d.meta.id),
+      }),
+    [active, assessment, docs]
+  );
+
   /** Claims for the selected site, and what they reconcile to. */
   const siteDocs = useMemo(
     () => docs.filter((d) => d.meta.siteId === (active?.id ?? "")),
@@ -129,7 +141,8 @@ export default function Atlas({
 
   // Re-assess whenever the brief, site or evidence changes. Stale responses are dropped.
   const runId = useRef(0);
-  const lastRun = useRef<{ brief: ProjectBrief; assessment: Assessment } | null>(null);
+  const lastAssessRun = useRef<{ brief: ProjectBrief; assessment: Assessment } | null>(null);
+  const signatureRef = useRef("");
   useEffect(() => {
     const site = sitePayload();
     if (!site || !active) { setAssessment(null); setContext(null); return; }
@@ -145,7 +158,7 @@ export default function Atlas({
         if (id !== runId.current) return; // a newer request has superseded this one
         // Deltas are computed against the previous run held in a ref, never
         // inside a state updater — updaters run during render and must be pure.
-        const prev = lastRun.current;
+        const prev = lastAssessRun.current;
         const sameSite = prev?.assessment.siteId === d.assessment.siteId;
         setDeltas(sameSite && prev ? diff(prev.assessment, d.assessment) : []);
         setAssessment(d.assessment);
@@ -159,7 +172,7 @@ export default function Atlas({
           setHistory((h) =>
             appendRun(h, { at: new Date().toISOString(), siteId: d.assessment.siteId, label, brief, assessment: d.assessment })
           );
-          lastRun.current = { brief, assessment: d.assessment };
+          lastAssessRun.current = { brief, assessment: d.assessment };
         }
       })
       .catch(() => {});
@@ -173,10 +186,13 @@ export default function Atlas({
     if (b.parcelId) selectSite(b.parcelId);
   };
 
+  useEffect(() => { signatureRef.current = signature; }, [signature]);
+
   const selectSite = useCallback((id: string) => {
     setSelectedId(id);
     setEvents([]);
     setMode(null);
+    setLastRun(null);
     const geom = id === "drawn" ? drawn?.geometry : sites.find((s) => s.id === id)?.geometry;
     if (geom) {
       const bbox = turf.bbox(turf.polygon(geom.coordinates)) as [number, number, number, number];
@@ -192,6 +208,8 @@ export default function Atlas({
     abortRef.current = ac;
     setBusy(true);
     setEvents([]);
+    let streamMode: "live" | "recorded" = "recorded";
+    const toolNames = new Set<string>();
 
     try {
       const res = await fetch("/api/investigate", {
@@ -224,11 +242,18 @@ export default function Atlas({
         for (const line of lines) {
           if (!line.trim()) continue;
           const evt = JSON.parse(line) as Evt;
-          if (evt.type === "mode") setMode(evt.mode);
+          if (evt.type === "mode") { setMode(evt.mode); streamMode = evt.mode; }
+          else if (evt.type === "tool" && evt.status === "ok") { toolNames.add(evt.name); setEvents((p) => [...p, evt]); }
           else if (evt.type === "done") continue;
           else setEvents((p) => [...p, evt]);
         }
       }
+      setLastRun({
+        at: new Date().toISOString(),
+        mode: streamMode,
+        tools: toolNames.size,
+        signature: signatureRef.current,
+      });
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
         setEvents((p) => [...p, { type: "notice", text: "Investigation failed. Computed results above are unchanged." }]);
@@ -606,6 +631,8 @@ export default function Atlas({
             onInvestigate={() => ask("Assess this site against the current brief and tell me what remains unproven.")}
             onCompare={addToCompare}
             busy={busy}
+            lastRun={lastRun}
+            signature={signature}
           />
         </div>
         <div className="min-h-[240px] flex-[2]">

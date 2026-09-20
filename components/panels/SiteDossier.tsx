@@ -46,8 +46,16 @@ function ClimateStrip({ monthly, peak }: { monthly: Record<string, number>; peak
   );
 }
 
+export type InvestigationSummary = {
+  at: string;
+  mode: "live" | "recorded";
+  tools: number;
+  /** Assessment fingerprint at the time of the run, to detect stale results. */
+  signature: string;
+};
+
 export default function SiteDossier({
-  name, kind, areaHa, assessment, context, onInvestigate, onCompare, busy,
+  name, kind, areaHa, assessment, context, onInvestigate, onCompare, busy, lastRun, signature,
 }: {
   name: string;
   kind: string;
@@ -57,6 +65,8 @@ export default function SiteDossier({
   onInvestigate: () => void;
   onCompare: () => void;
   busy: boolean;
+  lastRun: InvestigationSummary | null;
+  signature: string;
 }) {
   if (!assessment) {
     return (
@@ -91,13 +101,42 @@ export default function SiteDossier({
             ? `${assessment.unknownCount} criteria unresolved · calc ${assessment.calculationVersion}`
             : `calc ${assessment.calculationVersion}`}
         </div>
+        {lastRun && !busy && (
+          <div
+            className={`mt-2.5 rounded-control px-2.5 py-2 text-[11px] leading-snug ring-1 ${
+              lastRun.signature === signature
+                ? "bg-white/[.03] text-muted ring-white/[.06]"
+                : "bg-caution/[.07] text-caution ring-caution/25"
+            }`}
+          >
+            {lastRun.signature === signature ? (
+              <>
+                Investigated · {lastRun.tools} tool{lastRun.tools === 1 ? "" : "s"} ·{" "}
+                {lastRun.mode === "live" ? "live model" : "recorded run"}
+                <span className="block text-muted/70">
+                  {new Date(lastRun.at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })} · findings below are current
+                </span>
+              </>
+            ) : (
+              <>
+                Inputs changed since the last investigation.
+                <span className="block text-caution/80">The narrative below is stale; the criteria above are current.</span>
+              </>
+            )}
+          </div>
+        )}
+
         <div className="mt-3 flex gap-2">
           <button
             onClick={onInvestigate}
             disabled={busy}
-            className="flex-1 rounded-control bg-active px-3 py-2 text-[12px] font-semibold text-bg transition hover:brightness-110 disabled:opacity-50"
+            className={`flex-1 rounded-control px-3 py-2 text-[12px] font-semibold transition disabled:opacity-50 ${
+              lastRun && lastRun.signature === signature
+                ? "bg-white/10 text-ink hover:bg-white/20"
+                : "bg-active text-bg hover:brightness-110"
+            }`}
           >
-            {busy ? "Investigating…" : "Investigate"}
+            {busy ? "Investigating…" : lastRun ? "Reinvestigate" : "Investigate"}
           </button>
           <button
             onClick={onCompare}
