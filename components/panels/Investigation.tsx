@@ -17,26 +17,63 @@ const TOOL_COPY: Record<string, string> = {
   prioritizeChecks: "Ranking unresolved checks",
 };
 
+function inline(text: string, key: string) {
+  // **bold** and *italic*, which the model uses to mark figures and caveats.
+  return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, j) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={`${key}-${j}`} className="font-semibold text-active">{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("*") && part.endsWith("*") && part.length > 2) {
+      return <em key={`${key}-${j}`} className="text-muted">{part.slice(1, -1)}</em>;
+    }
+    return <span key={`${key}-${j}`}>{part}</span>;
+  });
+}
+
+/** Minimal renderer for the subset of markdown the agent actually emits. */
 function Markdownish({ text }: { text: string }) {
-  return (
-    <>
-      {text.split("\n").map((line, i) =>
-        line.trim() === "" ? (
-          <div key={i} className="h-1.5" />
-        ) : (
-          <p key={i} className="text-[12.5px] leading-relaxed text-ink/90">
-            {line.split(/(\*\*[^*]+\*\*)/g).map((part, j) =>
-              part.startsWith("**") ? (
-                <strong key={j} className="font-semibold text-active">{part.slice(2, -2)}</strong>
-              ) : (
-                <span key={j}>{part}</span>
-              )
-            )}
-          </p>
-        )
-      )}
-    </>
-  );
+  const lines = text.split("\n");
+  const out: React.ReactNode[] = [];
+  let bullets: string[] = [];
+
+  const flush = (key: string) => {
+    if (!bullets.length) return;
+    out.push(
+      <ul key={`ul-${key}`} className="my-1 space-y-0.5 pl-1">
+        {bullets.map((b, i) => (
+          <li key={i} className="flex gap-1.5 text-[12.5px] leading-relaxed text-ink/90">
+            <span aria-hidden className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-muted" />
+            <span>{inline(b, `b${key}-${i}`)}</span>
+          </li>
+        ))}
+      </ul>
+    );
+    bullets = [];
+  };
+
+  lines.forEach((raw, i) => {
+    const line = raw.trimEnd();
+    const bullet = /^\s*[-*]\s+(.*)$/.exec(line);
+    if (bullet) { bullets.push(bullet[1]); return; }
+    flush(String(i));
+
+    if (!line.trim()) { out.push(<div key={i} className="h-1.5" />); return; }
+
+    const heading = /^(#{1,4})\s+(.*)$/.exec(line);
+    if (heading) {
+      out.push(
+        <h4 key={i} className="mb-0.5 mt-2 text-[11px] font-semibold uppercase tracking-[.12em] text-muted first:mt-0">
+          {inline(heading[2], `h${i}`)}
+        </h4>
+      );
+      return;
+    }
+    out.push(
+      <p key={i} className="text-[12.5px] leading-relaxed text-ink/90">{inline(line, `p${i}`)}</p>
+    );
+  });
+  flush("end");
+  return <>{out}</>;
 }
 
 export default function Investigation({

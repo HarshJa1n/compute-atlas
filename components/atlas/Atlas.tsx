@@ -10,8 +10,12 @@ import SiteDossier, { type AssessContext } from "@/components/panels/SiteDossier
 import Investigation, { type Evt } from "@/components/panels/Investigation";
 import BriefSheet from "@/components/panels/BriefSheet";
 import CompareTray from "@/components/panels/CompareTray";
+import SitesPanel from "@/components/panels/SitesPanel";
+import { parsePolygon, validatePolygon } from "@/lib/analysis/geometry";
 import { SyntheticBadge } from "@/components/panels/ui";
 import type { Bookmark } from "@/lib/data";
+
+import type { DrawControls } from "./AtlasCanvas";
 
 const AtlasCanvas = dynamic(() => import("./AtlasCanvas"), { ssr: false });
 
@@ -47,7 +51,10 @@ export default function Atlas({
   const [evidenceAdded, setEvidenceAdded] = useState(false);
   const [compare, setCompare] = useState<Array<{ id: string; name: string; assessment: Assessment }>>([]);
   const [showCompare, setShowCompare] = useState(false);
-  const [leftTab, setLeftTab] = useState<"brief" | "layers">("brief");
+  const [leftTab, setLeftTab] = useState<"sites" | "brief" | "layers">("sites");
+  const [drawing, setDrawing] = useState(false);
+  const [geomError, setGeomError] = useState<string | null>(null);
+  const controls = useRef<DrawControls | null>(null);
   const [railOpen, setRailOpen] = useState(true);
 
   // Below the 1200px breakpoint the spec collapses the layer panel so the two
@@ -59,11 +66,10 @@ export default function Atlas({
     return () => window.removeEventListener("resize", apply);
   }, []);
 
-  const candidates = useMemo(() => {
-    const list = sites.map((s) => ({ id: s.id, name: `Parcel ${s.id}`, geometry: s.geometry }));
-    if (drawn) list.push({ id: "drawn", name: "Your polygon", geometry: drawn.geometry });
-    return list;
-  }, [sites, drawn]);
+  const candidates = useMemo(
+    () => sites.map((s) => ({ id: s.id, name: `Parcel ${s.id}`, geometry: s.geometry })),
+    [sites]
+  );
 
   const active = useMemo(() => {
     if (selectedId === "drawn" && drawn) {
@@ -179,6 +185,61 @@ export default function Atlas({
     }
   }, [brief, active, sitePayload]);
 
+  const handleDraw = useCallback((f: Feature<Polygon> | null) => {
+    setDrawing(false);
+    if (!f) {
+      setDrawn(null);
+      setGeomError(null);
+      setSelectedId((cur) => (cur === "drawn" ? null : cur));
+      return;
+    }
+    const check = validatePolygon(f.geometry, indiaBounds);
+    if (!check.ok) {
+      // The shape stays on the map so it can be edited rather than silently vanishing.
+      setGeomError(check.reason);
+      setDrawn(null);
+      setSelectedId((cur) => (cur === "drawn" ? null : cur));
+      setLeftTab("sites");
+      setRailOpen(true);
+      return;
+    }
+    setGeomError(null);
+    setDrawn(f);
+    selectSite("drawn");
+  }, [indiaBounds, selectSite]);
+
+  const startDraw = () => {
+    setGeomError(null);
+    controls.current?.start();
+    setDrawing(true);
+  };
+
+  const clearDraw = () => {
+    controls.current?.clear();
+    setDrawing(false);
+    setGeomError(null);
+  };
+
+  const importGeoJSON = (text: string) => {
+    const poly = parsePolygon(text);
+    if (!poly) {
+      setGeomError("Could not read a Polygon from that text. Paste a Polygon, Feature or FeatureCollection.");
+      return;
+    }
+    const check = validatePolygon(poly, indiaBounds);
+    if (!check.ok) {
+      setGeomError(check.reason);
+      return;
+    }
+    setGeomError(null);
+    controls.current?.load(poly);
+    mapRef.current?.fitBounds(turf.bbox(turf.polygon(poly.coordinates)) as [number, number, number, number], {
+      padding: 160,
+      duration: 900,
+      maxZoom: 14,
+    });
+  };
+
   const addToCompare = () => {
     if (!active || !assessment) return;
     setCompare((p) =>
@@ -208,17 +269,22 @@ export default function Atlas({
   // Escape clears the current selection before anything else.
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setShowCompare(false); setSelectedId(null); }
+      if (e.key !== "Escape") return;
+      if (controls.current?.cancel()) { setDrawing(false); return; }
+      if (geomError) { setGeomError(null); return; }
+      if (showCompare) { setShowCompare(false); return; }
+      setSelectedId(null);
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, []);
+  }, [geomError, showCompare]);
 
   return (
     <main className="relative h-screen w-screen overflow-hidden bg-bg">
       <AtlasCanvas
         onReady={(m) => { mapRef.current = m; }}
-        onDraw={(f) => { setDrawn(f); if (f) selectSite("drawn"); }}
+        onControls={(c) => { controls.current = c; }}
+        onDraw={handleDraw}
         onSelectSite={selectSite}
         candidates={candidates}
         selectedId={selectedId}
@@ -280,21 +346,43 @@ export default function Atlas({
         className="glass absolute left-3 top-[86px] z-20 w-[262px] overflow-hidden rounded-panel"
       >
         <div className="flex border-b hairline border-b">
-          {(["brief", "layers"] as const).map((t) => (
+          {(["sites", "brief", "layers"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setLeftTab(t)}
               aria-pressed={leftTab === t}
-              className={`flex-1 px-3 py-2 text-[11px] font-semibold uppercase tracking-[.12em] transition ${
+              className={`flex-1 px-2 py-2 text-[11px] font-semibold uppercase tracking-[.1em] transition ${
                 leftTab === t ? "text-active" : "text-muted hover:text-ink"
               }`}
             >
-              {t === "brief" ? "Project" : "Layers"}
+              {t === "sites" ? "Sites" : t === "brief" ? "Project" : "Layers"}
             </button>
           ))}
         </div>
 
-        {leftTab === "brief" ? (
+        {leftTab === "sites" ? (
+          <SitesPanel
+            rows={[
+              ...sites.map((x) => ({
+                id: x.id,
+                name: x.name,
+                kind: x.kind,
+                areaHa: hectares(x.geometry),
+              })),
+              ...(drawn
+                ? [{ id: "drawn", name: "Drawn polygon", kind: "user-drawn", areaHa: hectares(drawn.geometry) }]
+                : []),
+            ]}
+            selectedId={selectedId}
+            onSelect={selectSite}
+            onDraw={startDraw}
+            onClear={clearDraw}
+            onImport={importGeoJSON}
+            drawing={drawing}
+            hasDrawn={Boolean(drawn)}
+            error={geomError}
+          />
+        ) : leftTab === "brief" ? (
           <BriefSheet brief={brief} onChange={setBrief} onPreset={(m) => setBrief(PRESETS[m])} />
         ) : (
           <div className="space-y-2.5 p-4">

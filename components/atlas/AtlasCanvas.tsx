@@ -8,8 +8,18 @@ import { resolveStyle, transformRequest, usingMapbox } from "@/lib/map/mapbox";
 
 export type Layers = { states: boolean; facilities: boolean; candidates: boolean };
 
+/** Our own UI drives drawing; the plugin's control strip is not the only entry point. */
+export type DrawControls = {
+  start: () => void;
+  clear: () => void;
+  load: (polygon: Polygon) => void;
+  isDrawing: () => boolean;
+  cancel: () => boolean;
+};
+
 type Props = {
   onReady: (map: MLMap) => void;
+  onControls: (controls: DrawControls) => void;
   onDraw: (feature: Feature<Polygon> | null) => void;
   onSelectSite: (id: string) => void;
   candidates: Array<{ id: string; name: string; geometry: Polygon }>;
@@ -30,7 +40,7 @@ function makeDraw(): MapboxDraw {
 
   return new MapboxDraw({
     displayControlsDefault: false,
-    controls: { polygon: true, trash: true },
+    controls: { polygon: false, trash: false },
     // Drawn geometry is styled to the atlas palette rather than Mapbox defaults.
     styles: [
       { id: "gl-draw-polygon-fill", type: "fill", filter: ["all", ["==", "$type", "Polygon"]], paint: { "fill-color": "#43dfc3", "fill-opacity": 0.12 } },
@@ -42,13 +52,13 @@ function makeDraw(): MapboxDraw {
   });
 }
 
-export default function AtlasCanvas({ onReady, onDraw, onSelectSite, candidates, selectedId, layers }: Props) {
+export default function AtlasCanvas({ onReady, onControls, onDraw, onSelectSite, candidates, selectedId, layers }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
   const drawRef = useRef<MapboxDraw | null>(null);
   const [ready, setReady] = useState(false);
-  const cbs = useRef({ onDraw, onSelectSite, onReady });
-  cbs.current = { onDraw, onSelectSite, onReady };
+  const cbs = useRef({ onDraw, onSelectSite, onReady, onControls });
+  cbs.current = { onDraw, onSelectSite, onReady, onControls };
 
   useEffect(() => {
     if (!el.current || mapRef.current) return;
@@ -178,6 +188,24 @@ export default function AtlasCanvas({ onReady, onDraw, onSelectSite, candidates,
         pop.remove();
       });
 
+      cbs.current.onControls({
+        start: () => draw.changeMode("draw_polygon"),
+        clear: () => {
+          draw.deleteAll();
+          cbs.current.onDraw(null);
+        },
+        load: (polygon: Polygon) => {
+          draw.deleteAll();
+          draw.add({ type: "Feature", properties: {}, geometry: polygon } as Feature<Polygon>);
+          emit();
+        },
+        isDrawing: () => draw.getMode() === "draw_polygon",
+        cancel: () => {
+          if (draw.getMode() !== "draw_polygon") return false;
+          draw.changeMode("simple_select");
+          return true;
+        },
+      });
       cbs.current.onReady(map);
       setReady(true);
     });
