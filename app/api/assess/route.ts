@@ -1,38 +1,16 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { evaluate } from "@/lib/analysis/evaluate";
-import { nearestClimate, nearestFacility, peakTemp } from "@/lib/data";
+import { buildSiteInput } from "@/lib/analysis/site";
+import { BriefSchema, EvidenceSchema, SiteSchema } from "@/lib/contracts";
 
 export const runtime = "nodejs";
 
-const Brief = z.object({
-  mode: z.enum(["campus", "modular"]),
-  itMW: z.number().positive(),
-  pue: z.number().min(1),
-  utilization: z.number().min(0).max(1),
-  wueLitresPerITkWh: z.number().min(0),
-  tariffINRPerKWh: z.number().min(0),
-  waterCapLDay: z.number().nullable(),
-  requiredHectares: z.number().positive(),
-  openingDate: z.string(),
-  maxLatencyMs: z.number().positive(),
-});
-
-const Site = z.object({
-  id: z.string(),
-  name: z.string(),
-  kind: z.string(),
-  areaHectares: z.number().nullable(),
-  availableMW: z.number().nullable(),
-  availableFromDate: z.string().nullable().optional(),
-  waterCapLDay: z.number().nullable(),
-  powerConflict: z.union([z.object({ claim: z.string(), counterClaim: z.string() }), z.literal(false)]).optional(),
-});
-
 const Body = z.object({
-  brief: Brief,
-  site: Site,
+  brief: BriefSchema,
+  site: SiteSchema,
   centroid: z.tuple([z.number(), z.number()]),
+  evidence: EvidenceSchema.default([]),
 });
 
 export async function POST(req: Request) {
@@ -40,32 +18,15 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid request", detail: parsed.error.flatten() }, { status: 400 });
   }
-  const { brief, site, centroid } = parsed.data;
+  const { brief, site, centroid, evidence } = parsed.data;
 
-  // Server derives the geographic observations; the client cannot assert them.
-  const fac = nearestFacility(centroid);
-  const clim = nearestClimate(centroid);
-  const pk = peakTemp(clim.record);
-
-  const assessment = evaluate(brief, {
-    ...site,
-    nearestFacilityKm: fac ? Number(fac.km.toFixed(1)) : null,
-    peakTempC: clim.km < 400 ? pk.value : null,
-  });
+  // Server derives the geographic observations and the evidence facts; the client cannot assert them.
+  const built = buildSiteInput(site, centroid, evidence);
+  const assessment = evaluate(brief, built.input);
 
   return NextResponse.json({
     assessment,
-    context: {
-      nearestFacility: fac ? { name: fac.facility.name, city: fac.facility.city, km: Number(fac.km.toFixed(1)), url: fac.facility.sourceUrl } : null,
-      climate: {
-        station: clim.record.id,
-        km: Number(clim.km.toFixed(1)),
-        period: clim.record.period,
-        peakMonth: pk.month,
-        inCoverage: clim.km < 400,
-        monthly: clim.record.monthlyTemperatureC,
-        humidity: clim.record.monthlyRelativeHumidityPercent,
-      },
-    },
+    context: built.context,
+    claims: built.claims,
   });
 }
