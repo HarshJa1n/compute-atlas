@@ -1,0 +1,2 @@
+Introducing Compute Atlas: draw land in India, state the AI workload, and see which requirements the evidence actually supports. Unknown stays unknown. Two sources that disagree stay a conflict. No score.
+Built with Next.js, MapLibre and a Claude agent that can call tools but never invent a number.
