@@ -11,6 +11,7 @@ import Investigation, { type Evt } from "@/components/panels/Investigation";
 import BriefSheet from "@/components/panels/BriefSheet";
 import CompareTray from "@/components/panels/CompareTray";
 import { SyntheticBadge } from "@/components/panels/ui";
+import type { Bookmark } from "@/lib/data";
 
 const AtlasCanvas = dynamic(() => import("./AtlasCanvas"), { ssr: false });
 
@@ -19,19 +20,18 @@ export type DemoSite = {
   geometry: Polygon; availableMW: number | null; waterCapLDay: number | null;
 };
 
-const BOOKMARKS: Array<{ name: string; center: [number, number]; zoom: number }> = [
-  { name: "India", center: [79.5, 22.6], zoom: 3.7 },
-  { name: "Bhopal", center: [77.53, 23.184], zoom: 11 },
-  { name: "Indore", center: [75.985, 22.804], zoom: 11 },
-  { name: "Nagpur", center: [79.025, 21.204], zoom: 11 },
-  { name: "Hyderabad", center: [78.487, 17.385], zoom: 9.5 },
-  { name: "Chennai", center: [80.271, 13.083], zoom: 9.5 },
-];
-
 const hectares = (g: Polygon) => turf.area(turf.polygon(g.coordinates)) / 10_000;
 const centroidOf = (g: Polygon) => turf.centroid(turf.polygon(g.coordinates)).geometry.coordinates as [number, number];
 
-export default function Atlas({ sites }: { sites: DemoSite[] }) {
+export default function Atlas({
+  sites,
+  bookmarks,
+  indiaBounds,
+}: {
+  sites: DemoSite[];
+  bookmarks: Bookmark[];
+  indiaBounds: [number, number, number, number];
+}) {
   const mapRef = useRef<MLMap | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -117,8 +117,13 @@ export default function Atlas({ sites }: { sites: DemoSite[] }) {
       .catch(() => {});
   }, [brief, sitePayload, active]);
 
-  const fly = (b: (typeof BOOKMARKS)[number]) =>
+  const flyNational = () =>
+    mapRef.current?.fitBounds(indiaBounds, { padding: 48, duration: 1100 });
+
+  const flyTo = (b: Bookmark) => {
     mapRef.current?.flyTo({ center: b.center, zoom: b.zoom, duration: 1100 });
+    if (b.parcelId) selectSite(b.parcelId);
+  };
 
   const selectSite = useCallback((id: string) => {
     setSelectedId(id);
@@ -226,9 +231,6 @@ export default function Atlas({ sites }: { sites: DemoSite[] }) {
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-active" aria-hidden />
             <h1 className="text-[13px] font-semibold tracking-tight text-ink">Compute Atlas</h1>
-            <span className="rounded bg-white/5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-muted">
-              Prototype
-            </span>
           </div>
           <p className="mt-0.5 text-[10.5px] text-muted">
             Before you build an AI factory, prove the site can support it.
@@ -245,10 +247,17 @@ export default function Atlas({ sites }: { sites: DemoSite[] }) {
             {railOpen ? "◀ Panel" : "▶ Panel"}
           </button>
           <span className="mx-1 h-4 w-px bg-white/10" />
-          {BOOKMARKS.map((b) => (
+          <button
+            onClick={flyNational}
+            className="rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink"
+          >
+            India
+          </button>
+          {bookmarks.map((b) => (
             <button
-              key={b.name}
-              onClick={() => fly(b)}
+              key={b.id}
+              onClick={() => flyTo(b)}
+              title={b.parcelId ? `Frames parcel ${b.parcelId}` : "Regional climate anchor"}
               className="hidden rounded-[6px] px-2.5 py-1.5 text-[11px] font-medium text-muted transition hover:bg-white/[.07] hover:text-ink sm:block"
             >
               {b.name}

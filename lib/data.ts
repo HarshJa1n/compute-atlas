@@ -100,3 +100,69 @@ export const SOURCES = [
   { id: "S-CARTO", name: "CARTO dark basemap / OpenStreetMap", url: "https://carto.com/basemaps/", scale: "vector tiles", kind: "basemap" },
   { id: "S-FIX", name: "Demonstration parcels and documents", url: "", scale: "fictional", kind: "synthetic" },
 ];
+
+/** Bounding box of the India ADM1 boundary set, used for the national camera. */
+export function indiaBounds(): [number, number, number, number] {
+  const fc = load<{ features: Array<{ geometry: { type: string; coordinates: unknown } }> }>("india-adm1.geojson");
+  let minX = 180, minY = 90, maxX = -180, maxY = -90;
+  const visit = (c: unknown): void => {
+    if (Array.isArray(c) && typeof c[0] === "number" && typeof c[1] === "number") {
+      const [x, y] = c as [number, number];
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+      return;
+    }
+    if (Array.isArray(c)) for (const p of c) visit(p);
+  };
+  for (const f of fc.features) visit(f.geometry.coordinates);
+  return [minX, minY, maxX, maxY];
+}
+
+const titleCase = (id: string) =>
+  id.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+export type Bookmark = {
+  id: string;
+  name: string;
+  center: [number, number];
+  zoom: number;
+  /** Set when a prepared parcel anchors this region, so the camera frames it. */
+  parcelId: string | null;
+};
+
+/**
+ * Regional anchors are derived from the prepared climate samples rather than a
+ * hand-written list, so adding a dataset adds its bookmark. Where a demonstration
+ * parcel sits near an anchor, the camera frames the parcel instead of the city.
+ */
+export function regionBookmarks(): Bookmark[] {
+  const sites = demoSites().sites as Array<{ id: string; geometry: { coordinates: number[][][] } }>;
+
+  const centroidOf = (ring: number[][]) => {
+    const pts = ring.slice(0, -1);
+    const lon = pts.reduce((s, p) => s + p[0], 0) / pts.length;
+    const lat = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+    return [lon, lat] as [number, number];
+  };
+
+  return climate()
+    .map((r) => {
+      const anchor: [number, number] = [r.coordinates[0], r.coordinates[1]];
+      let best: { id: string; centroid: [number, number]; km: number } | null = null;
+      for (const s of sites) {
+        const c = centroidOf(s.geometry.coordinates[0]);
+        const km = distanceKm(anchor, c);
+        if (km < 100 && (!best || km < best.km)) best = { id: s.id, centroid: c, km };
+      }
+      return {
+        id: r.id,
+        name: titleCase(r.id),
+        center: best ? best.centroid : anchor,
+        zoom: best ? 12 : 10,
+        parcelId: best ? best.id : null,
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+}

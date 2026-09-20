@@ -5,8 +5,8 @@ import type { RequestParameters, StyleSpecification } from "maplibre-gl";
 
 export const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
 
-/** Mapbox style id used when a token is present. */
-export const MAPBOX_STYLE = "mapbox/dark-v11";
+/** Mapbox style id used when a token is present. Override per deployment. */
+export const MAPBOX_STYLE = process.env.NEXT_PUBLIC_MAPBOX_STYLE || "mapbox/dark-v11";
 
 const CARTO_FALLBACK = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
